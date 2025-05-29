@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    "charliermarsh.ruff",
+    "codezombiech.gitignore",
+    "eamodio.gitlens",
+    "ms-python.debugpy",
+    "ms-python.mypy-type-checker",
+    "ms-python.python",
+    "ms-vscode.vscode-github-issue-notebooks",
+    "redhat.vscode-yaml",
+    "streetsidesoftware.code-spell-checker",
+    "usernamehw.errorlens",
+    "GitHub.codespaces",
+    "GitHub.vscode-github-actions",
+    "GitHub.copilot",
+    "GitHub.copilot-chat",
+    "GitHub.vscode-pull-request-github",
+    "GitHub.remotehub"
+  ]
+}
