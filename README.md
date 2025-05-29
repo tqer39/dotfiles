@@ -12,6 +12,9 @@ This repository contains my public dotfiles, which are managed using git submodu
   - `.hyper.js`: Hyper terminal configuration
   - `.zshrc`: Zsh shell configuration
   - `.vscode/`: VS Code settings and extensions
+    - `settings.json`: VS Code editor settings and preferences
+    - `extensions.json`: Recommended VS Code extensions for development
+    - `mcp.json`: Multi-root workspace configuration for VS Code
   - `.config/`: Application-specific configurations
     - `starship.toml`: Starship prompt configuration for a modern and informative shell prompt
     - `karabiner/`: Karabiner-Elements configuration for custom keyboard shortcuts and key remapping
@@ -35,6 +38,7 @@ This repository contains my public dotfiles, which are managed using git submodu
 - Git
 - Starship (for shell prompt customization)
 - Karabiner-Elements (for keyboard customization)
+- Visual Studio Code (for development environment)
 
 ## Documentation
 

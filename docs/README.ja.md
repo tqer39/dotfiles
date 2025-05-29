@@ -12,6 +12,9 @@
   - `.hyper.js`: Hyperターミナルの設定
   - `.zshrc`: Zshシェルの設定
   - `.vscode/`: VS Codeの設定と拡張機能
+    - `settings.json`: VS Codeエディタの設定と環境設定
+    - `extensions.json`: 開発に推奨されるVS Code拡張機能
+    - `mcp.json`: VS Codeのマルチルートワークスペース設定
   - `.config/`: アプリケーション固有の設定
     - `starship.toml`: モダンで情報量の多いシェルプロンプトのためのStarship設定
     - `karabiner/`: カスタムキーボードショートカットとキーリマップのためのKarabiner-Elements設定
@@ -35,6 +38,7 @@
 - Git
 - Starship（シェルプロンプトのカスタマイズ用）
 - Karabiner-Elements（キーボードのカスタマイズ用）
+- Visual Studio Code（開発環境用）
 
 ## ドキュメント
 
