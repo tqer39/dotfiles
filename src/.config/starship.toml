@@ -1,0 +1,131 @@
+# プロンプトの先頭の空行を無効にする
+add_newline = true
+
+# モジュールの表示順序
+format = """(bg:#A6A6A6 fg:#57686B)\
+        $time\
+        $memory_usage\
+        $username\
+        $hostname\
+        $directory\
+        $aws\
+        $singularity\
+        $docker_context\
+        (↓ Source control - for right side ↓)\
+        $git_branch\
+        $git_commit\
+        $git_status\
+        $git_state\
+        (↑ Source control - for right side ↑)\
+        (↓ Toolchain version modules ↓)\
+        $golang\
+        $nodejs\
+        $perl\
+        $php\
+        $python\
+        $ruby\
+        $rust\
+        $terraform\
+        (↑ Toolchain version modules ↑)\
+        (↓ Package modules ↓)\
+        $helm\
+        $package\
+        $cmake\
+        $conda\
+        (↑ Package modules ↑)\
+        $nix_shell\
+        $env_var\
+        $custom\
+        (↑ above input line ↑)\
+        $line_break\
+        (↓ on input line ↓)\
+        $battery\
+        $shlvl\
+        $jobs\
+        $cmd_duration\
+        $status\
+        \n\
+        $character\
+    """
+
+[username]
+style_user = "white bold"
+style_root = "black bold"
+format = "user: [$user]($style) "
+disabled = false
+
+[time]
+disabled = false
+# style = "bg:#b4bbc8 fg:#111111"
+style = "bold #f57800"
+use_12hr = false
+time_format = "%H:%M"
+utc_time_offset = "local"
+format = "[🕒(bg:#b4bbc8 fg:#A6A6A6) $time (bg:#A6A6A6 fg:#b4bbc8)]($style)"
+
+[directory]
+truncation_length = 5
+format = "[$path]($style)[$lock_symbol]($lock_style) "
+truncate_to_repo = true
+read_only = "🔒"
+read_only_style = "bold white"
+
+[directory.substitutions]
+"~/Documents" = ""
+"~/Music" = ""
+"~/Movies" = ""
+"~/Pictures" = ""
+"~/Sources" = ""
+"~" = " "
+"/" = "  "
+
+# パッケージを表示させない
+[package]
+disabled = true
+
+# モジュールを有効にしてプロンプトを分割する
+[line_break]
+disabled = true
+
+# コマンドの成功時と失敗時時で行頭を変える
+[character]
+success_symbol = "[▶](bold green)"
+error_symbol = "[▶](bold red)"
+
+# 3,000ミリ秒（= 3秒）を超えるコマンド期間を表示
+[cmd_duration]
+min_time = 3_000
+format = "took [$duration]($style)"
+
+# バッテリー残量が20％以下の場合にのみ表示
+[battery]
+charging_symbol = "⚡️"
+discharging_symbol = "💀 "
+full_symbol = "🤗"
+
+# バッテリー残量が0％から20％の場合に表示
+[[battery.display]]
+threshold = 20
+style = "bold red"
+
+# バッテリー残量が20％から30％の場合に表示
+[[battery.display]]
+threshold = 30
+style = "bold yellow"
+discharging_symbol = "💦"
+
+# Gitのステータス表示用アイコン
+[git_status]
+conflicted = "💥"
+ahead = "🏎💨"
+behind = "😰"
+diverged = "😵"
+untracked = "🌚‍"
+stashed = "📦"
+modified = "📝"
+staged = '🔦'
+renamed = "🏷"
+deleted = "🗑"
+
+[docker_context]
+format = "via [🐋 $context](blue bold)"

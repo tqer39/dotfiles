@@ -1,0 +1,19 @@
+[user]
+	name = tqer39
+	email = tqer39@gmail.com
+	signingkey = 0D7D835BF867083B
+[core]
+	editor = code --wait
+[merge]
+	tool = code --wait \"$MERGED\"
+[push]
+	default = simple
+	autoSetupRemote = true
+[diff]
+	tool = default-difftool
+[difftool "default-difftool"]
+	cmd = code --wait --diff $LOCAL $REMOTE
+[alias]
+	new-feature-branch = "!f() { \\\n  TITLE=\"$1\"; \\\n  DATE=$(date +%Y%m%d); \\\n  git checkout main && \\\n  git fetch origin -p && \\\n  git reset --hard origin/main && \\\n  git checkout -b \"feature/${TITLE}-${DATE}\" ; \\\n}; f"
+[commit]
+	gpgsign = true
