@@ -22,13 +22,6 @@
    git submodule add https://github.com/yourusername/dotfiles.git
    ```
 
-2. dotfilesへのシンボリックリンクを作成します：
-
-   ```bash
-   cd dotfiles
-   ./setup/create_symlinks.sh
-   ```
-
 ## 必要条件
 
 - macOS（主要な開発環境）

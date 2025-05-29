@@ -22,13 +22,6 @@ This repository contains my public dotfiles, which are managed using git submodu
    git submodule add https://github.com/yourusername/dotfiles.git
    ```
 
-2. Create symbolic links to the dotfiles:
-
-   ```bash
-   cd dotfiles
-   ./setup/create_symlinks.sh
-   ```
-
 ## Requirements
 
 - macOS (primary development environment)
