@@ -13,6 +13,9 @@ This repository contains my public dotfiles, which are managed using git submodu
   - `.zshrc`: Zsh shell configuration
   - `.vscode/`: VS Code settings and extensions
   - `.config/`: Application-specific configurations
+    - `starship.toml`: Starship prompt configuration for a modern and informative shell prompt
+    - `karabiner/`: Karabiner-Elements configuration for custom keyboard shortcuts and key remapping
+    - `git/`: Additional Git configuration files and templates
 
 ## Usage
 
@@ -27,6 +30,8 @@ This repository contains my public dotfiles, which are managed using git submodu
 - macOS (primary development environment)
 - zsh (default shell)
 - Git
+- Starship (for shell prompt customization)
+- Karabiner-Elements (for keyboard customization)
 
 ## Documentation
 

@@ -13,6 +13,9 @@
   - `.zshrc`: Zshシェルの設定
   - `.vscode/`: VS Codeの設定と拡張機能
   - `.config/`: アプリケーション固有の設定
+    - `starship.toml`: モダンで情報量の多いシェルプロンプトのためのStarship設定
+    - `karabiner/`: カスタムキーボードショートカットとキーリマップのためのKarabiner-Elements設定
+    - `git/`: 追加のGit設定ファイルとテンプレート
 
 ## 使用方法
 
@@ -27,6 +30,8 @@
 - macOS（主要な開発環境）
 - zsh（デフォルトシェル）
 - Git
+- Starship（シェルプロンプトのカスタマイズ用）
+- Karabiner-Elements（キーボードのカスタマイズ用）
 
 ## ドキュメント
 
