@@ -15,7 +15,10 @@ This repository contains my public dotfiles, which are managed using git submodu
   - `.config/`: Application-specific configurations
     - `starship.toml`: Starship prompt configuration for a modern and informative shell prompt
     - `karabiner/`: Karabiner-Elements configuration for custom keyboard shortcuts and key remapping
+      - `karabiner.json`: Main configuration file for keyboard shortcuts and key remapping
+      - `assets/`: Directory containing custom key icons and other assets for Karabiner-Elements
     - `git/`: Additional Git configuration files and templates
+      - `ignore`: Global gitignore patterns for common development environments
 
 ## Usage
 

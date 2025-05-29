@@ -15,7 +15,10 @@
   - `.config/`: アプリケーション固有の設定
     - `starship.toml`: モダンで情報量の多いシェルプロンプトのためのStarship設定
     - `karabiner/`: カスタムキーボードショートカットとキーリマップのためのKarabiner-Elements設定
+      - `karabiner.json`: キーボードショートカットとキーリマップのメイン設定ファイル
+      - `assets/`: Karabiner-Elements用のカスタムキーアイコンやその他のアセットを含むディレクトリ
     - `git/`: 追加のGit設定ファイルとテンプレート
+      - `ignore`: 一般的な開発環境向けのグローバルgitignoreパターン
 
 ## 使用方法
 
