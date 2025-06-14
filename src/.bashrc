@@ -293,6 +293,9 @@ if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 
+# mise
+eval "$(mise activate bash)"
+
 # code-insiders
 if command -v code-insiders &> /dev/null; then
   alias ci='code-insiders'
