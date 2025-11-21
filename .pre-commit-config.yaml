@@ -20,7 +20,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: v9.3.1
+    rev: v9.3.3
     hooks:
       - id: cspell
 
