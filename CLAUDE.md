@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Purpose
 
-This is a dotfiles repository with automated setup scripts. It installs configuration files via symlinks to maintain consistent development environments across macOS, Linux (Ubuntu), and Windows.
+This is a dotfiles repository with automated setup scripts.
+It installs configuration files via symlinks.
+The goal is to maintain consistent development environments across macOS, Linux (Ubuntu), and Windows.
 
 **Goal**: Provide nearly identical developer experience (DX) across macOS, Linux, and Windows.
 
@@ -64,7 +66,7 @@ Shared utilities sourced by all scripts:
 
 - `config/platform-files.conf` - Defines SOURCE:DESTINATION:PLATFORMS mappings
   - Format: `.zshrc:~/.zshrc:macos,linux`
-  - Platforms: `all`, `macos`, `linux`, `ubuntu`, `windows`
+  - Platforms: `all` / `macos` / `linux` / `ubuntu` / `windows`
 - `config/packages/Brewfile` - Homebrew packages
 - `config/packages/apt-packages.txt` - APT packages for Ubuntu
 
