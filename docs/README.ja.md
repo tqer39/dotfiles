@@ -8,20 +8,20 @@
 
 ```bash
 # 最小限のインストール（dotfiles のみ）
-curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash
+curl -fsSL https://install.tqer39.dev | bash
 
 # フルインストール（dotfiles + 開発環境）
-curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --full
+curl -fsSL https://install.tqer39.dev | bash -s -- --full
 
 # 実行せずに変更内容をプレビュー
-curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --dry-run
+curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
 # 最小限のインストール
-irm https://raw.githubusercontent.com/tqer39/dotfiles/main/install.ps1 | iex
+irm https://install.tqer39.dev/windows | iex
 
 # フルインストール
 .\install.ps1 -Full

@@ -4,9 +4,9 @@
 # install.sh - Dotfiles setup entry point
 # ------------------------------------------------------------------------------
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash
-#   curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --full
-#   curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --dry-run
+#   curl -fsSL https://install.tqer39.dev | bash
+#   curl -fsSL https://install.tqer39.dev | bash -s -- --full
+#   curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 # ------------------------------------------------------------------------------
 
 set -euo pipefail

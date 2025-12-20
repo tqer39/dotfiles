@@ -8,20 +8,20 @@ This repository contains my public dotfiles with an automated setup script. Thes
 
 ```bash
 # Minimal install (dotfiles only)
-curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash
+curl -fsSL https://install.tqer39.dev | bash
 
 # Full install (dotfiles + development environment)
-curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --full
+curl -fsSL https://install.tqer39.dev | bash -s -- --full
 
 # Preview changes without executing
-curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --dry-run
+curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
 # Minimal install
-irm https://raw.githubusercontent.com/tqer39/dotfiles/main/install.ps1 | iex
+irm https://install.tqer39.dev/windows | iex
 
 # Full install
 .\install.ps1 -Full
