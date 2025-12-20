@@ -1,49 +1,117 @@
 # Dotfiles
 
-このリポジトリは、git submoduleを使用して管理している公開用のdotfilesを含んでいます。これらの設定ファイルは、異なるマシン間で一貫した開発環境を維持するのに役立ちます。
+このリポジトリは、自動セットアップスクリプト付きの公開用 dotfiles を含んでいます。これらの設定ファイルは、macOS、Linux (Ubuntu)、Windows 間で一貫した開発環境を維持するのに役立ちます。
+
+## クイックスタート
+
+### macOS / Linux (Ubuntu)
+
+```bash
+# 最小限のインストール（dotfiles のみ）
+curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash
+
+# フルインストール（dotfiles + 開発環境）
+curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --full
+
+# 実行せずに変更内容をプレビュー
+curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --dry-run
+```
+
+### Windows (PowerShell)
+
+```powershell
+# 最小限のインストール
+irm https://raw.githubusercontent.com/tqer39/dotfiles/main/install.ps1 | iex
+
+# フルインストール
+.\install.ps1 -Full
+
+# 変更内容をプレビュー
+.\install.ps1 -DryRun
+```
+
+## 特徴
+
+- **冪等性**: 複数回実行しても安全 - 既存の正しいシンボリックリンクはスキップ
+- **クロスプラットフォーム**: macOS、Linux (Ubuntu)、Windows をサポート
+- **バックアップ**: 既存のファイルは `~/.dotfiles_backup/` にバックアップ
+- **モジュラー**: 最小限（dotfiles のみ）またはフル（開発ツール付き）を選択可能
+
+## コマンドラインオプション
+
+| オプション | 説明 |
+| --------- | ---- |
+| `--full` | フルセットアップ（dotfiles + 開発環境） |
+| `--minimal` | 最小限のセットアップ（dotfiles のみ、デフォルト） |
+| `--skip-packages` | パッケージマネージャのインストールをスキップ |
+| `--skip-languages` | 言語ランタイムのインストールをスキップ |
+| `--dry-run` | 実行せずに変更内容を表示 |
+| `-v, --verbose` | 詳細なログを出力 |
+| `--uninstall` | dotfiles のシンボリックリンクを削除 |
 
 ## リポジトリ構造
 
-- `src/`: すべてのdotfilesを含むディレクトリ
-  - `.bash_profile`: Bashプロファイルの設定
-  - `.bashrc`: Bashシェルの設定
-  - `.gitconfig`: Gitの設定
-  - `.gitignore`: グローバルなgitignoreルール
-  - `.hyper.js`: Hyperターミナルの設定
-  - `.zshrc`: Zshシェルの設定
-  - `.vscode/`: VS Codeの設定と拡張機能
-    - `settings.json`: VS Codeエディタの設定と環境設定
-    - `extensions.json`: 開発に推奨されるVS Code拡張機能
-    - `mcp.json`: VS Codeのマルチルートワークスペース設定
-  - `.config/`: アプリケーション固有の設定
-    - `starship.toml`: モダンで情報量の多いシェルプロンプトのためのStarship設定
-    - `karabiner/`: カスタムキーボードショートカットとキーリマップのためのKarabiner-Elements設定
-      - `karabiner.json`: キーボードショートカットとキーリマップのメイン設定ファイル
-      - `assets/`: Karabiner-Elements用のカスタムキーアイコンやその他のアセットを含むディレクトリ
-    - `git/`: 追加のGit設定ファイルとテンプレート
-      - `ignore`: 一般的な開発環境向けのグローバルgitignoreパターン
+```text
+dotfiles/
+├── install.sh              # Unix 用エントリーポイント
+├── install.ps1             # Windows PowerShell 用エントリーポイント
+├── src/                    # Dotfiles
+│   ├── .zshrc              # Zsh 設定
+│   ├── .bashrc             # Bash 設定
+│   ├── .gitconfig          # Git 設定
+│   ├── .hyper.js           # Hyper ターミナル
+│   ├── .hammerspoon/       # ウィンドウ管理 (macOS)
+│   ├── .vscode/            # VS Code 設定
+│   └── .config/
+│       ├── starship.toml   # Starship プロンプト
+│       ├── karabiner/      # キーボードカスタマイズ (macOS)
+│       └── git/            # Git ignore パターン
+├── scripts/
+│   ├── lib/                # 共通ユーティリティ
+│   ├── installers/         # パッケージインストーラー
+│   └── dotfiles.sh         # シンボリックリンク管理
+└── config/
+    ├── platform-files.conf # ファイル → シンボリックリンク マッピング
+    └── packages/           # パッケージリスト（Brewfile など）
+```
 
-## 使用方法
+## プラットフォーム別ファイル
 
-1. このリポジトリをホームディレクトリにサブモジュールとしてクローンします：
+一部の dotfiles は特定のプラットフォームでのみインストールされます：
 
-   ```bash
-   git submodule add https://github.com/yourusername/dotfiles.git
-   ```
+| ファイル | macOS | Linux | Windows |
+| ------- | :---: | :---: | :-----: |
+| `.zshrc`, `.bashrc` | ✓ | ✓ | - |
+| `.gitconfig` | ✓ | ✓ | ✓ |
+| `.hammerspoon/` | ✓ | - | - |
+| `.config/karabiner/` | ✓ | - | - |
+| `.vscode/` | ✓ | ✓ | ✓ |
+| `.config/starship.toml` | ✓ | ✓ | - |
+
+## フルインストールの内容
+
+`--full` オプションを使用すると、以下も一緒にインストールされます：
+
+### パッケージマネージャ
+
+- **macOS/Linux**: Homebrew + `config/packages/Brewfile` のパッケージ
+- **Ubuntu**: `config/packages/apt-packages.txt` の APT パッケージ
+- **Windows**: winget パッケージ
+
+### 開発ツール
+
+- **anyenv**: 言語ランタイム管理（pyenv、nodenv など）
+- **VS Code 拡張機能**: `src/.vscode/extensions.json` から
 
 ## 必要条件
 
-- macOS（主要な開発環境）
-- zsh（デフォルトシェル）
-- Git
-- Starship（シェルプロンプトのカスタマイズ用）
-- Karabiner-Elements（キーボードのカスタマイズ用）
-- Visual Studio Code（開発環境用）
+- **Git**: リポジトリのクローンに必要
+- **curl** (Unix) または **PowerShell 5.1+** (Windows)
 
 ## ドキュメント
 
-英語版のドキュメントについては、[README.md](../README.md)を参照してください。
+英語版のドキュメントについては、[README.md](../README.md) を参照してください。
 
 ## ライセンス
 
-このプロジェクトはMITライセンスの下で公開されています。詳細は[LICENSE](../LICENSE)ファイルを参照してください。
+このプロジェクトは MIT ライセンスの下で公開されています。詳細は [LICENSE](../LICENSE) ファイルを参照してください。
