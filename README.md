@@ -1,44 +1,112 @@
 # Dotfiles
 
-This repository contains my public dotfiles, which are managed using git submodules. These configuration files help maintain a consistent development environment across different machines.
+This repository contains my public dotfiles with an automated setup script. These configuration files help maintain a consistent development environment across macOS, Linux (Ubuntu), and Windows.
+
+## Quick Start
+
+### macOS / Linux (Ubuntu)
+
+```bash
+# Minimal install (dotfiles only)
+curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash
+
+# Full install (dotfiles + development environment)
+curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --full
+
+# Preview changes without executing
+curl -fsSL https://raw.githubusercontent.com/tqer39/dotfiles/main/install.sh | bash -s -- --dry-run
+```
+
+### Windows (PowerShell)
+
+```powershell
+# Minimal install
+irm https://raw.githubusercontent.com/tqer39/dotfiles/main/install.ps1 | iex
+
+# Full install
+.\install.ps1 -Full
+
+# Preview changes
+.\install.ps1 -DryRun
+```
+
+## Features
+
+- **Idempotent**: Safe to run multiple times - existing correct symlinks are skipped
+- **Cross-platform**: Supports macOS, Linux (Ubuntu), and Windows
+- **Backup**: Existing files are backed up to `~/.dotfiles_backup/`
+- **Modular**: Choose between minimal (dotfiles only) or full (with dev tools) installation
+
+## Command Line Options
+
+| Option | Description |
+| ------ | ----------- |
+| `--full` | Full setup (dotfiles + development environment) |
+| `--minimal` | Minimal setup (dotfiles only, default) |
+| `--skip-packages` | Skip package manager installation |
+| `--skip-languages` | Skip language runtime installation |
+| `--dry-run` | Show what would be done without executing |
+| `-v, --verbose` | Enable verbose output |
+| `--uninstall` | Remove dotfiles symlinks |
 
 ## Repository Structure
 
-- `src/`: Contains all dotfiles
-  - `.bash_profile`: Bash profile configuration
-  - `.bashrc`: Bash shell configuration
-  - `.gitconfig`: Git configuration
-  - `.gitignore`: Global gitignore rules
-  - `.hyper.js`: Hyper terminal configuration
-  - `.zshrc`: Zsh shell configuration
-  - `.vscode/`: VS Code settings and extensions
-    - `settings.json`: VS Code editor settings and preferences
-    - `extensions.json`: Recommended VS Code extensions for development
-    - `mcp.json`: Multi-root workspace configuration for VS Code
-  - `.config/`: Application-specific configurations
-    - `starship.toml`: Starship prompt configuration for a modern and informative shell prompt
-    - `karabiner/`: Karabiner-Elements configuration for custom keyboard shortcuts and key remapping
-      - `karabiner.json`: Main configuration file for keyboard shortcuts and key remapping
-      - `assets/`: Directory containing custom key icons and other assets for Karabiner-Elements
-    - `git/`: Additional Git configuration files and templates
-      - `ignore`: Global gitignore patterns for common development environments
+```text
+dotfiles/
+├── install.sh              # Unix entry point
+├── install.ps1             # Windows PowerShell entry point
+├── src/                    # Dotfiles
+│   ├── .zshrc              # Zsh configuration
+│   ├── .bashrc             # Bash configuration
+│   ├── .gitconfig          # Git configuration
+│   ├── .hyper.js           # Hyper terminal
+│   ├── .hammerspoon/       # Window management (macOS)
+│   ├── .vscode/            # VS Code settings
+│   └── .config/
+│       ├── starship.toml   # Starship prompt
+│       ├── karabiner/      # Keyboard customization (macOS)
+│       └── git/            # Git ignore patterns
+├── scripts/
+│   ├── lib/                # Shared utilities
+│   ├── installers/         # Package installers
+│   └── dotfiles.sh         # Symlink management
+└── config/
+    ├── platform-files.conf # File -> symlink mapping
+    └── packages/           # Package lists (Brewfile, etc.)
+```
 
-## Usage
+## Platform-Specific Files
 
-1. Clone this repository as a submodule in your home directory:
+Some dotfiles are only installed on specific platforms:
 
-   ```bash
-   git submodule add https://github.com/yourusername/dotfiles.git
-   ```
+| File | macOS | Linux | Windows |
+| ---- | :---: | :---: | :-----: |
+| `.zshrc`, `.bashrc` | ✓ | ✓ | - |
+| `.gitconfig` | ✓ | ✓ | ✓ |
+| `.hammerspoon/` | ✓ | - | - |
+| `.config/karabiner/` | ✓ | - | - |
+| `.vscode/` | ✓ | ✓ | ✓ |
+| `.config/starship.toml` | ✓ | ✓ | - |
+
+## Full Installation Includes
+
+When using `--full`, the following will also be installed:
+
+### Package Managers
+
+- **macOS/Linux**: Homebrew + packages from `config/packages/Brewfile`
+- **Ubuntu**: APT packages from `config/packages/apt-packages.txt`
+- **Windows**: winget packages
+
+### Development Tools
+
+- **anyenv**: For managing language runtimes (pyenv, nodenv, etc.)
+- **VS Code Extensions**: From `src/.vscode/extensions.json`
 
 ## Requirements
 
-- macOS (primary development environment)
-- zsh (default shell)
-- Git
-- Starship (for shell prompt customization)
-- Karabiner-Elements (for keyboard customization)
-- Visual Studio Code (for development environment)
+- **Git**: Required for cloning the repository
+- **curl** (Unix) or **PowerShell 5.1+** (Windows)
 
 ## Documentation
 
