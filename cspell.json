@@ -83,6 +83,7 @@
     "pcra",
     "pipefail",
     "pmset",
+    "prek",
     "pydocstyle",
     "pyenv",
     "remotehub",
