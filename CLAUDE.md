@@ -86,6 +86,31 @@ Modular installers called during `--full` installation:
 - **Platform filtering**: Each dotfile specifies which platforms it applies to in `platform-files.conf`.
 - **Arithmetic safety**: Use `count=$((count + 1))` instead of `((count++))` to avoid `set -e` issues.
 
+## Terraform Infrastructure
+
+### Bootstrap (初回セットアップ)
+
+GitHub Actions の OIDC 認証用 IAM Role は `infra/terraform/envs/prod/bootstrap` で管理されています。
+このリソースは GitHub Actions から作成できないため、初回はローカルから実行する必要があります。
+
+```bash
+cd infra/terraform/envs/prod/bootstrap
+terraform init
+terraform plan
+terraform apply
+```
+
+作成される IAM Role: `portfolio-dotfiles-terraform-deploy`
+
+### ディレクトリ構成
+
+- `infra/terraform/modules/` - 再利用可能なモジュール
+  - `cloudflare/` - CloudFlare DNS 設定
+  - `deploy-role/` - GitHub Actions OIDC 用 IAM Role
+- `infra/terraform/envs/prod/` - 本番環境
+  - `bootstrap/` - IAM Role (ローカル実行必須)
+  - `dns/` - CloudFlare DNS レコード
+
 ## Coding Guidelines
 
 - Shell: zsh-compatible, use `#!/usr/bin/env bash` with `set -euo pipefail`

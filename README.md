@@ -107,6 +107,17 @@ When using `--full`, the following will also be installed:
 - **Git**: Required for cloning the repository
 - **curl** (Unix) or **PowerShell 5.1+** (Windows)
 
+## Development
+
+This repository uses tools that require macOS or Linux:
+
+- `make bootstrap` - Install development dependencies
+- `just setup` - Configure development environment
+- `just lint` - Run linters
+- `just tf` - Run Terraform commands
+
+Windows is supported for **using** dotfiles, but **developing** this repository requires macOS or Linux.
+
 ## Documentation
 
 For detailed documentation in Japanese, please refer to [docs/README.ja.md](docs/README.ja.md).
