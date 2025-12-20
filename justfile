@@ -4,8 +4,10 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 aws_profile := env("AWS_PROFILE", "default")
 
 # Show help
-default:
+help:
     @just --list
+
+default: help
 
 # Setup
 setup: setup-mise setup-direnv setup-hooks
