@@ -1,0 +1,82 @@
+# ------------------------------------------------------------------------------
+# Brewfile - Homebrew packages for macOS and Linux
+# ------------------------------------------------------------------------------
+# Usage: brew bundle --file=Brewfile
+# ------------------------------------------------------------------------------
+
+# Taps
+tap "homebrew/bundle"
+
+# ------------------------------------------------------------------------------
+# CLI Tools
+# ------------------------------------------------------------------------------
+
+# Shell and prompt
+brew "zsh"
+brew "starship"
+
+# Git
+brew "git"
+brew "gh"
+
+# Modern CLI replacements
+brew "eza"          # ls replacement
+brew "bat"          # cat replacement
+brew "fzf"          # fuzzy finder
+brew "ripgrep"      # grep replacement
+
+# Development tools
+brew "direnv"
+brew "shellcheck"
+brew "pre-commit"
+
+# Utilities
+brew "curl"
+brew "wget"
+brew "jq"
+brew "tree"
+brew "xsel" if OS.linux?  # clipboard support for Linux
+
+# ------------------------------------------------------------------------------
+# macOS Only - Casks
+# ------------------------------------------------------------------------------
+if OS.mac?
+  # Development
+  cask "visual-studio-code"
+
+  # Keyboard & Window Management
+  cask "karabiner-elements"
+  cask "hammerspoon"
+
+  # Other
+  cask "rancher"
+end
+
+# ------------------------------------------------------------------------------
+# Optional: Uncomment as needed
+# ------------------------------------------------------------------------------
+
+# Database clients
+# brew "mysql-client"
+# brew "postgresql"
+
+# Cloud CLI
+# brew "awscli"
+# brew "azure-cli"
+# brew "google-cloud-sdk" if OS.mac?
+
+# Container tools
+# brew "docker"
+# brew "docker-compose"
+# brew "kubectl"
+# brew "helm"
+
+# Terraform
+# brew "terraform"
+# brew "terragrunt"
+
+# Languages (prefer anyenv instead)
+# brew "python"
+# brew "node"
+# brew "go"
+# brew "rust"

@@ -59,7 +59,6 @@ dotfiles/
 │   ├── .zshrc              # Zsh 設定
 │   ├── .bashrc             # Bash 設定
 │   ├── .gitconfig          # Git 設定
-│   ├── .hyper.js           # Hyper ターミナル
 │   ├── .hammerspoon/       # ウィンドウ管理 (macOS)
 │   ├── .vscode/            # VS Code 設定
 │   └── .config/
