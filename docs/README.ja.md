@@ -1,5 +1,7 @@
 # Dotfiles
 
+> English: [English version](../README.md)
+
 このリポジトリは、自動セットアップスクリプト付きの公開用 dotfiles を含んでいます。これらの設定ファイルは、macOS、Linux (Ubuntu)、Windows 間で一貫した開発環境を維持するのに役立ちます。
 
 ## クイックスタート
@@ -106,10 +108,6 @@ dotfiles/
 
 - **Git**: リポジトリのクローンに必要
 - **curl** (Unix) または **PowerShell 5.1+** (Windows)
-
-## ドキュメント
-
-英語版のドキュメントについては、[README.md](../README.md) を参照してください。
 
 ## ライセンス
 

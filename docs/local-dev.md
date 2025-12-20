@@ -1,77 +1,79 @@
 # Local Development Setup
 
-このリポジトリの開発環境セットアップ手順です。
+> Japanese: [日本語版](./local-dev.ja.md)
 
-## 前提条件
+Development environment setup instructions for this repository.
 
-- macOS または Linux
+## Prerequisites
+
+- macOS or Linux
 - Git
 
-## セットアップ
+## Setup
 
-### 1. 開発ツールのインストール
+### 1. Install Development Tools
 
 ```bash
 make bootstrap
 ```
 
-これにより以下がインストールされます:
+This installs the following:
 
 - Homebrew
-- mise (バージョン管理)
-- just (タスクランナー)
-- direnv (環境変数管理)
-- prek (pre-commit フック)
+- mise (version management)
+- just (task runner)
+- direnv (environment variable management)
+- prek (pre-commit hooks)
 - aws-vault
 - cf-vault
 
-### 2. 開発環境の設定
+### 2. Configure Development Environment
 
-シェルを再起動後:
+After restarting your shell:
 
 ```bash
 just setup
 ```
 
-## Terraform の実行
+## Running Terraform
 
-### 認証情報の設定
+### Setting Up Credentials
 
-Terraform を実行するには以下のプロファイルが必要です:
+The following profiles are required to run Terraform:
 
 ```bash
-# AWS 認証情報を追加
+# Add AWS credentials
 aws-vault add portfolio
 
-# Cloudflare API Token を追加
+# Add Cloudflare API Token
 cf-vault add dotfiles
 ```
 
-### コマンド
+### Commands
 
 ```bash
 # Terraform plan
 just tf plan
 
-# 特定の環境を指定
+# Specify a specific environment
 just tf -chdir=prod/bootstrap init
 just tf -chdir=prod/dns plan
 ```
 
-### Bootstrap (初回のみ)
+### Bootstrap (First Time Only)
 
-GitHub Actions の OIDC 認証用 IAM Role は初回のみローカルから作成が必要です:
+The IAM Role for GitHub Actions OIDC authentication must be created locally the first time:
 
 ```bash
 just tf -chdir=prod/bootstrap init
 just tf -chdir=prod/bootstrap apply
 ```
 
-## よく使うコマンド
+## Common Commands
 
-| コマンド     | 説明                     |
-| ------------ | ------------------------ |
-| `just help`  | 利用可能なコマンド一覧   |
-| `just setup` | 開発環境のセットアップ   |
-| `just lint`  | Linter の実行            |
-| `just tf`    | Terraform の実行         |
+| Command      | Description                      |
+| ------------ | -------------------------------- |
+| `just help`  | List available commands          |
+| `just setup` | Set up development environment   |
+| `just lint`  | Run linters                      |
+| `just tf`    | Run Terraform commands           |

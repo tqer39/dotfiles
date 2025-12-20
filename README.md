@@ -1,5 +1,7 @@
 # Dotfiles
 
+> Japanese: [日本語版](docs/README.ja.md)
+
 This repository contains my public dotfiles with an automated setup script. These configuration files help maintain a consistent development environment across macOS, Linux (Ubuntu), and Windows.
 
 ## Quick Start
@@ -117,10 +119,6 @@ This repository uses tools that require macOS or Linux:
 - `just tf` - Run Terraform commands
 
 Windows is supported for **using** dotfiles, but **developing** this repository requires macOS or Linux.
-
-## Documentation
-
-For detailed documentation in Japanese, please refer to [docs/README.ja.md](docs/README.ja.md).
 
 ## License
 

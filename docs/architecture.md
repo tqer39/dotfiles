@@ -1,5 +1,7 @@
 # Architecture
 
+> Japanese: [日本語版](./architecture.ja.md)
+
 ## Entry Points
 
 - `install.sh` - Unix (macOS/Linux) entry point, can be piped from curl
@@ -32,9 +34,9 @@ Modular installers called during `--full` installation:
 
 ## Terraform (`infra/terraform/`)
 
-- `modules/` - 再利用可能なモジュール
-  - `cloudflare/` - CloudFlare DNS 設定
-  - `deploy-role/` - GitHub Actions OIDC 用 IAM Role
-- `envs/prod/` - 本番環境
-  - `bootstrap/` - IAM Role (ローカル実行必須)
-  - `dns/` - CloudFlare DNS レコード
+- `modules/` - Reusable modules
+  - `cloudflare/` - CloudFlare DNS configuration
+  - `deploy-role/` - IAM Role for GitHub Actions OIDC
+- `envs/prod/` - Production environment
+  - `bootstrap/` - IAM Role (must be run locally)
+  - `dns/` - CloudFlare DNS records
