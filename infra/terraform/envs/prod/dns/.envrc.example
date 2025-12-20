@@ -1,0 +1,8 @@
+# CloudFlare API Token
+# Create at: https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Zone:DNS:Edit, Zone:Page Rules:Edit
+export CLOUDFLARE_API_TOKEN="your-api-token-here"
+
+# CloudFlare Zone ID
+# Found in: CloudFlare Dashboard > tqer39.dev > Overview (right sidebar)
+export TF_VAR_cloudflare_zone_id="your-zone-id-here"
