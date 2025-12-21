@@ -1,23 +1,19 @@
+# 共通設定の読み込み
 locals {
-  aws_account_id = "072693953877"
-  aws_env_name   = "portfolio"
-  organization   = "tqer39"
-  repository     = "dotfiles"
-  state_bucket   = "terraform-tfstate-tqer39-072693953877-ap-northeast-1"
+  config         = yamldecode(file("../../config.yml"))
+  aws_account_id = local.config.aws.account_id
+  aws_env_name   = local.config.aws.env_name
+  organization   = local.config.project.organization
+  repository     = local.config.project.repository
+  app_env_name   = local.config.environments.prod.name
 }
 
 module "deploy_role" {
   source = "../../../modules/deploy-role"
 
-  aws_account_id       = local.aws_account_id
-  aws_env_name         = local.aws_env_name
-  organization         = local.organization
-  repository           = local.repository
-  state_bucket         = local.state_bucket
-  create_oidc_provider = true
-
-  tags = {
-    Project   = "dotfiles"
-    ManagedBy = "terraform"
-  }
+  aws_account_id = local.aws_account_id
+  aws_env_name   = local.aws_env_name
+  organization   = local.organization
+  repository     = local.repository
+  app_env_name   = local.app_env_name
 }

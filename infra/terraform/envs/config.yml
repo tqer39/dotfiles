@@ -1,0 +1,38 @@
+# dotfiles インフラ共通設定
+# このファイルは各 Terraform モジュールから参照されます
+
+# プロジェクト情報
+project:
+  name: dotfiles
+  organization: tqer39
+  domain: tqer39.dev
+  repository: dotfiles
+
+# 環境設定
+environments:
+  dev:
+    name: dev
+    full_name: development
+  prod:
+    name: prod
+    full_name: production
+
+aws:
+  account_id: '072693953877'
+  env_name: portfolio
+  region: ap-northeast-1
+  IaC: Terraform
+
+github:
+  organization: 'tqer39'
+  repository_owner: 'tqer39'
+  repository_name: 'dotfiles'
+
+# タグ設定
+tags:
+  common:
+    Project: dotfiles
+    ManagedBy: terraform
+    Repository: https://github.com/tqer39/dotfiles
+  prod:
+    Environment: production

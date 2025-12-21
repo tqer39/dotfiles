@@ -18,12 +18,11 @@ variable "records" {
 }
 
 variable "redirects" {
-  description = "List of URL redirects (Page Rules)"
+  description = "List of URL redirects"
   type = list(object({
     source      = string
     destination = string
     status_code = optional(number, 302)
-    priority    = optional(number, 1)
   }))
   default = []
 }

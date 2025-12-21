@@ -18,22 +18,21 @@ resource "cloudflare_ruleset" "redirects" {
   kind    = "zone"
   phase   = "http_request_dynamic_redirect"
 
-  dynamic "rules" {
-    for_each = var.redirects
-    content {
+  rules = [
+    for r in var.redirects : {
       action = "redirect"
-      action_parameters {
-        from_value {
-          status_code = rules.value.status_code
-          target_url {
-            value = rules.value.destination
-          }
+      action_parameters = {
+        from_value = {
+          status_code           = r.status_code
           preserve_query_string = false
+          target_url = {
+            value = r.destination
+          }
         }
       }
-      expression  = "(http.host eq \"${rules.value.source}\")"
-      description = "Redirect ${rules.value.source}"
+      expression  = "(http.host eq \"${r.source}\")"
+      description = "Redirect ${r.source}"
       enabled     = true
     }
-  }
+  ]
 }
