@@ -1,0 +1,56 @@
+# ------------------------------------------------------------------------------
+# apt-packages.txt - APT packages for Ubuntu/Debian
+# ------------------------------------------------------------------------------
+# Usage: Used by scripts/installers/apt.sh
+# Lines starting with # are comments
+# ------------------------------------------------------------------------------
+
+# Build essentials
+build-essential
+curl
+wget
+git
+software-properties-common
+apt-transport-https
+ca-certificates
+gnupg
+lsb-release
+
+# Shell
+zsh
+
+# Utilities
+jq
+tree
+unzip
+zip
+
+# Clipboard support (for pbcopy/pbpaste aliases)
+xsel
+xclip
+
+# Development dependencies (for anyenv/pyenv builds)
+libssl-dev
+zlib1g-dev
+libbz2-dev
+libreadline-dev
+libsqlite3-dev
+libncursesw5-dev
+xz-utils
+tk-dev
+libxml2-dev
+libxmlsec1-dev
+libffi-dev
+liblzma-dev
+
+# ------------------------------------------------------------------------------
+# Optional: Uncomment as needed
+# ------------------------------------------------------------------------------
+
+# Database clients
+# mysql-client
+# postgresql-client
+
+# Container tools (prefer Docker Desktop or Rancher Desktop)
+# docker.io
+# docker-compose

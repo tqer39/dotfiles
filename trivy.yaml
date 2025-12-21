@@ -1,0 +1,19 @@
+---
+# Trivy Configuration
+# https://aquasecurity.github.io/trivy/latest/docs/configuration/
+
+scan:
+  security-checks:
+    - config
+
+severity:
+  - CRITICAL
+  - HIGH
+  - MEDIUM
+
+format: table
+timeout: 5m
+
+skip-dirs:
+  - .git
+  - .terraform

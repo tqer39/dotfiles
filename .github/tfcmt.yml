@@ -1,0 +1,142 @@
+---
+ci: github-actions
+
+embedded_var_names:
+  - target
+
+terraform:
+  plan:
+    template: |
+      {{template "plan_title" .}}
+
+      {{ .Message }}
+
+      {{template "plan_result" .}}
+
+      {{template "updated_resources" .}}
+    when_parse_error:
+      template: |
+        {{template "plan_title" .}}
+
+        :warning: **Parse Error**
+
+        <details><summary>Show error details</summary>
+
+        ```
+        {{ .CombinedOutput }}
+        ```
+
+        </details>
+      color: '#d73a4a'
+    when_plan_has_error:
+      template: |
+        {{template "plan_title" .}}
+
+        :x: **Plan Failed**
+
+        <details><summary>Show error details</summary>
+
+        ```
+        {{ .CombinedOutput }}
+        ```
+
+        </details>
+      color: '#d73a4a'
+    when_plan_has_diff:
+      label: 'terraform:plan-has-diff'
+      color: '#d4c5f9'
+    when_plan_no_diff:
+      label: 'terraform:plan-no-diff'
+      color: '#28a745'
+
+  apply:
+    template: |
+      {{template "apply_title" .}}
+
+      {{ .Message }}
+
+      {{template "apply_result" .}}
+    when_apply_has_error:
+      template: |
+        {{template "apply_title" .}}
+
+        :x: **Apply Failed**
+
+        <details><summary>Show error details</summary>
+
+        ```
+        {{ .CombinedOutput }}
+        ```
+
+        </details>
+      color: '#d73a4a'
+    when_apply_no_error:
+      color: '#28a745'
+
+templates:
+  plan_title: |
+    ## Terraform Plan: `{{ .Vars.target }}`
+
+  plan_result: |
+    {{ if eq .ExitCode 0 }}
+    :white_check_mark: **No changes detected**
+    {{ else if eq .ExitCode 2 }}
+    :warning: **Changes detected**
+
+    <details><summary>Show plan details</summary>
+
+    {{ .FormattedPlanOutput }}
+
+    </details>
+    {{ end }}
+
+  updated_resources: |
+    {{ if .CreatedResources }}
+    **:new: Created:**
+    {{- range .CreatedResources }}
+    - `{{ . }}`
+    {{- end }}
+    {{ end }}
+
+    {{ if .UpdatedResources }}
+    **:arrows_counterclockwise: Updated:**
+    {{- range .UpdatedResources }}
+    - `{{ . }}`
+    {{- end }}
+    {{ end }}
+
+    {{ if .DeletedResources }}
+    **:x: Deleted:**
+    {{- range .DeletedResources }}
+    - `{{ . }}`
+    {{- end }}
+    {{ end }}
+
+    {{ if .ReplacedResources }}
+    **:recycle: Replaced:**
+    {{- range .ReplacedResources }}
+    - `{{ . }}`
+    {{- end }}
+    {{ end }}
+
+  apply_title: |
+    ## Terraform Apply: `{{ .Vars.target }}`
+
+  apply_result: |
+    {{ if eq .ExitCode 0 }}
+    :white_check_mark: **Apply successful**
+
+    <details><summary>Show apply details</summary>
+
+    ```
+    {{ .CombinedOutput }}
+    ```
+
+    </details>
+    {{ else }}
+    :x: **Apply failed**
+
+    ```
+    {{ .CombinedOutput }}
+    ```
+    {{ end }}

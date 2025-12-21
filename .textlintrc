@@ -3,8 +3,34 @@
     "comments": true
   },
   "rules": {
-    "no-dropping-the-ra": true,
-    "textlint-rule-ja-no-space-between-full-width": true,
-    "textlint-rule-no-dropping-the-ra": true
+    "preset-smarthr": {
+      "sentence-length": {
+        "max": 120
+      },
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [":", "：", "）", ")", "」", "【", "》", "〉", ">", "】"],
+        "allowEmojiAtEnd": true,
+        "forceAppendPeriod": false
+      },
+      "prh-rules": false,
+      "ja-no-space-between-full-width": false,
+      "ja-space-between-half-and-full-width": false,
+      "ja-hiragana-fukushi": false
+    },
+    "preset-ja-technical-writing": {
+      "no-mix-dearu-desumasu": {
+        "preferInHeader": "",
+        "preferInBody": "ですます",
+        "preferInList": "",
+        "strict": false
+      },
+      "sentence-length": false,
+      "no-dropping-the-ra": false,
+      "no-double-negative-ja": false,
+      "ja-no-redundant-expression": false,
+      "ja-no-abusage": false,
+      "no-doubled-conjunctive-particle-ga": false,
+      "ja-no-mixed-period": false
+    }
   }
 }
