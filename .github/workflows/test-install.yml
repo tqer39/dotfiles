@@ -28,6 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
+    env:
+      # Use checked-out code instead of cloning from main branch
+      DOTFILES_DIR: ${{ github.workspace }}
 
     steps:
       - name: Checkout
@@ -79,6 +82,9 @@ jobs:
   test-windows:
     name: Test on Windows
     runs-on: windows-latest
+    env:
+      # Use checked-out code instead of cloning from main branch
+      DOTFILES_DIR: ${{ github.workspace }}
 
     steps:
       - name: Checkout

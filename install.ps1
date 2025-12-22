@@ -48,7 +48,7 @@ param(
 $ErrorActionPreference = "Stop"
 $DotfilesRepo = "https://github.com/tqer39/dotfiles.git"
 $DotfilesBranch = "main"
-$DotfilesDir = Join-Path $env:USERPROFILE ".dotfiles"
+$DotfilesDir = if ($env:DOTFILES_DIR) { $env:DOTFILES_DIR } else { Join-Path $env:USERPROFILE ".dotfiles" }
 $BackupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -Format 'yyyyMMdd_HHmmss')"
 
 # ------------------------------------------------------------------------------
