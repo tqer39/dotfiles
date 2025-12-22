@@ -300,19 +300,74 @@ function Uninstall-Dotfiles {
     Write-Success "Dotfiles uninstalled"
 }
 
+function Install-Scoop {
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        Write-Info "Scoop is already installed"
+        return $true
+    }
+
+    Write-Info "Installing Scoop..."
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would install Scoop"
+        return $true
+    }
+
+    try {
+        Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+        Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+        Write-Success "Scoop installed"
+        return $true
+    } catch {
+        Write-Warn "Failed to install Scoop: $_"
+        return $false
+    }
+}
+
+function Install-ScoopPackages {
+    if (-not (Get-Command scoop -ErrorAction SilentlyContinue)) {
+        Write-Warn "Scoop is not installed. Skipping Scoop package installation."
+        return
+    }
+
+    Write-Info "Installing packages with Scoop..."
+
+    # Add extras bucket for additional packages
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would add extras bucket"
+    } else {
+        scoop bucket add extras 2>$null
+    }
+
+    # Scoop packages (prefer these over winget)
+    $packages = @(
+        "git",
+        "gh",
+        "starship"
+    )
+
+    foreach ($package in $packages) {
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would install: $package"
+        } else {
+            Write-Info "Installing: $package"
+            scoop install $package 2>$null
+        }
+    }
+
+    Write-Success "Scoop packages installed"
+}
+
 function Install-WingetPackages {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
-        Write-Warn "winget is not installed. Skipping package installation."
+        Write-Warn "winget is not installed. Skipping winget package installation."
         return
     }
 
     Write-Info "Installing packages with winget..."
 
+    # Packages that are better installed via winget (GUI apps, etc.)
     $packages = @(
-        "Git.Git",
-        "GitHub.cli",
-        "Microsoft.VisualStudioCode",
-        "Starship.Starship"
+        "Microsoft.VisualStudioCode"
     )
 
     foreach ($package in $packages) {
@@ -324,7 +379,7 @@ function Install-WingetPackages {
         }
     }
 
-    Write-Success "Packages installed"
+    Write-Success "winget packages installed"
 }
 
 function Install-VSCodeExtensions {
@@ -377,8 +432,8 @@ function Main {
     # Check for git
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
         Write-Err "Git is required but not installed."
-        Write-Info "Install Git from: https://git-scm.com/download/win"
-        Write-Info "Or run: winget install Git.Git"
+        Write-Info "Install Git via Scoop: scoop install git"
+        Write-Info "Or via winget: winget install Git.Git"
         return
     }
 
@@ -396,6 +451,11 @@ function Main {
     # Full installation
     if ($Full) {
         if (-not $SkipPackages) {
+            # Install Scoop first (if not present)
+            Install-Scoop
+            # Install packages via Scoop (preferred)
+            Install-ScoopPackages
+            # Install remaining packages via winget (GUI apps)
             Install-WingetPackages
         }
         Install-VSCodeExtensions
