@@ -117,6 +117,55 @@ install_build_essentials() {
   log_success "Build essentials installed"
 }
 
+# Install Albert launcher
+install_albert() {
+  log_info "Installing Albert launcher..."
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "Albert is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v albert &>/dev/null; then
+    log_debug "Albert is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Albert launcher"
+    return 0
+  fi
+
+  # Get Ubuntu version
+  local ubuntu_version
+  if [[ -f /etc/os-release ]]; then
+    # shellcheck source=/dev/null
+    . /etc/os-release
+    ubuntu_version="${VERSION_ID}"
+  else
+    log_warn "Cannot detect Ubuntu version. Skipping Albert installation."
+    return 0
+  fi
+
+  # Add Albert repository
+  local repo_url="https://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_${ubuntu_version}/"
+  local key_url="https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_${ubuntu_version}/Release.key"
+
+  log_info "Adding Albert repository for Ubuntu ${ubuntu_version}..."
+
+  echo "deb ${repo_url} /" | sudo tee /etc/apt/sources.list.d/home_manuelschneid3r.list > /dev/null
+  curl -fsSL "${key_url}" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+
+  sudo apt update
+  sudo apt install -y albert
+
+  log_success "Albert launcher installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages
