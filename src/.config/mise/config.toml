@@ -1,0 +1,12 @@
+# ------------------------------------------------------------------------------
+# mise global configuration
+# ------------------------------------------------------------------------------
+# This file is symlinked to ~/.config/mise/config.toml
+# Run `mise install` to install all tools
+# ------------------------------------------------------------------------------
+
+[tools]
+# AI CLI Tools
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@google/gemini-cli" = "latest"
+"npm:@openai/codex" = "latest"
