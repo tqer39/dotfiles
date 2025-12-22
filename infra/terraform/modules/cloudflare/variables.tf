@@ -16,13 +16,3 @@ variable "records" {
   }))
   default = []
 }
-
-variable "redirects" {
-  description = "List of URL redirects"
-  type = list(object({
-    source      = string
-    destination = string
-    status_code = optional(number, 302)
-  }))
-  default = []
-}
