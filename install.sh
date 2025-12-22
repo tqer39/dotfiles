@@ -283,6 +283,7 @@ main() {
           # shellcheck source=/dev/null
           source "${DOTFILES_DIR}/scripts/installers/apt.sh"
           install_apt_packages
+          install_albert
         fi
       fi
     else

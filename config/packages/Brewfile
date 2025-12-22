@@ -44,6 +44,9 @@ if OS.mac?
   # Development
   cask "visual-studio-code"
 
+  # Productivity
+  cask "raycast"
+
   # Keyboard & Window Management
   cask "karabiner-elements"
   cask "hammerspoon"
