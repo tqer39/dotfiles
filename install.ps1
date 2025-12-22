@@ -48,7 +48,7 @@ param(
 $ErrorActionPreference = "Stop"
 $DotfilesRepo = "https://github.com/tqer39/dotfiles.git"
 $DotfilesBranch = "main"
-$DotfilesDir = Join-Path $env:USERPROFILE ".dotfiles"
+$DotfilesDir = if ($env:DOTFILES_DIR) { $env:DOTFILES_DIR } else { Join-Path $env:USERPROFILE ".dotfiles" }
 $BackupDir = Join-Path $env:USERPROFILE ".dotfiles_backup\$(Get-Date -Format 'yyyyMMdd_HHmmss')"
 
 # ------------------------------------------------------------------------------
@@ -167,6 +167,13 @@ function New-SymbolicLinkSafe {
 # Setup Functions
 # ------------------------------------------------------------------------------
 function Install-Repository {
+    # Skip if dotfiles scripts already exist (e.g., running from source checkout)
+    $scriptsPath = Join-Path $DotfilesDir "scripts"
+    if (Test-Path (Join-Path $scriptsPath "dotfiles.sh")) {
+        Write-Info "Using existing dotfiles at $DotfilesDir"
+        return
+    }
+
     if (Test-Path $DotfilesDir) {
         Write-Info "Dotfiles directory exists, updating..."
         if ($DryRun) {

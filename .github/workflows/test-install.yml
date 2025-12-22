@@ -1,0 +1,141 @@
+name: Test Install Scripts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "install.sh"
+      - "install.ps1"
+      - "scripts/**"
+      - "config/platform-files.conf"
+      - "src/**"
+      - ".github/workflows/test-install.yml"
+  pull_request:
+    paths:
+      - "install.sh"
+      - "install.ps1"
+      - "scripts/**"
+      - "config/platform-files.conf"
+      - "src/**"
+      - ".github/workflows/test-install.yml"
+  workflow_dispatch:
+
+jobs:
+  test-unix:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    env:
+      # Use checked-out code instead of cloning from main branch
+      DOTFILES_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test dry-run mode
+        run: |
+          echo "=== Testing dry-run mode ==="
+          bash install.sh --dry-run --verbose
+
+      - name: Test minimal install
+        run: |
+          echo "=== Testing minimal install ==="
+          bash install.sh --minimal
+
+      - name: Verify symlinks created
+        run: |
+          echo "=== Verifying symlinks ==="
+          # Check that at least some expected symlinks exist
+          if [ -L ~/.gitconfig ] || [ -L ~/.zshrc ] || [ -L ~/.bashrc ]; then
+            echo "Symlinks created successfully"
+          else
+            echo "Warning: No expected symlinks found"
+          fi
+          # List created symlinks
+          ls -la ~ | grep "^l" || true
+
+      - name: Test status command
+        run: |
+          echo "=== Testing status command ==="
+          bash scripts/dotfiles.sh status
+
+      - name: Test uninstall
+        run: |
+          echo "=== Testing uninstall ==="
+          bash install.sh --uninstall
+
+      - name: Verify uninstall
+        run: |
+          echo "=== Verifying uninstall ==="
+          # Check that symlinks are removed
+          if [ -L ~/.gitconfig ] || [ -L ~/.zshrc ] || [ -L ~/.bashrc ]; then
+            echo "Warning: Some symlinks still exist after uninstall"
+            ls -la ~ | grep "^l" || true
+          else
+            echo "Uninstall completed successfully"
+          fi
+
+  test-windows:
+    name: Test on Windows
+    runs-on: windows-latest
+    env:
+      # Use checked-out code instead of cloning from main branch
+      DOTFILES_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test dry-run mode
+        shell: pwsh
+        run: |
+          Write-Host "=== Testing dry-run mode ==="
+          .\install.ps1 -DryRun -Verbose
+
+      - name: Test minimal install
+        shell: pwsh
+        run: |
+          Write-Host "=== Testing minimal install ==="
+          .\install.ps1 -Minimal
+
+      - name: Verify symlinks created
+        shell: pwsh
+        run: |
+          Write-Host "=== Verifying symlinks ==="
+          $gitconfig = "$env:USERPROFILE\.gitconfig"
+          if (Test-Path $gitconfig) {
+            $item = Get-Item $gitconfig -Force
+            if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+              Write-Host "Symlink created successfully: $gitconfig"
+            } else {
+              Write-Host "File exists but is not a symlink: $gitconfig"
+            }
+          } else {
+            Write-Host "File not found: $gitconfig"
+          }
+
+      - name: Test uninstall
+        shell: pwsh
+        run: |
+          Write-Host "=== Testing uninstall ==="
+          .\install.ps1 -Uninstall
+
+      - name: Verify uninstall
+        shell: pwsh
+        run: |
+          Write-Host "=== Verifying uninstall ==="
+          $gitconfig = "$env:USERPROFILE\.gitconfig"
+          if (Test-Path $gitconfig) {
+            $item = Get-Item $gitconfig -Force
+            if ($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
+              Write-Host "Warning: Symlink still exists: $gitconfig"
+            } else {
+              Write-Host "File restored from backup or unchanged"
+            }
+          } else {
+            Write-Host "Uninstall completed successfully"
+          }

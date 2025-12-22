@@ -5,6 +5,12 @@
 # log.sh - Logging utilities for dotfiles setup
 # ------------------------------------------------------------------------------
 
+# Include guard to prevent multiple sourcing
+if [[ -n "${_LOG_SH_LOADED:-}" ]]; then
+  return 0
+fi
+readonly _LOG_SH_LOADED=1
+
 # Color codes
 readonly LOG_RED='\033[0;31m'
 readonly LOG_GREEN='\033[0;32m'

@@ -4,6 +4,12 @@
 # utils.sh - Utility functions for dotfiles setup
 # ------------------------------------------------------------------------------
 
+# Include guard to prevent multiple sourcing
+if [[ -n "${_UTILS_SH_LOADED:-}" ]]; then
+  return 0
+fi
+_UTILS_SH_LOADED=1
+
 # Detect operating system
 # Returns: macos, ubuntu, linux, windows, unknown
 detect_os() {
