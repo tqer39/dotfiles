@@ -167,6 +167,13 @@ function New-SymbolicLinkSafe {
 # Setup Functions
 # ------------------------------------------------------------------------------
 function Install-Repository {
+    # Skip if dotfiles scripts already exist (e.g., running from source checkout)
+    $scriptsPath = Join-Path $DotfilesDir "scripts"
+    if (Test-Path (Join-Path $scriptsPath "dotfiles.sh")) {
+        Write-Info "Using existing dotfiles at $DotfilesDir"
+        return
+    }
+
     if (Test-Path $DotfilesDir) {
         Write-Info "Dotfiles directory exists, updating..."
         if ($DryRun) {

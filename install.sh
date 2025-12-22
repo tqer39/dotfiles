@@ -178,6 +178,12 @@ check_prerequisites() {
 # Clone or update dotfiles repository
 # ------------------------------------------------------------------------------
 setup_repository() {
+  # Skip if dotfiles scripts already exist (e.g., running from source checkout)
+  if [[ -f "${DOTFILES_DIR}/scripts/dotfiles.sh" ]]; then
+    print_info "Using existing dotfiles at $DOTFILES_DIR"
+    return 0
+  fi
+
   if [[ -d "$DOTFILES_DIR" ]]; then
     print_info "Dotfiles directory exists, updating..."
     if [[ "$DRY_RUN" == "true" ]]; then
