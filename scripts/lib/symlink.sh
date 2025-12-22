@@ -4,6 +4,12 @@
 # symlink.sh - Symlink management for dotfiles
 # ------------------------------------------------------------------------------
 
+# Include guard to prevent multiple sourcing
+if [[ -n "${_SYMLINK_SH_LOADED:-}" ]]; then
+  return 0
+fi
+_SYMLINK_SH_LOADED=1
+
 # Backup directory (can be overridden)
 BACKUP_DIR="${BACKUP_DIR:-${HOME}/.dotfiles_backup/$(date +%Y%m%d_%H%M%S)}"
 
