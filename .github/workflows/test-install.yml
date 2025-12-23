@@ -7,7 +7,7 @@ on:
       - "install.sh"
       - "install.ps1"
       - "scripts/**"
-      - "config/platform-files.conf"
+      - "config/**"
       - "src/**"
       - ".github/workflows/test-install.yml"
   pull_request:
@@ -15,21 +15,23 @@ on:
       - "install.sh"
       - "install.ps1"
       - "scripts/**"
-      - "config/platform-files.conf"
+      - "config/**"
       - "src/**"
       - ".github/workflows/test-install.yml"
   workflow_dispatch:
 
 jobs:
-  test-unix:
-    name: Test on ${{ matrix.os }}
+  # ------------------------------------------------------------------------------
+  # Minimal Install Tests (symlinks only, fast)
+  # ------------------------------------------------------------------------------
+  test-unix-minimal:
+    name: Minimal - ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
     env:
-      # Use checked-out code instead of cloning from main branch
       DOTFILES_DIR: ${{ github.workspace }}
 
     steps:
@@ -49,13 +51,11 @@ jobs:
       - name: Verify symlinks created
         run: |
           echo "=== Verifying symlinks ==="
-          # Check that at least some expected symlinks exist
           if [ -L ~/.gitconfig ] || [ -L ~/.zshrc ] || [ -L ~/.bashrc ]; then
             echo "Symlinks created successfully"
           else
             echo "Warning: No expected symlinks found"
           fi
-          # List created symlinks
           ls -la ~ | grep "^l" || true
 
       - name: Test status command
@@ -71,7 +71,6 @@ jobs:
       - name: Verify uninstall
         run: |
           echo "=== Verifying uninstall ==="
-          # Check that symlinks are removed
           if [ -L ~/.gitconfig ] || [ -L ~/.zshrc ] || [ -L ~/.bashrc ]; then
             echo "Warning: Some symlinks still exist after uninstall"
             ls -la ~ | grep "^l" || true
@@ -79,11 +78,61 @@ jobs:
             echo "Uninstall completed successfully"
           fi
 
-  test-windows:
-    name: Test on Windows
+  # ------------------------------------------------------------------------------
+  # Full Install Tests (packages + runtimes)
+  # ------------------------------------------------------------------------------
+  test-unix-full:
+    name: Full - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    env:
+      DOTFILES_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test full install
+        run: |
+          echo "=== Testing full install ==="
+          bash install.sh --full --ci
+        timeout-minutes: 30
+
+      - name: Verify CLI tools installed
+        run: |
+          echo "=== Verifying CLI tools ==="
+          # Check common CLI tools
+          command -v starship && starship --version || echo "starship not found"
+          command -v gh && gh --version || echo "gh not found"
+          command -v eza && eza --version || echo "eza not found"
+          command -v bat && bat --version || echo "bat not found"
+          command -v fzf && fzf --version || echo "fzf not found"
+          command -v rg && rg --version || echo "ripgrep not found"
+
+      - name: Verify language runtimes
+        run: |
+          echo "=== Verifying language runtimes ==="
+          # Check anyenv and *env installations
+          if [ -d ~/.anyenv ]; then
+            echo "anyenv installed"
+            export PATH="$HOME/.anyenv/bin:$PATH"
+            eval "$(anyenv init -)"
+            command -v pyenv && pyenv --version || echo "pyenv not found"
+            command -v nodenv && nodenv --version || echo "nodenv not found"
+          else
+            echo "anyenv not found"
+          fi
+
+  # ------------------------------------------------------------------------------
+  # Windows Minimal Tests
+  # ------------------------------------------------------------------------------
+  test-windows-minimal:
+    name: Minimal - Windows
     runs-on: windows-latest
     env:
-      # Use checked-out code instead of cloning from main branch
       DOTFILES_DIR: ${{ github.workspace }}
 
     steps:
@@ -138,4 +187,46 @@ jobs:
             }
           } else {
             Write-Host "Uninstall completed successfully"
+          }
+
+  # ------------------------------------------------------------------------------
+  # Windows Full Tests
+  # ------------------------------------------------------------------------------
+  test-windows-full:
+    name: Full - Windows
+    runs-on: windows-latest
+    env:
+      DOTFILES_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test full install
+        shell: pwsh
+        run: |
+          Write-Host "=== Testing full install ==="
+          .\install.ps1 -Full -CI
+        timeout-minutes: 20
+
+      - name: Verify Scoop packages installed
+        shell: pwsh
+        run: |
+          Write-Host "=== Verifying Scoop packages ==="
+          if (Get-Command scoop -ErrorAction SilentlyContinue) {
+            Write-Host "Scoop installed"
+            scoop list
+          } else {
+            Write-Host "Scoop not found"
+          }
+          # Check CLI tools
+          if (Get-Command starship -ErrorAction SilentlyContinue) {
+            starship --version
+          } else {
+            Write-Host "starship not found"
+          }
+          if (Get-Command gh -ErrorAction SilentlyContinue) {
+            gh --version
+          } else {
+            Write-Host "gh not found"
           }

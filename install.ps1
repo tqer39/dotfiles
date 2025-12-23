@@ -39,6 +39,7 @@ param(
     [switch]$SkipPackages,
     [switch]$DryRun,
     [switch]$Uninstall,
+    [switch]$CI,
     [switch]$Help
 )
 
@@ -87,6 +88,7 @@ Options:
     -SkipPackages   Skip package installation
     -DryRun         Show what would be done without executing
     -Uninstall      Remove dotfiles symlinks
+    -CI             CI mode (non-interactive, continue on errors)
     -Help           Show this help message
 
 Examples:
@@ -241,7 +243,7 @@ function Install-Dotfiles {
         $fullDest = $fullDest -replace "/", "\"
 
         if (Test-Path $fullSrc) {
-            New-SymbolicLinkSafe -Source $fullSrc -Destination $fullDest
+            New-SymbolicLinkSafe -Source $fullSrc -Destination $fullDest | Out-Null
         } else {
             Write-Warn "Source not found: $fullSrc"
         }
@@ -350,7 +352,15 @@ function Install-ScoopPackages {
             Write-Info "[DRY-RUN] Would install: $package"
         } else {
             Write-Info "Installing: $package"
-            scoop install $package 2>$null
+            try {
+                scoop install $package 2>$null
+            } catch {
+                if ($CI) {
+                    Write-Warn "Failed to install $package (CI mode, continuing): $_"
+                } else {
+                    throw
+                }
+            }
         }
     }
 
@@ -376,7 +386,18 @@ function Install-WingetPackages {
             Write-Info "[DRY-RUN] Would install: $package"
         } else {
             Write-Info "Installing: $package"
-            winget install --id $package --accept-source-agreements --accept-package-agreements --silent
+            try {
+                $result = winget install --id $package --accept-source-agreements --accept-package-agreements --silent 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    throw "winget exited with code $LASTEXITCODE"
+                }
+            } catch {
+                if ($CI) {
+                    Write-Warn "Failed to install $package (CI mode, continuing): $_"
+                } else {
+                    throw
+                }
+            }
         }
     }
 
@@ -417,7 +438,7 @@ function Install-VSCodeExtensions {
 function Main {
     if ($Help) {
         Show-Help
-        return
+        exit 0
     }
 
     # Header
@@ -427,6 +448,7 @@ function Main {
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host "  Mode: $(if ($Full) { 'full' } else { 'minimal' })"
     Write-Host "  Dry run: $DryRun"
+    Write-Host "  CI mode: $CI"
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host ""
 
@@ -435,7 +457,7 @@ function Main {
         Write-Err "Git is required but not installed."
         Write-Info "Install Git via Scoop: scoop install git"
         Write-Info "Or via winget: winget install Git.Git"
-        return
+        exit 1
     }
 
     # Setup repository
@@ -443,7 +465,7 @@ function Main {
 
     if ($Uninstall) {
         Uninstall-Dotfiles
-        return
+        exit 0
     }
 
     # Install dotfiles
@@ -453,7 +475,7 @@ function Main {
     if ($Full) {
         if (-not $SkipPackages) {
             # Install Scoop first (if not present)
-            Install-Scoop
+            Install-Scoop | Out-Null
             # Install packages via Scoop (preferred)
             Install-ScoopPackages
             # Install remaining packages via winget (GUI apps)
@@ -469,6 +491,9 @@ function Main {
     Write-Host "==========================================" -ForegroundColor Green
     Write-Host ""
     Write-Info "Please restart your PowerShell session."
+
+    # Explicitly exit with success code to ensure $LASTEXITCODE from native commands doesn't affect script exit
+    exit 0
 }
 
 # Run main function
