@@ -180,6 +180,73 @@ install_albert() {
   log_success "Albert launcher installed"
 }
 
+# Install 1Password
+install_1password() {
+  log_info "Installing 1Password..."
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "1Password apt installation is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v 1password &>/dev/null; then
+    log_debug "1Password is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install 1Password"
+    return 0
+  fi
+
+  # Add 1Password GPG key
+  log_info "Adding 1Password repository..."
+
+  # In CI mode, continue even if 1Password installation fails
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! (
+      curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+        sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg &&
+      echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | \
+        sudo tee /etc/apt/sources.list.d/1password.list > /dev/null &&
+      sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/ &&
+      curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+        sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol > /dev/null &&
+      sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22 &&
+      curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+        sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg &&
+      sudo apt update &&
+      sudo apt install -y 1password
+    ); then
+      log_warn "Failed to install 1Password (CI mode, continuing)"
+      return 0
+    fi
+  else
+    curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+      sudo gpg --dearmor --output /usr/share/keyrings/1password-archive-keyring.gpg
+
+    echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/1password-archive-keyring.gpg] https://downloads.1password.com/linux/debian/amd64 stable main' | \
+      sudo tee /etc/apt/sources.list.d/1password.list > /dev/null
+
+    # Add debsig-verify policy
+    sudo mkdir -p /etc/debsig/policies/AC2D62742012EA22/
+    curl -sS https://downloads.1password.com/linux/debian/debsig/1password.pol | \
+      sudo tee /etc/debsig/policies/AC2D62742012EA22/1password.pol > /dev/null
+    sudo mkdir -p /usr/share/debsig/keyrings/AC2D62742012EA22
+    curl -sS https://downloads.1password.com/linux/keys/1password.asc | \
+      sudo gpg --dearmor --output /usr/share/debsig/keyrings/AC2D62742012EA22/debsig.gpg
+
+    sudo apt update
+    sudo apt install -y 1password
+  fi
+
+  log_success "1Password installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages

@@ -6,6 +6,7 @@
 
 # Taps
 tap "homebrew/bundle"
+tap "homebrew/cask-fonts"
 
 # ------------------------------------------------------------------------------
 # CLI Tools
@@ -41,6 +42,9 @@ brew "xsel" if OS.linux?  # clipboard support for Linux
 # macOS Only - Casks
 # ------------------------------------------------------------------------------
 if OS.mac?
+  # Fonts
+  cask "font-hackgen-nerd"
+
   # Terminal
   cask "ghostty"
 
@@ -48,6 +52,7 @@ if OS.mac?
   cask "visual-studio-code"
 
   # Productivity
+  cask "1password"
   cask "raycast"
 
   # Keyboard & Window Management

@@ -333,18 +333,20 @@ function Install-ScoopPackages {
 
     Write-Info "Installing packages with Scoop..."
 
-    # Add extras bucket for additional packages
+    # Add buckets for additional packages
     if ($DryRun) {
-        Write-Info "[DRY-RUN] Would add extras bucket"
+        Write-Info "[DRY-RUN] Would add extras and nerd-fonts buckets"
     } else {
         scoop bucket add extras 2>$null
+        scoop bucket add nerd-fonts 2>$null
     }
 
     # Scoop packages (prefer these over winget)
     $packages = @(
         "git",
         "gh",
-        "starship"
+        "starship",
+        "HackGen-NF"
     )
 
     foreach ($package in $packages) {
@@ -379,7 +381,7 @@ function Install-WingetPackages {
     $packages = @(
         "Microsoft.VisualStudioCode",
         "Raycast.Raycast",
-        "VideoLAN.VLC"
+        "AgileBits.1Password"
     )
 
     foreach ($package in $packages) {
