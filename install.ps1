@@ -347,7 +347,8 @@ function Install-ScoopPackages {
         "gh",
         "starship",
         "HackGen-NF",
-        "aws-vault"
+        "aws-vault",
+        "ripgrep"
     )
 
     foreach ($package in $packages) {
