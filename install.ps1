@@ -346,7 +346,8 @@ function Install-ScoopPackages {
         "git",
         "gh",
         "starship",
-        "HackGen-NF"
+        "HackGen-NF",
+        "aws-vault"
     )
 
     foreach ($package in $packages) {
