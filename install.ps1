@@ -243,7 +243,7 @@ function Install-Dotfiles {
         $fullDest = $fullDest -replace "/", "\"
 
         if (Test-Path $fullSrc) {
-            New-SymbolicLinkSafe -Source $fullSrc -Destination $fullDest
+            New-SymbolicLinkSafe -Source $fullSrc -Destination $fullDest | Out-Null
         } else {
             Write-Warn "Source not found: $fullSrc"
         }
@@ -438,7 +438,7 @@ function Install-VSCodeExtensions {
 function Main {
     if ($Help) {
         Show-Help
-        return
+        exit 0
     }
 
     # Header
@@ -457,7 +457,7 @@ function Main {
         Write-Err "Git is required but not installed."
         Write-Info "Install Git via Scoop: scoop install git"
         Write-Info "Or via winget: winget install Git.Git"
-        return
+        exit 1
     }
 
     # Setup repository
@@ -465,7 +465,7 @@ function Main {
 
     if ($Uninstall) {
         Uninstall-Dotfiles
-        return
+        exit 0
     }
 
     # Install dotfiles
@@ -475,7 +475,7 @@ function Main {
     if ($Full) {
         if (-not $SkipPackages) {
             # Install Scoop first (if not present)
-            Install-Scoop
+            Install-Scoop | Out-Null
             # Install packages via Scoop (preferred)
             Install-ScoopPackages
             # Install remaining packages via winget (GUI apps)
@@ -491,6 +491,9 @@ function Main {
     Write-Host "==========================================" -ForegroundColor Green
     Write-Host ""
     Write-Info "Please restart your PowerShell session."
+
+    # Explicitly exit with success code to ensure $LASTEXITCODE from native commands doesn't affect script exit
+    exit 0
 }
 
 # Run main function
