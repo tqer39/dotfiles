@@ -291,6 +291,7 @@ main() {
           source "${DOTFILES_DIR}/scripts/installers/apt.sh"
           install_apt_packages
           install_albert
+          install_1password
         fi
       fi
     else
