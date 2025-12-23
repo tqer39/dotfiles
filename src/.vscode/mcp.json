@@ -1,5 +1,5 @@
 {
-  "mcpServers": {
+  "servers": {
     "awslabs.core-mcp-server": {
       "command": "uvx",
       "args": ["awslabs.core-mcp-server@latest"],

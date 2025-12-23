@@ -27,6 +27,7 @@ SKIP_LANGUAGES=false
 DRY_RUN=false
 VERBOSE=false
 UNINSTALL=false
+CI_MODE=false
 
 # Color codes
 RED='\033[0;31m'
@@ -70,6 +71,9 @@ parse_args() {
       --uninstall)
         UNINSTALL=true
         ;;
+      --ci)
+        CI_MODE=true
+        ;;
       -h|--help)
         show_help
         exit 0
@@ -99,6 +103,7 @@ Options:
   --dry-run           Show what would be done without executing
   -v, --verbose       Enable verbose output
   --uninstall         Remove dotfiles symlinks
+  --ci                CI mode (non-interactive, continue on errors)
   -h, --help          Show this help message
 
 Examples:
@@ -212,6 +217,7 @@ main() {
   # Export for child scripts
   export DRY_RUN
   export VERBOSE
+  export CI_MODE
   if [[ "$VERBOSE" == "true" ]]; then
     export LOG_LEVEL="DEBUG"
   fi
@@ -224,6 +230,7 @@ main() {
   echo "  Mode: $INSTALL_MODE"
   echo "  OS: $(detect_os)"
   echo "  Dry run: $DRY_RUN"
+  echo "  CI mode: $CI_MODE"
   echo "=========================================="
   echo ""
 

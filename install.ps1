@@ -39,6 +39,7 @@ param(
     [switch]$SkipPackages,
     [switch]$DryRun,
     [switch]$Uninstall,
+    [switch]$CI,
     [switch]$Help
 )
 
@@ -87,6 +88,7 @@ Options:
     -SkipPackages   Skip package installation
     -DryRun         Show what would be done without executing
     -Uninstall      Remove dotfiles symlinks
+    -CI             CI mode (non-interactive, continue on errors)
     -Help           Show this help message
 
 Examples:
@@ -350,7 +352,15 @@ function Install-ScoopPackages {
             Write-Info "[DRY-RUN] Would install: $package"
         } else {
             Write-Info "Installing: $package"
-            scoop install $package 2>$null
+            try {
+                scoop install $package 2>$null
+            } catch {
+                if ($CI) {
+                    Write-Warn "Failed to install $package (CI mode, continuing): $_"
+                } else {
+                    throw
+                }
+            }
         }
     }
 
@@ -376,7 +386,18 @@ function Install-WingetPackages {
             Write-Info "[DRY-RUN] Would install: $package"
         } else {
             Write-Info "Installing: $package"
-            winget install --id $package --accept-source-agreements --accept-package-agreements --silent
+            try {
+                $result = winget install --id $package --accept-source-agreements --accept-package-agreements --silent 2>&1
+                if ($LASTEXITCODE -ne 0) {
+                    throw "winget exited with code $LASTEXITCODE"
+                }
+            } catch {
+                if ($CI) {
+                    Write-Warn "Failed to install $package (CI mode, continuing): $_"
+                } else {
+                    throw
+                }
+            }
         }
     }
 
@@ -427,6 +448,7 @@ function Main {
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host "  Mode: $(if ($Full) { 'full' } else { 'minimal' })"
     Write-Host "  Dry run: $DryRun"
+    Write-Host "  CI mode: $CI"
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host ""
 

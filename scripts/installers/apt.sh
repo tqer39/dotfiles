@@ -157,11 +157,25 @@ install_albert() {
 
   log_info "Adding Albert repository for Ubuntu ${ubuntu_version}..."
 
-  echo "deb ${repo_url} /" | sudo tee /etc/apt/sources.list.d/home_manuelschneid3r.list > /dev/null
-  curl -fsSL "${key_url}" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
+  # In CI mode, continue even if Albert installation fails
+  # (repository might not be available for all Ubuntu versions)
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! (
+      echo "deb ${repo_url} /" | sudo tee /etc/apt/sources.list.d/home_manuelschneid3r.list > /dev/null &&
+      curl -fsSL "${key_url}" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null &&
+      sudo apt update &&
+      sudo apt install -y albert
+    ); then
+      log_warn "Failed to install Albert (CI mode, continuing)"
+      return 0
+    fi
+  else
+    echo "deb ${repo_url} /" | sudo tee /etc/apt/sources.list.d/home_manuelschneid3r.list > /dev/null
+    curl -fsSL "${key_url}" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
 
-  sudo apt update
-  sudo apt install -y albert
+    sudo apt update
+    sudo apt install -y albert
+  fi
 
   log_success "Albert launcher installed"
 }
