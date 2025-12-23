@@ -29,6 +29,9 @@ zip
 xsel
 xclip
 
+# Media
+vlc
+
 # Development dependencies (for anyenv/pyenv builds)
 libssl-dev
 zlib1g-dev
