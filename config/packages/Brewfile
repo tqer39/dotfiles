@@ -72,7 +72,7 @@ end
 # brew "postgresql"
 
 # Cloud CLI
-# brew "awscli"
+brew "awscli"
 # brew "azure-cli"
 # brew "google-cloud-sdk" if OS.mac?
 

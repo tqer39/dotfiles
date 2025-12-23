@@ -24,6 +24,7 @@ jq
 tree
 unzip
 zip
+awscli
 
 # Clipboard support (for pbcopy/pbpaste aliases)
 xsel

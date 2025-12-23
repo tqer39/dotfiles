@@ -381,7 +381,8 @@ function Install-WingetPackages {
     $packages = @(
         "Microsoft.VisualStudioCode",
         "Raycast.Raycast",
-        "AgileBits.1Password"
+        "AgileBits.1Password",
+        "Amazon.AWSCLI"
     )
 
     foreach ($package in $packages) {
