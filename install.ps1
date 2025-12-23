@@ -378,7 +378,8 @@ function Install-WingetPackages {
     # Packages that are better installed via winget (GUI apps, etc.)
     $packages = @(
         "Microsoft.VisualStudioCode",
-        "Raycast.Raycast"
+        "Raycast.Raycast",
+        "AgileBits.1Password"
     )
 
     foreach ($package in $packages) {
