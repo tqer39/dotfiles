@@ -351,7 +351,10 @@ function Install-ScoopPackages {
         "HackGen-NF",
         "aws-vault",
         "ripgrep",
-        "mobaxterm"
+        "mobaxterm",
+        "eza",
+        "bat",
+        "jq"
     )
 
     foreach ($package in $packages) {
