@@ -79,7 +79,7 @@ install_vscode_extensions() {
   # Parse extensions from JSON and install
   # Using grep/sed to avoid jq dependency
   local extensions
-  extensions=$(grep -oP '"[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+"' "$extensions_file" | tr -d '"' | sort -u)
+  extensions=$(grep -oE '"[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+"' "$extensions_file" | tr -d '"' | sort -u)
 
   local count=0
   local total
