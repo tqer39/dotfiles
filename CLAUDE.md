@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+[🇯🇵 日本語版](docs/CLAUDE.ja.md)
+
 Claude Code 向けのガイダンス。
 
 ## Repository Purpose

@@ -1,6 +1,6 @@
 # Platform Compatibility
 
-> Japanese: [日本語版](./platform-compatibility.ja.md)
+[🇯🇵 日本語版](./platform-compatibility.ja.md)
 
 This document describes tool availability and alternatives across macOS, Linux, and Windows.
 

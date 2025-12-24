@@ -1,6 +1,6 @@
 # プラットフォーム互換性
 
-> English: [English version](./platform-compatibility.md)
+[🇺🇸 English](./platform-compatibility.md)
 
 macOS、Linux、Windows 間でのツール対応状況と代替手段を記載。
 

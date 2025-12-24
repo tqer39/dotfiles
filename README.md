@@ -1,6 +1,6 @@
 # Dotfiles
 
-> Japanese: [日本語版](docs/README.ja.md)
+[🇯🇵 日本語版](docs/README.ja.md)
 
 This repository contains my public dotfiles with an automated setup script. These configuration files help maintain a consistent development environment across macOS, Linux (Ubuntu), and Windows.
 

@@ -1,6 +1,6 @@
 # Dotfiles
 
-> English: [English version](../README.md)
+[🇺🇸 English](../README.md)
 
 このリポジトリは、自動セットアップスクリプト付きの公開用 dotfiles を含んでいます。これらの設定ファイルは、macOS、Linux (Ubuntu)、Windows 間で一貫した開発環境を維持するのに役立ちます。
 
