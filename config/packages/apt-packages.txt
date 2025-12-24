@@ -25,10 +25,15 @@ tree
 unzip
 zip
 awscli
+fzf
+ripgrep
 
 # Clipboard support (for pbcopy/pbpaste aliases)
 xsel
 xclip
+
+# Media
+vlc
 
 # Development dependencies (for anyenv/pyenv builds)
 libssl-dev

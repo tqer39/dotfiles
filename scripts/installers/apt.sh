@@ -247,6 +247,64 @@ install_1password() {
   log_success "1Password installed"
 }
 
+# Install VS Code
+install_vscode() {
+  log_info "Installing VS Code..."
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "VS Code apt installation is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v code &>/dev/null; then
+    log_debug "VS Code is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install VS Code"
+    return 0
+  fi
+
+  log_info "Adding Microsoft VS Code repository..."
+
+  # In CI mode, continue even if VS Code installation fails
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! (
+      sudo apt-get install -y wget gpg &&
+      wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg &&
+      sudo install -D -o root -g root -m 644 /tmp/microsoft.gpg /usr/share/keyrings/microsoft.gpg &&
+      rm -f /tmp/microsoft.gpg &&
+      echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | \
+        sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null &&
+      sudo apt-get install -y apt-transport-https &&
+      sudo apt-get update &&
+      sudo apt-get install -y code
+    ); then
+      log_warn "Failed to install VS Code (CI mode, continuing)"
+      return 0
+    fi
+  else
+    sudo apt-get install -y wget gpg
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > /tmp/microsoft.gpg
+    sudo install -D -o root -g root -m 644 /tmp/microsoft.gpg /usr/share/keyrings/microsoft.gpg
+    rm -f /tmp/microsoft.gpg
+
+    echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main" | \
+      sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null
+
+    sudo apt-get install -y apt-transport-https
+    sudo apt-get update
+    sudo apt-get install -y code
+  fi
+
+  log_success "VS Code installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages

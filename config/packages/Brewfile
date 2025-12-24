@@ -59,6 +59,9 @@ if OS.mac?
   cask "karabiner-elements"
   cask "hammerspoon"
 
+  # Media
+  cask "vlc"
+
   # Other
   cask "rancher"
 end
