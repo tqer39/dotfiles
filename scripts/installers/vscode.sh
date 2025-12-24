@@ -61,6 +61,12 @@ install_vscode_extensions() {
 
   log_info "Installing VS Code extensions..."
 
+  # Skip in CI mode (headless environment cannot run VS Code CLI properly)
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    log_info "CI mode detected. Skipping VS Code extension installation."
+    return 0
+  fi
+
   # Check if VS Code is installed
   local vscode_cmd
   vscode_cmd=$(get_vscode_cmd)
