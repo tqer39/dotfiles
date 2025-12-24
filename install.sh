@@ -292,6 +292,7 @@ main() {
           install_apt_packages
           install_albert
           install_1password
+          install_vscode
         fi
       fi
     else
