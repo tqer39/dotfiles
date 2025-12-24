@@ -24,7 +24,6 @@ jq
 tree
 unzip
 zip
-awscli
 fzf
 ripgrep
 
