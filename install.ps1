@@ -346,6 +346,7 @@ function Install-ScoopPackages {
         "git",
         "gh",
         "starship",
+        "mise",
         "HackGen-NF",
         "aws-vault",
         "ripgrep"

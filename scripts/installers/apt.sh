@@ -180,6 +180,56 @@ install_albert() {
   log_success "Albert launcher installed"
 }
 
+# Install mise (polyglot runtime manager)
+install_mise() {
+  log_info "Installing mise..."
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "mise apt installation is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v mise &>/dev/null; then
+    log_debug "mise is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install mise"
+    return 0
+  fi
+
+  # Add mise GPG key and repository
+  log_info "Adding mise repository..."
+
+  # In CI mode, continue even if mise installation fails
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! (
+      sudo install -dm 755 /etc/apt/keyrings &&
+      wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | sudo tee /etc/apt/keyrings/mise-archive-keyring.gpg > /dev/null &&
+      echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | sudo tee /etc/apt/sources.list.d/mise.list > /dev/null &&
+      sudo apt update &&
+      sudo apt install -y mise
+    ); then
+      log_warn "Failed to install mise (CI mode, continuing)"
+      return 0
+    fi
+  else
+    sudo install -dm 755 /etc/apt/keyrings
+    wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | sudo tee /etc/apt/keyrings/mise-archive-keyring.gpg > /dev/null
+    echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | sudo tee /etc/apt/sources.list.d/mise.list > /dev/null
+
+    sudo apt update
+    sudo apt install -y mise
+  fi
+
+  log_success "mise installed"
+}
+
 # Install 1Password
 install_1password() {
   log_info "Installing 1Password..."
