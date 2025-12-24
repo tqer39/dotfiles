@@ -36,6 +36,7 @@ brew "curl"
 brew "wget"
 brew "jq"
 brew "tree"
+brew "gnupg"
 brew "xsel" if OS.linux?  # clipboard support for Linux
 
 # ------------------------------------------------------------------------------
