@@ -347,6 +347,7 @@ function Install-ScoopPackages {
         "gh",
         "starship",
         "mise",
+        "fzf",
         "HackGen-NF",
         "aws-vault",
         "ripgrep"
@@ -370,6 +371,35 @@ function Install-ScoopPackages {
     }
 
     Write-Success "Scoop packages installed"
+}
+
+function Install-PowerShellModules {
+    Write-Info "Installing PowerShell modules..."
+
+    # PSFzf for fzf integration
+    if (Get-Command fzf -ErrorAction SilentlyContinue) {
+        if (-not (Get-Module -ListAvailable -Name PSFzf)) {
+            if ($DryRun) {
+                Write-Info "[DRY-RUN] Would install PSFzf module"
+            } else {
+                Write-Info "Installing PSFzf module..."
+                try {
+                    Install-Module -Name PSFzf -Scope CurrentUser -Force -AllowClobber
+                    Write-Success "PSFzf module installed"
+                } catch {
+                    if ($CI) {
+                        Write-Warn "Failed to install PSFzf module (CI mode, continuing): $_"
+                    } else {
+                        throw
+                    }
+                }
+            }
+        } else {
+            Write-Info "PSFzf module already installed"
+        }
+    } else {
+        Write-Warn "fzf not found. Skipping PSFzf module installation."
+    }
 }
 
 function Install-WingetPackages {
@@ -486,6 +516,8 @@ function Main {
             Install-ScoopPackages
             # Install remaining packages via winget (GUI apps)
             Install-WingetPackages
+            # Install PowerShell modules (PSFzf, etc.)
+            Install-PowerShellModules
         }
         Install-VSCodeExtensions
     }
