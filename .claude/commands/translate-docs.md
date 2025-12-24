@@ -7,8 +7,9 @@ Translate documentation files and add cross-links between English and Japanese v
 ## Rules
 
 1. **README.md** (root): English only, Japanese version at `docs/README.ja.md`
-2. **docs/*.md**: English, Japanese version at `docs/*.ja.md`
-3. **docs/*.ja.md**: Japanese, English version at `docs/*.md` (without `.ja`)
+2. **CLAUDE.md** (root): English only, Japanese version at `docs/CLAUDE.ja.md`
+3. **docs/*.md**: English, Japanese version at `docs/*.ja.md`
+4. **docs/*.ja.md**: Japanese, English version at `docs/*.md` (without `.ja`)
 
 ## Cross-link Format
 
@@ -17,25 +18,37 @@ Add at the top of each file (after title):
 **English version:**
 
 ```markdown
-> Japanese: [日本語版](./filename.ja.md)
+[🇯🇵 日本語版](./filename.ja.md)
 ```
 
 **Japanese version:**
 
 ```markdown
-> English: [English version](./filename.md)
+[🇺🇸 English](./filename.md)
 ```
 
 **For README.md:**
 
 ```markdown
-> Japanese: [日本語版](docs/README.ja.md)
+[🇯🇵 日本語版](docs/README.ja.md)
 ```
 
 **For docs/README.ja.md:**
 
 ```markdown
-> English: [English version](../README.md)
+[🇺🇸 English](../README.md)
+```
+
+**For CLAUDE.md:**
+
+```markdown
+[🇯🇵 日本語版](docs/CLAUDE.ja.md)
+```
+
+**For docs/CLAUDE.ja.md:**
+
+```markdown
+[🇺🇸 English](../CLAUDE.md)
 ```
 
 ## Instructions
