@@ -140,11 +140,9 @@ if command -v xsel &> /dev/null; then
 fi
 
 # fzf
-if [[ $(command -v brew) ]]; then
-  if [ "$(brew list | grep -c "^fzf@*.*$")" -gt 0 ]; then
-    # shellcheck source=/dev/null
-    [ -f "$HOME/.fzf.zsh" ] && . "$HOME/.fzf.zsh"
-  fi
+if command -v fzf &> /dev/null; then
+  # shellcheck source=/dev/null
+  eval "$(fzf --zsh 2>/dev/null)" || [ -f "$HOME/.fzf.zsh" ] && . "$HOME/.fzf.zsh"
 fi
 
 # git
