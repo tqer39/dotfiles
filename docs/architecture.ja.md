@@ -1,6 +1,6 @@
 # アーキテクチャ
 
-> English: [English version](./architecture.md)
+[🇺🇸 English](./architecture.md)
 
 ## エントリーポイント
 

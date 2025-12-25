@@ -40,6 +40,7 @@ param(
     [switch]$DryRun,
     [switch]$Uninstall,
     [switch]$CI,
+    [switch]$Work,
     [switch]$Help
 )
 
@@ -89,6 +90,7 @@ Options:
     -DryRun         Show what would be done without executing
     -Uninstall      Remove dotfiles symlinks
     -CI             CI mode (non-interactive, continue on errors)
+    -Work           Work/company mode (skip personal packages)
     -Help           Show this help message
 
 Examples:
@@ -350,7 +352,11 @@ function Install-ScoopPackages {
         "fzf",
         "HackGen-NF",
         "aws-vault",
-        "ripgrep"
+        "ripgrep",
+        "mobaxterm",
+        "eza",
+        "bat",
+        "jq"
     )
 
     foreach ($package in $packages) {
@@ -486,6 +492,7 @@ function Main {
     Write-Host "  Mode: $(if ($Full) { 'full' } else { 'minimal' })"
     Write-Host "  Dry run: $DryRun"
     Write-Host "  CI mode: $CI"
+    Write-Host "  Work mode: $Work"
     Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host ""
 

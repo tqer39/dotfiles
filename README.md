@@ -1,6 +1,6 @@
 # Dotfiles
 
-> Japanese: [日本語版](docs/README.ja.md)
+[🇯🇵 日本語版](docs/README.ja.md)
 
 This repository contains my public dotfiles with an automated setup script. These configuration files help maintain a consistent development environment across macOS, Linux (Ubuntu), and Windows.
 
@@ -50,6 +50,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--dry-run` | Show what would be done without executing |
 | `-v, --verbose` | Enable verbose output |
 | `--uninstall` | Remove dotfiles symlinks |
+| `--work` | Work/company mode (skip personal packages) |
 
 ## Repository Structure
 

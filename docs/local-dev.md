@@ -1,6 +1,6 @@
 # Local Development Setup
 
-> Japanese: [日本語版](./local-dev.ja.md)
+[🇯🇵 日本語版](./local-dev.ja.md)
 
 Development environment setup instructions for this repository.
 

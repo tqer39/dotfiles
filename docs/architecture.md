@@ -1,6 +1,6 @@
 # Architecture
 
-> Japanese: [日本語版](./architecture.ja.md)
+[🇯🇵 日本語版](./architecture.ja.md)
 
 ## Entry Points
 
