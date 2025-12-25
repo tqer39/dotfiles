@@ -50,6 +50,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--dry-run` | Show what would be done without executing |
 | `-v, --verbose` | Enable verbose output |
 | `--uninstall` | Remove dotfiles symlinks |
+| `--work` | Work/company mode (skip personal packages) |
 
 ## Repository Structure
 

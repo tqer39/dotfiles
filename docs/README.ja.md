@@ -50,6 +50,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--dry-run` | 実行せずに変更内容を表示 |
 | `-v, --verbose` | 詳細なログを出力 |
 | `--uninstall` | dotfiles のシンボリックリンクを削除 |
+| `--work` | 会社モード（個人用パッケージをスキップ） |
 
 ## リポジトリ構造
 

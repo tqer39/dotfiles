@@ -28,6 +28,7 @@ DRY_RUN=false
 VERBOSE=false
 UNINSTALL=false
 CI_MODE=false
+WORK_MODE=false
 
 # Color codes
 RED='\033[0;31m'
@@ -74,6 +75,9 @@ parse_args() {
       --ci)
         CI_MODE=true
         ;;
+      --work)
+        WORK_MODE=true
+        ;;
       -h|--help)
         show_help
         exit 0
@@ -104,6 +108,7 @@ Options:
   -v, --verbose       Enable verbose output
   --uninstall         Remove dotfiles symlinks
   --ci                CI mode (non-interactive, continue on errors)
+  --work              Work/company mode (skip personal packages)
   -h, --help          Show this help message
 
 Examples:
@@ -218,6 +223,7 @@ main() {
   export DRY_RUN
   export VERBOSE
   export CI_MODE
+  export WORK_MODE
   if [[ "$VERBOSE" == "true" ]]; then
     export LOG_LEVEL="DEBUG"
   fi
@@ -231,6 +237,7 @@ main() {
   echo "  OS: $(detect_os)"
   echo "  Dry run: $DRY_RUN"
   echo "  CI mode: $CI_MODE"
+  echo "  Work mode: $WORK_MODE"
   echo "=========================================="
   echo ""
 
