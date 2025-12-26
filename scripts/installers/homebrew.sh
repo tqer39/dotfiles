@@ -78,11 +78,11 @@ install_homebrew_packages() {
   # In CI mode, continue even if some packages fail (e.g., GUI apps)
   if [[ "${CI_MODE:-false}" == "true" ]]; then
     # Try to install, but don't fail if some packages can't be installed
-    if ! brew bundle --file="$brewfile" --no-lock; then
+    if ! brew bundle --file="$brewfile"; then
       log_warn "Some packages failed to install (CI mode, continuing)"
     fi
   else
-    brew bundle --file="$brewfile" --no-lock
+    brew bundle --file="$brewfile"
   fi
 
   log_success "Homebrew packages installed successfully"
