@@ -95,6 +95,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Cache Homebrew
+        if: runner.os == 'macOS'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/Homebrew
+            /opt/homebrew/Cellar
+          key: ${{ runner.os }}-brew-${{ hashFiles('config/packages/Brewfile') }}
+          restore-keys: |
+            ${{ runner.os }}-brew-
+
+      - name: Cache APT packages
+        if: runner.os == 'Linux'
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-${{ hashFiles('config/packages/apt-packages.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
       - name: Test full install
         run: |
           echo "=== Testing full install ==="
@@ -201,6 +221,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Cache Scoop
+        uses: actions/cache@v4
+        with:
+          path: ~/scoop/cache
+          key: windows-scoop-${{ hashFiles('install.ps1') }}
+          restore-keys: |
+            windows-scoop-
 
       - name: Test full install
         shell: pwsh
