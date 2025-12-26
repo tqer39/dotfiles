@@ -2,6 +2,27 @@
 
 [🇯🇵 日本語版](./architecture.ja.md)
 
+## Installation Flow
+
+```mermaid
+flowchart TD
+    A["curl -fsSL https://install.tqer39.dev | bash"] --> B
+
+    subgraph Cloudflare
+        B["DNS: install.tqer39.dev"]
+        B --> C["Workers"]
+        C -->|"Fetch & Cache (5min)"| D["GitHub Raw"]
+    end
+
+    D --> E
+
+    subgraph Local["Local Execution"]
+        E["install.sh"] --> F["Clone to ~/.dotfiles"]
+        F --> G["Create symlinks"]
+        G --> H["Install packages (--full)"]
+    end
+```
+
 ## Entry Points
 
 - `install.sh` - Unix (macOS/Linux) entry point, can be piped from curl
@@ -32,11 +53,26 @@ Modular installers called during `--full` installation:
 - `anyenv.sh` - Language runtime manager
 - `vscode.sh` - VS Code extensions from `src/.vscode/extensions.json`
 
-## Terraform (`infra/terraform/`)
+## Infrastructure
+
+### Domain & DNS
+
+- **Domain**: `tqer39.dev` (registered via Google Cloud Platform)
+- **DNS/CDN**: Cloudflare
+  - Zone management for `tqer39.dev`
+  - Workers for `install.tqer39.dev` redirect
+
+### CI/CD
+
+- **GitHub Actions** with AWS IAM OIDC (no API keys stored)
+- **State Backend**: AWS S3
+
+### Terraform (`infra/terraform/`)
 
 - `modules/` - Reusable modules
   - `cloudflare/` - CloudFlare DNS configuration
+  - `workers/` - CloudFlare Workers deployment
   - `deploy-role/` - IAM Role for GitHub Actions OIDC
 - `envs/prod/` - Production environment
-  - `bootstrap/` - IAM Role (must be run locally)
-  - `dns/` - CloudFlare DNS records
+  - `bootstrap/` - IAM Role (must be run locally first)
+  - `dns/` - CloudFlare DNS records and Workers
