@@ -52,6 +52,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--uninstall` | dotfiles のシンボリックリンクを削除 |
 | `--work` | 会社モード（個人用パッケージをスキップ） |
 | `--ci` | CI モード（非対話型） |
+| `--doctor` | 環境ヘルスチェックを実行 |
 
 ## リポジトリ構造
 

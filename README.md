@@ -52,6 +52,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--uninstall` | Remove dotfiles symlinks |
 | `--work` | Work/company mode (skip personal packages) |
 | `--ci` | CI mode (non-interactive) |
+| `--doctor` | Run environment health check |
 
 ## Repository Structure
 
