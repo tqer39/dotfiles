@@ -18,6 +18,8 @@ just lint
 # Dotfiles
 ./scripts/dotfiles.sh status
 ./scripts/dotfiles.sh install
+./scripts/dotfiles.sh uninstall
+./scripts/dotfiles.sh doctor
 
 # Terraform
 just tf plan

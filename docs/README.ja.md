@@ -51,6 +51,7 @@ irm https://install.tqer39.dev/windows | iex
 | `-v, --verbose` | 詳細なログを出力 |
 | `--uninstall` | dotfiles のシンボリックリンクを削除 |
 | `--work` | 会社モード（個人用パッケージをスキップ） |
+| `--ci` | CI モード（非対話型） |
 
 ## リポジトリ構造
 
@@ -98,7 +99,7 @@ dotfiles/
 
 - **macOS/Linux**: Homebrew + `config/packages/Brewfile` のパッケージ
 - **Ubuntu**: `config/packages/apt-packages.txt` の APT パッケージ
-- **Windows**: winget パッケージ
+- **Windows**: Scoop（CLI ツール）+ winget（GUI アプリ）
 
 ### 開発ツール
 
