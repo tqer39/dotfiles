@@ -51,6 +51,7 @@ irm https://install.tqer39.dev/windows | iex
 | `-v, --verbose` | Enable verbose output |
 | `--uninstall` | Remove dotfiles symlinks |
 | `--work` | Work/company mode (skip personal packages) |
+| `--ci` | CI mode (non-interactive) |
 
 ## Repository Structure
 
@@ -98,7 +99,7 @@ When using `--full`, the following will also be installed:
 
 - **macOS/Linux**: Homebrew + packages from `config/packages/Brewfile`
 - **Ubuntu**: APT packages from `config/packages/apt-packages.txt`
-- **Windows**: winget packages
+- **Windows**: Scoop (CLI tools) + winget (GUI apps)
 
 ### Development Tools
 

@@ -17,6 +17,8 @@ source "${SCRIPT_DIR}/lib/log.sh"
 source "${SCRIPT_DIR}/lib/utils.sh"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/symlink.sh"
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/lib/doctor.sh"
 
 # Install dotfiles by creating symlinks
 install_dotfiles() {
@@ -205,8 +207,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     status)
       status_dotfiles
       ;;
+    doctor)
+      run_doctor
+      ;;
     *)
-      echo "Usage: $0 {install|uninstall|status}"
+      echo "Usage: $0 {install|uninstall|status|doctor}"
       exit 1
       ;;
   esac

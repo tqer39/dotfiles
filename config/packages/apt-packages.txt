@@ -7,32 +7,23 @@
 
 # Build essentials
 build-essential
-curl
-wget
 git
 software-properties-common
 apt-transport-https
 ca-certificates
-gnupg
 lsb-release
 
 # Shell
 zsh
 
 # Utilities
-jq
-tree
+# Note: CLI tools (curl/wget/jq/tree/fzf/ripgrep/gnupg) are installed via brew
 unzip
 zip
-fzf
-ripgrep
 
 # Clipboard support (for pbcopy/pbpaste aliases)
 xsel
 xclip
-
-# Media
-vlc
 
 # Development dependencies (for anyenv/pyenv builds)
 libssl-dev
