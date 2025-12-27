@@ -193,12 +193,16 @@ doctor_check_mise_npm_tools() {
       local npm_package="${BASH_REMATCH[1]}"
       # Get the command name (last part of package name)
       local cmd_name="${npm_package##*/}"
+      # Some npm CLIs include "-cli" in the package name but install a binary
+      # without it (e.g. "@anthropic-ai/claude-code-cli" -> "claude-code"),
+      # so we strip the optional "-cli" suffix when deriving the command name.
       cmd_name="${cmd_name%-cli}"
 
       # Check if the tool is installed via mise
-      local tool_version
-      tool_version=$(mise current "npm:${npm_package}" 2>/dev/null) || true
-      if [[ -n "${tool_version}" && "${tool_version}" != "missing" ]]; then
+      local tool_version mise_status
+      tool_version=$(mise current "npm:${npm_package}" 2>/dev/null)
+      mise_status=$?
+      if [[ $mise_status -eq 0 && -n "${tool_version}" && "${tool_version}" != "missing" ]]; then
         doctor_check_ok "${cmd_name} (mise)" "${tool_version}"
       else
         doctor_check_warn "${cmd_name}" "Run: mise install"
