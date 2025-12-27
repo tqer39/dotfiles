@@ -22,6 +22,7 @@ brew "eza"          # ls replacement
 brew "bat"          # cat replacement
 brew "fzf"          # fuzzy finder
 brew "ripgrep"      # grep replacement
+brew "zoxide"       # cd replacement
 
 # Development tools
 brew "direnv"

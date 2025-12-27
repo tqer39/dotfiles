@@ -202,6 +202,11 @@ fi
 # mise
 eval "$(mise activate zsh)"
 
+# zoxide (smarter cd)
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
 # code-insiders
 if command -v code-insiders &> /dev/null; then
   alias ci='code-insiders'
