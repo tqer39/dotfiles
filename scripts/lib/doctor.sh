@@ -179,6 +179,34 @@ doctor_check_symlinks() {
   done < "$config_file"
 }
 
+doctor_check_mise_npm_tools() {
+  local mise_config="${DOTFILES_DIR}/src/.config/mise/config.toml"
+
+  if [[ ! -f "${mise_config}" ]]; then
+    return
+  fi
+
+  # Extract npm tools from mise config and check each one
+  while IFS= read -r line; do
+    # Match lines like: "npm:@anthropic-ai/claude-code" = "latest"
+    if [[ "${line}" =~ ^\"npm:(.+)\"[[:space:]]*= ]]; then
+      local npm_package="${BASH_REMATCH[1]}"
+      # Get the command name (last part of package name)
+      local cmd_name="${npm_package##*/}"
+      cmd_name="${cmd_name%-cli}"
+
+      # Check if the tool is installed via mise
+      local tool_version
+      tool_version=$(mise current "npm:${npm_package}" 2>/dev/null) || true
+      if [[ -n "${tool_version}" && "${tool_version}" != "missing" ]]; then
+        doctor_check_ok "${cmd_name} (mise)" "${tool_version}"
+      else
+        doctor_check_warn "${cmd_name}" "Run: mise install"
+      fi
+    fi
+  done < "${mise_config}"
+}
+
 doctor_check_runtimes() {
   _doctor_section_header "Language Runtimes"
 
@@ -195,6 +223,9 @@ doctor_check_runtimes() {
     else
       doctor_check_warn "node" "Run: mise install node"
     fi
+
+    # Check npm tools from mise config
+    doctor_check_mise_npm_tools
   else
     doctor_check_warn "mise" "Not installed"
   fi
