@@ -41,12 +41,12 @@ jobs:
       - name: Test dry-run mode
         run: |
           echo "=== Testing dry-run mode ==="
-          bash install.sh --dry-run --verbose
+          bash install.sh --dry-run --verbose --ci
 
       - name: Test minimal install
         run: |
           echo "=== Testing minimal install ==="
-          bash install.sh --minimal
+          bash install.sh --minimal --ci
 
       - name: Verify symlinks created
         run: |
@@ -66,7 +66,7 @@ jobs:
       - name: Test uninstall
         run: |
           echo "=== Testing uninstall ==="
-          bash install.sh --uninstall
+          bash install.sh --uninstall --ci
 
       - name: Verify uninstall
         run: |
@@ -163,13 +163,13 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "=== Testing dry-run mode ==="
-          .\install.ps1 -DryRun -Verbose
+          .\install.ps1 -DryRun -Verbose -CI
 
       - name: Test minimal install
         shell: pwsh
         run: |
           Write-Host "=== Testing minimal install ==="
-          .\install.ps1 -Minimal
+          .\install.ps1 -Minimal -CI
 
       - name: Verify symlinks created
         shell: pwsh
@@ -191,7 +191,7 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "=== Testing uninstall ==="
-          .\install.ps1 -Uninstall
+          .\install.ps1 -Uninstall -CI
 
       - name: Verify uninstall
         shell: pwsh
