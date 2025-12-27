@@ -5,210 +5,125 @@
 # ------------------------------------------------------------------------------
 eval "$(sheldon source)"
 
-# 履歴ファイルの保存先
+# ------------------------------------------------------------------------------
+# History
+# ------------------------------------------------------------------------------
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=100000
 export SAVEHIST=100000
 setopt extended_history
 
-# \shellcheck
-if [[ $(command -v shellcheck) ]]; then
-  alias sc='shellcheck'
-  function schelp() {
-    curl -s https://raw.githubusercontent.com/wiki/koalaman/shellcheck/"$1".md
-  }
-fi
+# ------------------------------------------------------------------------------
+# Aliases
+# ------------------------------------------------------------------------------
 
-alias help-me='echo "
-ctrl+a\t\t:行頭に移動
-ctrl+e\t\t:行末に移動
-ctrl+h\t\t:後方に1文字削除
-meta(esc)+b\t:一語後退
-meta(esc)+f\t:一語前進
-ctrl+u\t\t:行頭まで削除
-ctrl+l\t\t:ターミナルの内容をクリア
-ctrl+c\t\t:実行中のコマンドを終了
-ctrl+r\t\t:コマンド履歴の検索
-ctrl+insert\t:コピー
-shift+insert\t:貼り付け
-ctrl+d\t\t:ターミナルを強制終了
-"'
+# Help function
+alias-help() {
+  cat << 'EOF'
+Aliases:
+  Navigation:
+    ..        cd ..
+    ...       cd ../..
+    work      cd ~/workspace
+    z         zoxide (smart cd)
 
-# pre-commit
-if [[ $(command -v pre-commit) ]]; then
-  alias pcv="pre-commit -V"
-  alias pcc="pre-commit clean"
-  alias pci="pre-commit install --install-hooks"
-  alias pcra="pre-commit run -a"
-fi
+  Git:
+    g         git
+    ga        git add
+    gc        git commit
+    gd        git diff
+    gpl       git pull
+    gps       git push
+    gs        git status
+    gsw       git switch
+    gl        git log --oneline
 
-# Rancher Desktop
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/home/tqer39/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+  Files:
+    ls        eza --icons
+    ll        eza -la (long)
+    lt        eza -T (tree)
+    cat       bat
+EOF
+}
 
-# shortcut
+# Navigation
 alias ..='cd ..'
 alias ...='cd ../..'
-alias ....='cd ../../..'
-alias .....='cd ../../../..'
-alias dl='cd ~/Downloads'
-alias d='cd ~/Desktop'
 alias work='cd ~/workspace'
-alias apt-u='sudo apt update && sudo apt upgrade -y'
-alias brew-u='brew update && brew upgrade'
 
-# brew
-if [[ "$(uname)" = "Linux" ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [ "$(uname)" = "Darwin" ]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
-# git
-if [[ $(command -v git) ]]; then
+# Git
+if command -v git &> /dev/null; then
   alias g='git'
-  alias gb='git branch'
   alias ga='git add'
-  alias gc='git commit -am'
-  alias gca='git commit --amend'
+  alias gc='git commit'
   alias gd='git diff'
-  alias gds='git diff --staged'
-  alias gf='git fetch'
-  alias gm='git merge'
-  alias gr="git rebase"
-  alias grc="git rebase --continue"
-  alias gra="git rebase --abort"
   alias gpl='git pull'
   alias gps='git push'
-  alias gpso='git push origin'
-  alias gpso-this='git push --set-upstream origin $(git branch --contains | cut -d " " -f 2)'
-  alias gstt='git status'
-  alias gsts='git stash'
+  alias gs='git status'
   alias gsw='git switch'
-  alias gswc='git switch -c'
-  alias gl='git log --oneline'
-  alias gbm='git branch --merged'
-  alias gbm-all='git branch --merged|egrep -v "\*|develop|main"|xargs git branch' # -d で削除, -D で完全削除
-  alias gch='git cherry-pick'
-  alias gbn='git new-feature-branch'
+  alias gl='git log --oneline -20'
 fi
 
-# anyenv
-# 挙動がおかしいときは chsh, $SHELL あたりを確認。$SHELL がちがう shell なら os reboot
-export PATH="$HOME/.anyenv/bin:$PATH"
-eval "$(anyenv init -)"
+# eza (ls replacement)
+if command -v eza &> /dev/null; then
+  alias ls='eza --icons --git'
+  alias ll='eza -la --icons --git'
+  alias lt='eza -T -L 2 --icons'
+fi
 
-# direnv
-eval "$(direnv hook zsh)"
+# bat (cat replacement)
+if command -v bat &> /dev/null; then
+  alias cat='bat'
+fi
 
-# pbcopy/pbpaste
+# pbcopy/pbpaste (Linux)
 if command -v xsel &> /dev/null; then
   alias pbcopy='xsel --clipboard --input'
   alias pbpaste='xsel --clipboard --output'
+fi
+
+# ------------------------------------------------------------------------------
+# Tools initialization
+# ------------------------------------------------------------------------------
+
+# Homebrew
+if [[ "$(uname)" = "Linux" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [[ "$(uname)" = "Darwin" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# direnv
+if command -v direnv &> /dev/null; then
+  eval "$(direnv hook zsh)"
 fi
 
 # fzf
 if command -v fzf &> /dev/null; then
   # shellcheck source=/dev/null
   if ! eval "$(fzf --zsh 2>/dev/null)"; then
+    # shellcheck source=/dev/null
     [ -f "$HOME/.fzf.zsh" ] && . "$HOME/.fzf.zsh"
   fi
 fi
 
-# git
-if command -v git &> /dev/null; then
-  alias g='git'
-  alias gb='git branch'
-  alias ga='git add'
-  alias gc='git commit -am'
-  alias gca='git commit --amend'
-  alias gd='git diff'
-  alias gds='git diff --staged'
-  alias gf='git fetch'
-  alias gm='git merge'
-  alias gr="git rebase"
-  alias grc="git rebase --continue"
-  alias gra="git rebase --abort"
-  alias gpl='git pull'
-  alias gps='git push'
-  alias gpso='git push origin'
-  alias gstt='git status'
-  alias gsts='git stash'
-  alias gsw='git switch'
-  alias gswc='git switch -c'
-  alias gl='git log --oneline'
-  alias gbm='git branch --merged'
-  alias gbm-all='git branch --merged|egrep -v "\*|develop|main"|xargs git branch' # -d で削除, -D で完全削除
-fi
-
-# bat
-if command -v bat &> /dev/null; then
-  alias cat="bat"
-fi
-
-# eza
-if [[ $(command -v eza) ]]; then
-  alias e='eza --icons --git'
-  alias l=e
-  alias ls=e
-  alias ea='eza -a --icons --git'
-  alias la=ea
-  alias ee='eza -aahl --icons --git'
-  alias ll=ee
-  alias et='eza -T -L 3 -a -I "node_modules|.git|.cache" --icons'
-  alias lt=et
-  alias eta='eza -T -a -I "node_modules|.git|.cache" --color=always --icons | less -r'
-  alias lta=eta
-  alias l='clear && ls'
-fi
-
-
-# openjdk
-if [[ $(command -v brew) ]]; then
-  if [ "$(brew list | grep -c "^openjdk@*.*$")" -gt 0 ]; then
-    PATH="$(brew --prefix openjdk@11)/bin:$PATH"
-    export PATH
-  fi
-fi
-
-# mysql-client
-if [[ $(command -v brew) ]]; then
-  if [ "$(brew list | grep -c "^mysql-client@*.*$")" -gt 0 ]; then
-    PATH="$(brew --prefix mysql-client)/bin:$PATH"
-    export PATH
-  fi
-fi
-
-# terraform
-if [[ $(command -v terraform) ]]; then
-  alias tf='terraform'
-  alias tfi='terraform init'
-  alias tfi='terraform init --auto-approve'
-  alias tff='terraform fmt'
-  alias tfp='terraform plan'
-  alias tfa='terraform apply'
-  alias tfi='terraform import'
-  alias tfaa='terraform apply --auto-approve'
-  alias tfsl='terraform state list'
-fi
-
-# ruff
+# Cargo/Rust
 # shellcheck source=/dev/null
 if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 
 # mise
-eval "$(mise activate zsh)"
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
 
 # zoxide (smarter cd)
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# Starship ... https://starship.rs/ja-jp/guide/
-# ※ 一番最後の行に設定が必要
+# Starship (must be at the end)
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
