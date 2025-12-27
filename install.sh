@@ -29,6 +29,7 @@ VERBOSE=false
 UNINSTALL=false
 CI_MODE=false
 WORK_MODE=false
+DOCTOR=false
 
 # Color codes
 RED='\033[0;31m'
@@ -78,6 +79,9 @@ parse_args() {
       --work)
         WORK_MODE=true
         ;;
+      --doctor)
+        DOCTOR=true
+        ;;
       -h|--help)
         show_help
         exit 0
@@ -109,6 +113,7 @@ Options:
   --uninstall         Remove dotfiles symlinks
   --ci                CI mode (non-interactive, continue on errors)
   --work              Work/company mode (skip personal packages)
+  --doctor            Run environment health check
   -h, --help          Show this help message
 
 Examples:
@@ -265,6 +270,19 @@ main() {
       # shellcheck source=/dev/null
       source "${DOTFILES_DIR}/scripts/dotfiles.sh"
       uninstall_dotfiles
+    fi
+    exit 0
+  fi
+
+  # Doctor mode
+  if [[ "$DOCTOR" == "true" ]]; then
+    if [[ -d "$DOTFILES_DIR" ]] && [[ -f "${DOTFILES_DIR}/scripts/dotfiles.sh" ]]; then
+      # shellcheck source=/dev/null
+      source "${DOTFILES_DIR}/scripts/dotfiles.sh"
+      run_doctor
+    else
+      print_error "Dotfiles not installed. Run install first."
+      exit 1
     fi
     exit 0
   fi

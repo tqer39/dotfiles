@@ -41,6 +41,7 @@ param(
     [switch]$Uninstall,
     [switch]$CI,
     [switch]$Work,
+    [switch]$Doctor,
     [switch]$Help
 )
 
@@ -91,6 +92,7 @@ Options:
     -Uninstall      Remove dotfiles symlinks
     -CI             CI mode (non-interactive, continue on errors)
     -Work           Work/company mode (skip personal packages)
+    -Doctor         Run environment health check
     -Help           Show this help message
 
 Examples:
@@ -476,6 +478,172 @@ function Install-VSCodeExtensions {
 }
 
 # ------------------------------------------------------------------------------
+# Doctor Functions
+# ------------------------------------------------------------------------------
+function Write-DoctorCheck {
+    param(
+        [string]$Component,
+        [string]$Status,
+        [string]$Details,
+        [string]$Color = "White"
+    )
+    $statusText = $Status.PadRight(10)
+    Write-Host ("{0,-25}" -f $Component) -NoNewline
+    Write-Host $statusText -ForegroundColor $Color -NoNewline
+    Write-Host " $Details"
+}
+
+function Invoke-Doctor {
+    Write-Host ""
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host "  Dotfiles Doctor (Windows)" -ForegroundColor Cyan
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    $issues = 0
+    $warnings = 0
+
+    # Dependencies
+    Write-Host "Dependencies" -ForegroundColor Yellow
+    Write-Host ("-" * 50)
+    Write-Host ("{0,-25} {1,-10} {2}" -f "COMPONENT", "STATUS", "DETAILS")
+    Write-Host ("{0,-25} {1,-10} {2}" -f "---------", "------", "-------")
+
+    # Check git
+    if (Get-Command git -ErrorAction SilentlyContinue) {
+        $version = (git --version 2>$null)
+        Write-DoctorCheck "git" "OK" $version -Color Green
+    } else {
+        Write-DoctorCheck "git" "FAIL" "Not installed" -Color Red
+        $issues++
+    }
+
+    # Check curl
+    if (Get-Command curl.exe -ErrorAction SilentlyContinue) {
+        Write-DoctorCheck "curl" "OK" "Available" -Color Green
+    } else {
+        Write-DoctorCheck "curl" "WARN" "Not found (using Invoke-WebRequest)" -Color Yellow
+        $warnings++
+    }
+
+    # Package Manager
+    Write-Host ""
+    Write-Host "Package Manager" -ForegroundColor Yellow
+    Write-Host ("-" * 50)
+    Write-Host ("{0,-25} {1,-10} {2}" -f "COMPONENT", "STATUS", "DETAILS")
+    Write-Host ("{0,-25} {1,-10} {2}" -f "---------", "------", "-------")
+
+    if (Get-Command scoop -ErrorAction SilentlyContinue) {
+        Write-DoctorCheck "scoop" "OK" "Available" -Color Green
+    } else {
+        Write-DoctorCheck "scoop" "WARN" "Not installed" -Color Yellow
+        $warnings++
+    }
+
+    if (Get-Command winget -ErrorAction SilentlyContinue) {
+        Write-DoctorCheck "winget" "OK" "Available" -Color Green
+    } else {
+        Write-DoctorCheck "winget" "WARN" "Not installed" -Color Yellow
+        $warnings++
+    }
+
+    # Symlinks
+    Write-Host ""
+    Write-Host "Symlinks" -ForegroundColor Yellow
+    Write-Host ("-" * 50)
+    Write-Host ("{0,-25} {1,-10} {2}" -f "COMPONENT", "STATUS", "DETAILS")
+    Write-Host ("{0,-25} {1,-10} {2}" -f "---------", "------", "-------")
+
+    $configFile = Join-Path $DotfilesDir "config\platform-files.conf"
+    if (Test-Path $configFile) {
+        $content = Get-Content $configFile
+        foreach ($line in $content) {
+            if ([string]::IsNullOrWhiteSpace($line) -or $line.TrimStart().StartsWith("#")) {
+                continue
+            }
+            $parts = $line.Split(":")
+            if ($parts.Count -lt 3) { continue }
+
+            $src = $parts[0].Trim()
+            $dest = $parts[1].Trim()
+            $platforms = $parts[2].Trim()
+
+            if ($platforms -ne "all" -and $platforms -notmatch "windows") {
+                continue
+            }
+
+            $fullSrc = Join-Path $DotfilesDir "src\$src"
+            $fullDest = $dest -replace "~", $env:USERPROFILE
+            if ($fullDest -match "VSCODE_USER_DIR") {
+                $vscodeDir = Join-Path $env:APPDATA "Code\User"
+                $fullDest = $fullDest -replace "VSCODE_USER_DIR", $vscodeDir
+            }
+            $fullDest = $fullDest -replace "/", "\"
+
+            if (-not (Test-Path $fullSrc)) {
+                Write-DoctorCheck $src "FAIL" "Source not found" -Color Red
+                $issues++
+            } elseif (Test-Path $fullDest) {
+                $item = Get-Item $fullDest -Force
+                if ($item.LinkType -eq "SymbolicLink") {
+                    Write-DoctorCheck $src "OK" "Linked correctly" -Color Green
+                } else {
+                    Write-DoctorCheck $src "FAIL" "Exists but not a symlink" -Color Red
+                    $issues++
+                }
+            } else {
+                Write-DoctorCheck $src "WARN" "Not installed" -Color Yellow
+                $warnings++
+            }
+        }
+    } else {
+        Write-DoctorCheck "config" "FAIL" "platform-files.conf not found" -Color Red
+        $issues++
+    }
+
+    # VS Code
+    Write-Host ""
+    Write-Host "VS Code" -ForegroundColor Yellow
+    Write-Host ("-" * 50)
+    Write-Host ("{0,-25} {1,-10} {2}" -f "COMPONENT", "STATUS", "DETAILS")
+    Write-Host ("{0,-25} {1,-10} {2}" -f "---------", "------", "-------")
+
+    if (Get-Command code -ErrorAction SilentlyContinue) {
+        $version = (code --version 2>$null | Select-Object -First 1)
+        Write-DoctorCheck "VS Code" "OK" $version -Color Green
+    } elseif (Get-Command code-insiders -ErrorAction SilentlyContinue) {
+        $version = (code-insiders --version 2>$null | Select-Object -First 1)
+        Write-DoctorCheck "VS Code" "OK" "Insiders $version" -Color Green
+    } else {
+        Write-DoctorCheck "VS Code" "WARN" "Not installed" -Color Yellow
+        $warnings++
+    }
+
+    # Summary
+    Write-Host ""
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host "  Summary" -ForegroundColor Cyan
+    Write-Host "==========================================" -ForegroundColor Cyan
+
+    if ($issues -eq 0) {
+        if ($warnings -eq 0) {
+            Write-Success "All checks passed!"
+        } else {
+            Write-Success "No critical issues found"
+        }
+    } else {
+        Write-Err "Issues found that require attention"
+    }
+
+    Write-Info "Issues: $issues, Warnings: $warnings"
+
+    if ($issues -gt 0) {
+        exit 1
+    }
+    exit 0
+}
+
+# ------------------------------------------------------------------------------
 # Main
 # ------------------------------------------------------------------------------
 function Main {
@@ -510,6 +678,11 @@ function Main {
     if ($Uninstall) {
         Uninstall-Dotfiles
         exit 0
+    }
+
+    if ($Doctor) {
+        Invoke-Doctor
+        # Invoke-Doctor calls exit internally
     }
 
     # Install dotfiles
