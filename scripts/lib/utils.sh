@@ -8,7 +8,18 @@
 if [[ -n "${_UTILS_SH_LOADED:-}" ]]; then
   return 0
 fi
-_UTILS_SH_LOADED=1
+readonly _UTILS_SH_LOADED=1
+
+# Trim leading and trailing whitespace from a string
+# Usage: trim "  hello world  " -> "hello world"
+trim() {
+  local str="$1"
+  # Remove leading whitespace
+  str="${str#"${str%%[![:space:]]*}"}"
+  # Remove trailing whitespace
+  str="${str%"${str##*[![:space:]]}"}"
+  echo "$str"
+}
 
 # Detect operating system
 # Returns: macos, ubuntu, linux, windows, unknown
@@ -78,7 +89,7 @@ is_platform_supported() {
   IFS=',' read -ra platform_list <<< "$platforms"
   for platform in "${platform_list[@]}"; do
     # Trim whitespace
-    platform=$(echo "$platform" | xargs)
+    platform=$(trim "$platform")
     if [[ "$platform" == "$current_os" ]]; then
       return 0
     fi

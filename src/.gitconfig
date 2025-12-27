@@ -14,6 +14,6 @@
 [difftool "default-difftool"]
 	cmd = code --wait --diff $LOCAL $REMOTE
 [alias]
-	new-feature-branch = "!f() { \\\n  TITLE=\"$1\"; \\\n  DATE=$(date +%Y%m%d); \\\n  git checkout main && \\\n  git fetch origin -p && \\\n  git reset --hard origin/main && \\\n  git checkout -b \"feature/${TITLE}-${DATE}\" ; \\\n}; f"
+	new-feature-branch = "!f() { \\\n  TITLE=\"$1\"; \\\n  DATE=$(date +%y%m%d); \\\n  git checkout main && \\\n  git fetch origin -p && \\\n  git reset --hard origin/main && \\\n  HASH=$(git rev-parse --short=6 HEAD) && \\\n  git checkout -b \"${TITLE}-${DATE}-${HASH}\" ; \\\n}; f"
 [commit]
 	gpgsign = true

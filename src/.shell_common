@@ -1,0 +1,110 @@
+#!/bin/bash
+# ------------------------------------------------------------------------------
+# .shell_common - Shared configuration for bash and zsh
+# ------------------------------------------------------------------------------
+# This file is sourced by both .bashrc and .zshrc
+# Shell-specific settings should remain in their respective files
+
+# ------------------------------------------------------------------------------
+# Aliases
+# ------------------------------------------------------------------------------
+
+# Help function
+alias_help() {
+  cat << 'EOF'
+Aliases:
+  Navigation:
+    ..        cd ..
+    ...       cd ../..
+    work      cd ~/workspace
+    z         zoxide (smart cd)
+
+  Git:
+    g         git
+    ga        git add
+    gc        git commit
+    gd        git diff
+    gpl       git pull
+    gps       git push
+    gs        git status
+    gsw       git switch
+    gl        git log --oneline
+    gnf       git new-feature-branch
+    gclean    delete stale local branches
+
+  Files:
+    ls        eza --icons
+    ll        eza -la (long)
+    lt        eza -T (tree)
+    cat       bat
+EOF
+}
+
+# Navigation
+alias ..='cd ..'
+alias ...='cd ../..'
+alias work='cd ~/workspace'
+
+# Git
+if command -v git &> /dev/null; then
+  alias g='git'
+  alias ga='git add'
+  alias gc='git commit'
+  alias gd='git diff'
+  alias gpl='git pull'
+  alias gps='git push'
+  alias gs='git status'
+  alias gsw='git switch'
+  alias gl='git log --oneline -20'
+  alias gnf='git new-feature-branch'
+
+  # Clean up local branches deleted on remote
+  git_cleanup_branches() {
+    git fetch -p
+    local branches
+    branches=$(git branch -vv | grep ': gone]' | awk '{print $1}')
+    if [[ -z "$branches" ]]; then
+      echo "No stale branches to clean up."
+      return 0
+    fi
+    echo "Deleting stale branches:"
+    echo "$branches"
+    echo "$branches" | xargs git branch -d
+  }
+  alias gclean='git_cleanup_branches'
+fi
+
+# eza (ls replacement)
+if command -v eza &> /dev/null; then
+  alias ls='eza --icons --git'
+  alias ll='eza -la --icons --git'
+  alias lt='eza -T -L 2 --icons'
+fi
+
+# bat (cat replacement)
+if command -v bat &> /dev/null; then
+  alias cat='bat'
+fi
+
+# pbcopy/pbpaste (Linux)
+if command -v xsel &> /dev/null; then
+  alias pbcopy='xsel --clipboard --input'
+  alias pbpaste='xsel --clipboard --output'
+fi
+
+# ------------------------------------------------------------------------------
+# Common tool initialization
+# ------------------------------------------------------------------------------
+
+# Homebrew
+if [[ "$(uname)" = "Linux" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [[ "$(uname)" = "Darwin" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# Cargo/Rust
+# shellcheck source=/dev/null
+if [ -f "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi

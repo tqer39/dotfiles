@@ -85,11 +85,12 @@ Some dotfiles are only installed on specific platforms:
 
 | File | macOS | Linux | Windows |
 | ---- | :---: | :---: | :-----: |
-| `.zshrc`, `.bashrc` | ✓ | ✓ | - |
+| `.shell_common`, `.zshrc`, `.bashrc` | ✓ | ✓ | - |
 | `.gitconfig` | ✓ | ✓ | ✓ |
 | `.hammerspoon/` | ✓ | - | - |
 | `.config/karabiner/` | ✓ | - | - |
 | `.vscode/` | ✓ | ✓ | ✓ |
+| `.claude.json` | ✓ | ✓ | ✓ |
 | `.config/starship.toml` | ✓ | ✓ | - |
 
 ## Full Installation Includes

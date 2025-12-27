@@ -17,12 +17,10 @@ if ! declare -f log_info &>/dev/null; then
   source "${SCRIPT_DIR}/../lib/utils.sh"
 fi
 
-# Get VS Code command (code or code-insiders)
+# Get VS Code command
 get_vscode_cmd() {
   if command_exists code; then
     echo "code"
-  elif command_exists code-insiders; then
-    echo "code-insiders"
   else
     echo ""
   fi

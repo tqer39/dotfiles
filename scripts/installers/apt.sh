@@ -305,6 +305,49 @@ install_vscode() {
   log_success "VS Code installed"
 }
 
+# Install Ghostty terminal
+install_ghostty() {
+  log_info "Installing Ghostty terminal..."
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "Ghostty apt installation is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v ghostty &>/dev/null; then
+    log_debug "Ghostty is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Ghostty"
+    return 0
+  fi
+
+  # Check if snap is available
+  if ! command -v snap &>/dev/null; then
+    log_warn "Snap is not available. Skipping Ghostty installation."
+    return 0
+  fi
+
+  log_info "Installing Ghostty via Snap..."
+
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! sudo snap install ghostty; then
+      log_warn "Failed to install Ghostty (CI mode, continuing)"
+      return 0
+    fi
+  else
+    sudo snap install ghostty
+  fi
+
+  log_success "Ghostty terminal installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages
