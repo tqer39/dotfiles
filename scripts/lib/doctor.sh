@@ -220,17 +220,10 @@ doctor_check_runtimes() {
 doctor_check_vscode() {
   _doctor_section_header "VS Code"
 
-  local vscode_cmd=""
   if command_exists code; then
-    vscode_cmd="code"
-  elif command_exists code-insiders; then
-    vscode_cmd="code-insiders"
-  fi
-
-  if [[ -n "$vscode_cmd" ]]; then
     local version
-    version=$("$vscode_cmd" --version 2>/dev/null | head -1)
-    doctor_check_ok "VS Code" "$vscode_cmd ($version)"
+    version=$(code --version 2>/dev/null | head -1)
+    doctor_check_ok "VS Code" "$version"
   else
     doctor_check_warn "VS Code" "Not installed"
   fi

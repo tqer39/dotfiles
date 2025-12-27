@@ -294,11 +294,6 @@ fi
 # mise
 eval "$(mise activate bash)"
 
-# code-insiders
-if command -v code-insiders &> /dev/null; then
-  alias ci='code-insiders'
-fi
-
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/home/tqer39/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

@@ -619,9 +619,6 @@ function Invoke-Doctor {
     if (Get-Command code -ErrorAction SilentlyContinue) {
         $version = (code --version 2>$null | Select-Object -First 1)
         Write-DoctorCheck "VS Code" "OK" $version -Color Green
-    } elseif (Get-Command code-insiders -ErrorAction SilentlyContinue) {
-        $version = (code-insiders --version 2>$null | Select-Object -First 1)
-        Write-DoctorCheck "VS Code" "OK" "Insiders $version" -Color Green
     } else {
         Write-DoctorCheck "VS Code" "WARN" "Not installed" -Color Yellow
         $warnings++

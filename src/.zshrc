@@ -207,11 +207,6 @@ if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# code-insiders
-if command -v code-insiders &> /dev/null; then
-  alias ci='code-insiders'
-fi
-
 # Starship ... https://starship.rs/ja-jp/guide/
 # ※ 一番最後の行に設定が必要
 if command -v starship &> /dev/null; then
