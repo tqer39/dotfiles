@@ -10,7 +10,7 @@
 # ------------------------------------------------------------------------------
 
 # Help function
-alias-help() {
+alias_help() {
   cat << 'EOF'
 Aliases:
   Navigation:
@@ -59,7 +59,7 @@ if command -v git &> /dev/null; then
   alias gnf='git new-feature-branch'
 
   # Clean up local branches deleted on remote
-  git-cleanup-branches() {
+  git_cleanup_branches() {
     git fetch -p
     local branches
     branches=$(git branch -vv | grep ': gone]' | awk '{print $1}')
@@ -71,7 +71,7 @@ if command -v git &> /dev/null; then
     echo "$branches"
     echo "$branches" | xargs git branch -d
   }
-  alias gclean='git-cleanup-branches'
+  alias gclean='git_cleanup_branches'
 fi
 
 # eza (ls replacement)
