@@ -1,0 +1,11 @@
+# Disable "Consider invoking separately to avoid masking return values"
+# This is common in shell initialization files with eval
+disable=SC2312
+
+# Disable "Prefer [[ ]] over [ ] for tests"
+# Allow POSIX-compatible [ ] tests
+disable=SC2292
+
+# Disable "Prefer braces around variable references"
+# Allow $HOME instead of ${HOME}
+disable=SC2250
