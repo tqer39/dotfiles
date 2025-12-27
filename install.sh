@@ -199,6 +199,9 @@ setup_repository() {
     log_info "Updating existing dotfiles at $DOTFILES_DIR"
     if [[ "$DRY_RUN" == "true" ]]; then
       log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
+    elif [[ "$CI_MODE" == "true" ]]; then
+      # Skip pull in CI mode - CI has already checked out the correct code
+      log_info "Skipping git pull in CI mode (code already checked out)"
     else
       # Check for uncommitted changes (tracked files)
       if ! git -C "$DOTFILES_DIR" diff --quiet 2>/dev/null || \
@@ -225,6 +228,9 @@ setup_repository() {
     log_info "Dotfiles directory exists, updating..."
     if [[ "$DRY_RUN" == "true" ]]; then
       log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
+    elif [[ "$CI_MODE" == "true" ]]; then
+      # Skip pull in CI mode - CI has already checked out the correct code
+      log_info "Skipping git pull in CI mode (code already checked out)"
     else
       # Check for uncommitted changes (tracked files)
       if ! git -C "$DOTFILES_DIR" diff --quiet 2>/dev/null || \

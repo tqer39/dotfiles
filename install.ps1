@@ -212,6 +212,9 @@ function Install-Repository {
         Write-Info "Updating existing dotfiles at $DotfilesDir"
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would run: git -C $DotfilesDir pull"
+        } elseif ($CI) {
+            # Skip pull in CI mode - CI has already checked out the correct code
+            Write-Info "Skipping git pull in CI mode (code already checked out)"
         } else {
             Update-Repository
         }
@@ -222,6 +225,9 @@ function Install-Repository {
         Write-Info "Dotfiles directory exists, updating..."
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would run: git -C $DotfilesDir pull"
+        } elseif ($CI) {
+            # Skip pull in CI mode - CI has already checked out the correct code
+            Write-Info "Skipping git pull in CI mode (code already checked out)"
         } else {
             Update-Repository
         }
