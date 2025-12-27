@@ -325,6 +325,7 @@ main() {
           install_albert
           install_1password
           install_vscode
+          install_ghostty
         fi
       fi
     else
