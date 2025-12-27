@@ -182,13 +182,12 @@ doctor_check_symlinks() {
 doctor_check_runtimes() {
   _doctor_section_header "Language Runtimes"
 
-  # Check mise first (preferred)
+  # Node.js via mise
   if command_exists mise; then
     local mise_version
     mise_version=$(mise --version 2>/dev/null | head -1)
     doctor_check_ok "mise" "$mise_version"
 
-    # Check Node.js via mise
     local node_version
     node_version=$(mise current node 2>/dev/null)
     if [[ -n "$node_version" && "$node_version" != "missing" ]]; then
@@ -196,58 +195,25 @@ doctor_check_runtimes() {
     else
       doctor_check_warn "node" "Run: mise install node"
     fi
-
-    # Check Python via mise (if configured)
-    local py_version
-    py_version=$(mise current python 2>/dev/null)
-    if [[ -n "$py_version" && "$py_version" != "missing" ]]; then
-      doctor_check_ok "python (mise)" "$py_version"
-    else
-      doctor_check_skip "python" "Not configured in mise"
-    fi
-  # Fallback to anyenv
   else
-    local anyenv_root="${ANYENV_ROOT:-${HOME}/.anyenv}"
+    doctor_check_warn "mise" "Not installed"
+  fi
 
-    if [[ -d "$anyenv_root" ]]; then
-      doctor_check_ok "anyenv" "$anyenv_root"
+  # Python via uv
+  if command_exists uv; then
+    local uv_version
+    uv_version=$(uv --version 2>/dev/null)
+    doctor_check_ok "uv" "$uv_version"
 
-      # Check nodenv
-      if [[ -d "${anyenv_root}/envs/nodenv" ]]; then
-        doctor_check_ok "nodenv" "Installed"
-
-        if command_exists nodenv; then
-          local node_version
-          node_version=$(nodenv version 2>/dev/null | awk '{print $1}')
-          if [[ -n "$node_version" && "$node_version" != "system" ]]; then
-            doctor_check_ok "node" "$node_version"
-          else
-            doctor_check_warn "node" "No version installed"
-          fi
-        fi
-      else
-        doctor_check_warn "nodenv" "Not installed"
-      fi
-
-      # Check pyenv
-      if [[ -d "${anyenv_root}/envs/pyenv" ]]; then
-        doctor_check_ok "pyenv" "Installed"
-
-        if command_exists pyenv; then
-          local py_version
-          py_version=$(pyenv version 2>/dev/null | awk '{print $1}')
-          if [[ -n "$py_version" && "$py_version" != "system" ]]; then
-            doctor_check_ok "python" "$py_version"
-          else
-            doctor_check_warn "python" "No version installed"
-          fi
-        fi
-      else
-        doctor_check_warn "pyenv" "Not installed"
-      fi
+    local py_version
+    py_version=$(uv python list --only-installed 2>/dev/null | head -1 | awk '{print $1}')
+    if [[ -n "$py_version" ]]; then
+      doctor_check_ok "python (uv)" "$py_version"
     else
-      doctor_check_warn "Runtime Manager" "Neither mise nor anyenv found"
+      doctor_check_warn "python" "Run: uv python install"
     fi
+  else
+    doctor_check_warn "uv" "Not installed"
   fi
 }
 
