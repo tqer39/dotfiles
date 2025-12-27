@@ -172,6 +172,39 @@ function New-SymbolicLinkSafe {
 # ------------------------------------------------------------------------------
 # Setup Functions
 # ------------------------------------------------------------------------------
+function Update-Repository {
+    # Helper function to stash local changes and pull
+    Push-Location $DotfilesDir
+    try {
+        # Check for uncommitted changes (tracked files)
+        git diff --quiet 2>$null
+        $hasDiff = $LASTEXITCODE -ne 0
+        git diff --cached --quiet 2>$null
+        $hasCachedDiff = $LASTEXITCODE -ne 0
+
+        if ($hasDiff -or $hasCachedDiff) {
+            Write-Warn "Local changes detected in $DotfilesDir"
+            Write-Warn "Stashing local changes before pulling..."
+            $stashName = "Auto-stash by install.ps1 $(Get-Date -Format 'yyyyMMdd_HHmmss')"
+            git stash push -m $stashName
+            Write-Info "Your changes have been stashed. Run 'git -C $DotfilesDir stash pop' to restore."
+        }
+
+        git pull --quiet
+        if ($LASTEXITCODE -ne 0) {
+            throw "git pull failed with exit code $LASTEXITCODE"
+        }
+        Write-Success "Updated dotfiles repository"
+    } catch {
+        Write-Err "Failed to update dotfiles repository: $_"
+        Write-Info "Please resolve conflicts manually:"
+        Write-Info "  cd $DotfilesDir; git status"
+        Pop-Location
+        exit 1
+    }
+    Pop-Location
+}
+
 function Install-Repository {
     # Update if dotfiles scripts already exist
     $scriptsPath = Join-Path $DotfilesDir "scripts"
@@ -180,10 +213,7 @@ function Install-Repository {
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would run: git -C $DotfilesDir pull"
         } else {
-            Push-Location $DotfilesDir
-            git pull --quiet 2>$null
-            Pop-Location
-            Write-Success "Updated dotfiles repository"
+            Update-Repository
         }
         return
     }
@@ -193,10 +223,7 @@ function Install-Repository {
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would run: git -C $DotfilesDir pull"
         } else {
-            Push-Location $DotfilesDir
-            git pull --quiet
-            Pop-Location
-            Write-Success "Updated dotfiles repository"
+            Update-Repository
         }
     } else {
         Write-Info "Cloning dotfiles repository..."

@@ -200,8 +200,23 @@ setup_repository() {
     if [[ "$DRY_RUN" == "true" ]]; then
       log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
     else
-      git -C "$DOTFILES_DIR" pull --quiet || true
-      log_success "Updated dotfiles repository"
+      # Check for uncommitted changes (tracked files)
+      if ! git -C "$DOTFILES_DIR" diff --quiet 2>/dev/null || \
+         ! git -C "$DOTFILES_DIR" diff --cached --quiet 2>/dev/null; then
+        log_warn "Local changes detected in $DOTFILES_DIR"
+        log_warn "Stashing local changes before pulling..."
+        git -C "$DOTFILES_DIR" stash push -m "Auto-stash by install.sh $(date +%Y%m%d_%H%M%S)"
+        log_info "Your changes have been stashed. Run 'git -C $DOTFILES_DIR stash pop' to restore."
+      fi
+
+      if git -C "$DOTFILES_DIR" pull --quiet; then
+        log_success "Updated dotfiles repository"
+      else
+        log_error "Failed to update dotfiles repository"
+        log_info "Please resolve conflicts manually:"
+        log_info "  cd $DOTFILES_DIR && git status"
+        exit 1
+      fi
     fi
     return 0
   fi
@@ -211,8 +226,23 @@ setup_repository() {
     if [[ "$DRY_RUN" == "true" ]]; then
       log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
     else
-      git -C "$DOTFILES_DIR" pull --quiet
-      log_success "Updated dotfiles repository"
+      # Check for uncommitted changes (tracked files)
+      if ! git -C "$DOTFILES_DIR" diff --quiet 2>/dev/null || \
+         ! git -C "$DOTFILES_DIR" diff --cached --quiet 2>/dev/null; then
+        log_warn "Local changes detected in $DOTFILES_DIR"
+        log_warn "Stashing local changes before pulling..."
+        git -C "$DOTFILES_DIR" stash push -m "Auto-stash by install.sh $(date +%Y%m%d_%H%M%S)"
+        log_info "Your changes have been stashed. Run 'git -C $DOTFILES_DIR stash pop' to restore."
+      fi
+
+      if git -C "$DOTFILES_DIR" pull --quiet; then
+        log_success "Updated dotfiles repository"
+      else
+        log_error "Failed to update dotfiles repository"
+        log_info "Please resolve conflicts manually:"
+        log_info "  cd $DOTFILES_DIR && git status"
+        exit 1
+      fi
     fi
   else
     log_info "Cloning dotfiles repository..."
