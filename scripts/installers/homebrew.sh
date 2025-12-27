@@ -75,14 +75,28 @@ install_homebrew_packages() {
   brew update
 
   # Install from Brewfile
-  # In CI mode, continue even if some packages fail (e.g., GUI apps)
-  if [[ "${CI_MODE:-false}" == "true" ]]; then
-    # Try to install, but don't fail if some packages can't be installed
-    if ! brew bundle --file="$brewfile"; then
+  # Capture output to detect critical errors (deprecated taps, etc.)
+  local bundle_output
+  bundle_output=$(brew bundle --file="$brewfile" 2>&1) || true
+  local bundle_exit=$?
+
+  # Always show output
+  echo "$bundle_output"
+
+  # Check for deprecated tap errors (configuration issues that must be fixed)
+  if echo "$bundle_output" | grep -q "was deprecated"; then
+    log_error "Deprecated tap found in Brewfile. Please remove it."
+    return 1
+  fi
+
+  # Handle bundle exit code
+  if [[ $bundle_exit -ne 0 ]]; then
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      # In CI mode, allow package install failures (e.g., GUI apps that can't install in CI)
       log_warn "Some packages failed to install (CI mode, continuing)"
+    else
+      return 1
     fi
-  else
-    brew bundle --file="$brewfile"
   fi
 
   log_success "Homebrew packages installed successfully"
