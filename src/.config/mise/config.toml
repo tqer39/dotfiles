@@ -7,7 +7,7 @@
 
 [tools]
 # Language Runtimes
-node = "22"
+node = "24"
 
 # AI CLI Tools
 "npm:@anthropic-ai/claude-code" = "latest"
