@@ -1,0 +1,20 @@
+# ------------------------------------------------------------------------------
+# sheldon plugins configuration
+# ------------------------------------------------------------------------------
+# This file is symlinked to ~/.config/sheldon/plugins.toml
+# Run `sheldon lock` to update the lock file
+# ------------------------------------------------------------------------------
+
+shell = "zsh"
+
+[plugins.zsh-defer]
+github = "romkatv/zsh-defer"
+
+[plugins.zsh-completions]
+github = "zsh-users/zsh-completions"
+
+[plugins.zsh-autosuggestions]
+github = "zsh-users/zsh-autosuggestions"
+
+[plugins.fast-syntax-highlighting]
+github = "zdharma-continuum/fast-syntax-highlighting"
