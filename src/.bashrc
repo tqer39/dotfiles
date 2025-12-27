@@ -90,11 +90,13 @@ fi
 
 # fzf
 if command -v fzf &> /dev/null; then
-  # shellcheck source=/dev/null
-  if ! eval "$(fzf --bash 2>/dev/null)"; then
+  if fzf_init="$(fzf --bash 2>/dev/null)" && [ -n "$fzf_init" ]; then
+    eval "$fzf_init"
+  else
     # shellcheck source=/dev/null
     [ -f "$HOME/.fzf.bash" ] && . "$HOME/.fzf.bash"
   fi
+  unset fzf_init
 fi
 
 # mise
