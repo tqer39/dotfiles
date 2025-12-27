@@ -29,6 +29,7 @@ Aliases:
     gs        git status
     gsw       git switch
     gl        git log --oneline
+    gnf       git new-feature-branch
 
   Files:
     ls        eza --icons
@@ -54,6 +55,7 @@ if command -v git &> /dev/null; then
   alias gs='git status'
   alias gsw='git switch'
   alias gl='git log --oneline -20'
+  alias gnf='git new-feature-branch'
 fi
 
 # eza (ls replacement)
