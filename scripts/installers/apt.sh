@@ -337,12 +337,12 @@ install_ghostty() {
   log_info "Installing Ghostty via Snap..."
 
   if [[ "${CI_MODE:-false}" == "true" ]]; then
-    if ! sudo snap install ghostty; then
+    if ! sudo snap install ghostty --classic; then
       log_warn "Failed to install Ghostty (CI mode, continuing)"
       return 0
     fi
   else
-    sudo snap install ghostty
+    sudo snap install ghostty --classic
   fi
 
   log_success "Ghostty terminal installed"
