@@ -40,11 +40,12 @@ NC='\033[0m'
 
 # ------------------------------------------------------------------------------
 # Helper functions (before sourcing libs)
+# Naming follows log_* convention for consistency with scripts/lib/log.sh
 # ------------------------------------------------------------------------------
-print_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
-print_success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
-print_warn() { echo -e "${YELLOW}[WARN]${NC} $*" >&2; }
-print_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
+log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
+log_success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $*" >&2; }
+log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
 # ------------------------------------------------------------------------------
 # Parse command line arguments
@@ -87,7 +88,7 @@ parse_args() {
         exit 0
         ;;
       *)
-        print_error "Unknown option: $1"
+        log_error "Unknown option: $1"
         show_help
         exit 1
         ;;
@@ -169,20 +170,20 @@ check_prerequisites() {
   fi
 
   if [[ ${#missing_deps[@]} -gt 0 ]]; then
-    print_error "Missing required dependencies: ${missing_deps[*]}"
-    print_info "Please install them first:"
+    log_error "Missing required dependencies: ${missing_deps[*]}"
+    log_info "Please install them first:"
 
     local os
     os=$(detect_os)
     case "$os" in
       macos)
-        print_info "  xcode-select --install"
+        log_info "  xcode-select --install"
         ;;
       ubuntu)
-        print_info "  sudo apt update && sudo apt install -y ${missing_deps[*]}"
+        log_info "  sudo apt update && sudo apt install -y ${missing_deps[*]}"
         ;;
       *)
-        print_info "  Install: ${missing_deps[*]}"
+        log_info "  Install: ${missing_deps[*]}"
         ;;
     esac
     exit 1
@@ -195,31 +196,31 @@ check_prerequisites() {
 setup_repository() {
   # Update if dotfiles scripts already exist
   if [[ -f "${DOTFILES_DIR}/scripts/dotfiles.sh" ]]; then
-    print_info "Updating existing dotfiles at $DOTFILES_DIR"
+    log_info "Updating existing dotfiles at $DOTFILES_DIR"
     if [[ "$DRY_RUN" == "true" ]]; then
-      print_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
+      log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
     else
       git -C "$DOTFILES_DIR" pull --quiet || true
-      print_success "Updated dotfiles repository"
+      log_success "Updated dotfiles repository"
     fi
     return 0
   fi
 
   if [[ -d "$DOTFILES_DIR" ]]; then
-    print_info "Dotfiles directory exists, updating..."
+    log_info "Dotfiles directory exists, updating..."
     if [[ "$DRY_RUN" == "true" ]]; then
-      print_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
+      log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull"
     else
       git -C "$DOTFILES_DIR" pull --quiet
-      print_success "Updated dotfiles repository"
+      log_success "Updated dotfiles repository"
     fi
   else
-    print_info "Cloning dotfiles repository..."
+    log_info "Cloning dotfiles repository..."
     if [[ "$DRY_RUN" == "true" ]]; then
-      print_info "[DRY-RUN] Would run: git clone $DOTFILES_REPO $DOTFILES_DIR"
+      log_info "[DRY-RUN] Would run: git clone $DOTFILES_REPO $DOTFILES_DIR"
     else
       git clone --branch "$DOTFILES_BRANCH" "$DOTFILES_REPO" "$DOTFILES_DIR"
-      print_success "Cloned dotfiles repository to $DOTFILES_DIR"
+      log_success "Cloned dotfiles repository to $DOTFILES_DIR"
     fi
   fi
 }
@@ -271,7 +272,7 @@ main() {
   # Uninstall mode
   if [[ "$UNINSTALL" == "true" ]]; then
     if [[ "$DRY_RUN" == "true" ]]; then
-      print_info "[DRY-RUN] Would uninstall dotfiles"
+      log_info "[DRY-RUN] Would uninstall dotfiles"
     else
       # shellcheck source=/dev/null
       source "${DOTFILES_DIR}/scripts/dotfiles.sh"
@@ -287,16 +288,16 @@ main() {
       source "${DOTFILES_DIR}/scripts/dotfiles.sh"
       run_doctor
     else
-      print_error "Dotfiles not installed. Run install first."
+      log_error "Dotfiles not installed. Run install first."
       exit 1
     fi
     exit 0
   fi
 
   # Step 1: Install dotfiles (symlinks)
-  print_info "Step 1: Installing dotfiles..."
+  log_info "Step 1: Installing dotfiles..."
   if [[ "$DRY_RUN" == "true" ]]; then
-    print_info "[DRY-RUN] Would create symlinks for dotfiles"
+    log_info "[DRY-RUN] Would create symlinks for dotfiles"
   else
     # shellcheck source=/dev/null
     source "${DOTFILES_DIR}/scripts/dotfiles.sh"
@@ -307,7 +308,7 @@ main() {
   if [[ "$INSTALL_MODE" == "full" ]]; then
     # Step 2: Install packages
     if [[ "$SKIP_PACKAGES" != "true" ]]; then
-      print_info "Step 2: Installing packages..."
+      log_info "Step 2: Installing packages..."
       if [[ -f "${DOTFILES_DIR}/scripts/installers/homebrew.sh" ]]; then
         # shellcheck source=/dev/null
         source "${DOTFILES_DIR}/scripts/installers/homebrew.sh"
@@ -327,23 +328,23 @@ main() {
         fi
       fi
     else
-      print_info "Step 2: Skipping packages (--skip-packages)"
+      log_info "Step 2: Skipping packages (--skip-packages)"
     fi
 
     # Step 3: Install language runtimes
     if [[ "$SKIP_LANGUAGES" != "true" ]]; then
-      print_info "Step 3: Installing language runtimes..."
+      log_info "Step 3: Installing language runtimes..."
       if [[ -f "${DOTFILES_DIR}/scripts/installers/anyenv.sh" ]]; then
         # shellcheck source=/dev/null
         source "${DOTFILES_DIR}/scripts/installers/anyenv.sh"
         install_anyenv
       fi
     else
-      print_info "Step 3: Skipping languages (--skip-languages)"
+      log_info "Step 3: Skipping languages (--skip-languages)"
     fi
 
     # Step 4: Install VS Code extensions
-    print_info "Step 4: Installing VS Code extensions..."
+    log_info "Step 4: Installing VS Code extensions..."
     if [[ -f "${DOTFILES_DIR}/scripts/installers/vscode.sh" ]]; then
       # shellcheck source=/dev/null
       source "${DOTFILES_DIR}/scripts/installers/vscode.sh"
@@ -357,8 +358,8 @@ main() {
   echo "  Setup Complete!"
   echo "=========================================="
   echo ""
-  print_info "Please restart your shell or run:"
-  print_info "  source ~/.zshrc"
+  log_info "Please restart your shell or run:"
+  log_info "  source ~/.zshrc"
   echo ""
 }
 
