@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g., 1.0.0, 1.2.3)"
+        required: true
+        type: string
+      prerelease:
+        description: "Mark as pre-release"
+        required: false
+        type: boolean
+        default: false
+      draft:
+        description: "Create as draft"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+
+    steps:
+      - name: Validate version format
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$ ]]; then
+            echo "Error: Invalid SemVer format: $VERSION"
+            echo "Expected format: MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]"
+            echo "Examples: 1.0.0, 1.2.3-alpha, 2.0.0-beta.1, 1.0.0+build.123"
+            exit 1
+          fi
+          echo "Version format is valid: $VERSION"
+
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check if tag already exists
+        run: |
+          TAG="v${{ inputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Error: Tag $TAG already exists"
+            exit 1
+          fi
+          echo "Tag $TAG is available"
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "previous_tag=$PREV_TAG" >> "$GITHUB_OUTPUT"
+          echo "Previous tag: ${PREV_TAG:-none}"
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          PREV_TAG="${{ steps.prev_tag.outputs.previous_tag }}"
+          TAG="v${{ inputs.version }}"
+
+          {
+            echo "notes<<EOF"
+            echo "## What's Changed"
+            echo ""
+            if [ -n "$PREV_TAG" ]; then
+              git log "${PREV_TAG}..HEAD" --pretty=format:"- %s (%h)" --no-merges
+            else
+              git log --pretty=format:"- %s (%h)" --no-merges -20
+              echo ""
+              echo ""
+              echo "_Showing last 20 commits (initial release)_"
+            fi
+            echo ""
+            echo ""
+            echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG:-$(git rev-list --max-parents=0 HEAD | head -1)}...${TAG}"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create tag
+        run: |
+          TAG="v${{ inputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: v${{ inputs.version }}
+          body: ${{ steps.notes.outputs.notes }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+          generate_release_notes: false
