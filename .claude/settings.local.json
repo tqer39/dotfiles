@@ -30,7 +30,8 @@
       "WebFetch(domain:code.visualstudio.com)",
       "Bash(git merge:*)",
       "Bash(git commit:*)",
-      "Bash(./scripts/dotfiles.sh:*)"
+      "Bash(./scripts/dotfiles.sh:*)",
+      "Bash(git rm:*)"
     ]
   }
 }
