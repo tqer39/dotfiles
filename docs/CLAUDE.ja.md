@@ -38,6 +38,10 @@ just tf -chdir=prod/bootstrap apply
 - 変数/関数名: snake_case
 - 算術演算: `count=$((count + 1))` (`((count++))` ではない)
 
+## ファイル制限
+
+- `.vscode/settings.json` を**作成しない** - VS Code の設定はこのリポジトリで管理しない
+
 ## ドキュメント
 
 - [docs/local-dev.ja.md](local-dev.ja.md) - 開発環境セットアップ
