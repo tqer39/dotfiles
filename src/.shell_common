@@ -30,6 +30,7 @@ Aliases:
     gsw       git switch
     gl        git log --oneline
     gnf       git new-feature-branch
+    gclean    delete stale local branches
 
   Files:
     ls        eza --icons
@@ -56,6 +57,21 @@ if command -v git &> /dev/null; then
   alias gsw='git switch'
   alias gl='git log --oneline -20'
   alias gnf='git new-feature-branch'
+
+  # Clean up local branches deleted on remote
+  git-cleanup-branches() {
+    git fetch -p
+    local branches
+    branches=$(git branch -vv | grep ': gone]' | awk '{print $1}')
+    if [[ -z "$branches" ]]; then
+      echo "No stale branches to clean up."
+      return 0
+    fi
+    echo "Deleting stale branches:"
+    echo "$branches"
+    echo "$branches" | xargs git branch -d
+  }
+  alias gclean='git-cleanup-branches'
 fi
 
 # eza (ls replacement)
