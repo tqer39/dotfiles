@@ -142,7 +142,9 @@ fi
 # fzf
 if command -v fzf &> /dev/null; then
   # shellcheck source=/dev/null
-  eval "$(fzf --zsh 2>/dev/null)" || [ -f "$HOME/.fzf.zsh" ] && . "$HOME/.fzf.zsh"
+  if ! eval "$(fzf --zsh 2>/dev/null)"; then
+    [ -f "$HOME/.fzf.zsh" ] && . "$HOME/.fzf.zsh"
+  fi
 fi
 
 # git
