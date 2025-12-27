@@ -6,7 +6,8 @@
   ],
   "ignorePaths": [
     ".git",
-    ".gitignore"
+    ".gitignore",
+    ".claude"
   ],
   "words": [
     "aahl",

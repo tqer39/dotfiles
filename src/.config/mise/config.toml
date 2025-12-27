@@ -6,6 +6,9 @@
 # ------------------------------------------------------------------------------
 
 [tools]
+# Language Runtimes
+node = "24"
+
 # AI CLI Tools
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@google/gemini-cli" = "latest"

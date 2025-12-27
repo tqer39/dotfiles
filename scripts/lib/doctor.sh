@@ -179,52 +179,41 @@ doctor_check_symlinks() {
   done < "$config_file"
 }
 
-doctor_check_anyenv() {
-  local anyenv_root="${ANYENV_ROOT:-${HOME}/.anyenv}"
-
+doctor_check_runtimes() {
   _doctor_section_header "Language Runtimes"
 
-  # Check anyenv
-  if [[ -d "$anyenv_root" ]]; then
-    doctor_check_ok "anyenv" "$anyenv_root"
+  # Node.js via mise
+  if command_exists mise; then
+    local mise_version
+    mise_version=$(mise --version 2>/dev/null | head -1)
+    doctor_check_ok "mise" "$mise_version"
 
-    # Check nodenv
-    if [[ -d "${anyenv_root}/envs/nodenv" ]]; then
-      doctor_check_ok "nodenv" "Installed"
-
-      if command_exists nodenv; then
-        local node_version
-        node_version=$(nodenv version 2>/dev/null | awk '{print $1}')
-        if [[ -n "$node_version" && "$node_version" != "system" ]]; then
-          doctor_check_ok "node" "$node_version"
-        else
-          doctor_check_warn "node" "No version installed"
-        fi
-      fi
+    local node_version
+    node_version=$(mise current node 2>/dev/null)
+    if [[ -n "$node_version" && "$node_version" != "missing" ]]; then
+      doctor_check_ok "node (mise)" "$node_version"
     else
-      doctor_check_warn "nodenv" "Not installed"
-    fi
-
-    # Check pyenv
-    if [[ -d "${anyenv_root}/envs/pyenv" ]]; then
-      doctor_check_ok "pyenv" "Installed"
-
-      if command_exists pyenv; then
-        local py_version
-        py_version=$(pyenv version 2>/dev/null | awk '{print $1}')
-        if [[ -n "$py_version" && "$py_version" != "system" ]]; then
-          doctor_check_ok "python" "$py_version"
-        else
-          doctor_check_warn "python" "No version installed"
-        fi
-      fi
-    else
-      doctor_check_warn "pyenv" "Not installed"
+      doctor_check_warn "node" "Run: mise install node"
     fi
   else
-    doctor_check_warn "anyenv" "Not installed"
-    doctor_check_skip "nodenv" "anyenv not installed"
-    doctor_check_skip "pyenv" "anyenv not installed"
+    doctor_check_warn "mise" "Not installed"
+  fi
+
+  # Python via uv
+  if command_exists uv; then
+    local uv_version
+    uv_version=$(uv --version 2>/dev/null)
+    doctor_check_ok "uv" "$uv_version"
+
+    local py_version
+    py_version=$(uv python list --only-installed 2>/dev/null | head -1 | awk '{print $1}')
+    if [[ -n "$py_version" ]]; then
+      doctor_check_ok "python (uv)" "$py_version"
+    else
+      doctor_check_warn "python" "Run: uv python install"
+    fi
+  else
+    doctor_check_warn "uv" "Not installed"
   fi
 }
 
@@ -291,7 +280,7 @@ run_doctor() {
   doctor_check_dependencies
   doctor_check_package_manager
   doctor_check_symlinks
-  doctor_check_anyenv
+  doctor_check_runtimes
   doctor_check_vscode
 
   # Print summary

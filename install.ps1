@@ -173,10 +173,18 @@ function New-SymbolicLinkSafe {
 # Setup Functions
 # ------------------------------------------------------------------------------
 function Install-Repository {
-    # Skip if dotfiles scripts already exist (e.g., running from source checkout)
+    # Update if dotfiles scripts already exist
     $scriptsPath = Join-Path $DotfilesDir "scripts"
     if (Test-Path (Join-Path $scriptsPath "dotfiles.sh")) {
-        Write-Info "Using existing dotfiles at $DotfilesDir"
+        Write-Info "Updating existing dotfiles at $DotfilesDir"
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would run: git -C $DotfilesDir pull"
+        } else {
+            Push-Location $DotfilesDir
+            git pull --quiet 2>$null
+            Pop-Location
+            Write-Success "Updated dotfiles repository"
+        }
         return
     }
 
