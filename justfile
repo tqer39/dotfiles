@@ -10,14 +10,11 @@ help:
 default: help
 
 # Setup
-setup: setup-mise setup-direnv setup-hooks
+setup: setup-mise setup-hooks
     @echo "Setup completed"
 
 setup-mise:
     @mise install
-
-setup-direnv:
-    @direnv allow .
 
 setup-hooks:
     @prek install
