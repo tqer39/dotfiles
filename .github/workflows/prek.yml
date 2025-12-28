@@ -43,6 +43,8 @@ jobs:
       contents: write
       # Claude Code Action が PR にコメントを投稿するために必要
       pull-requests: write
+      # Claude Code Action が OIDC トークンを取得するために必要
+      id-token: write
     steps:
       - uses: actions/checkout@v6
         with:
