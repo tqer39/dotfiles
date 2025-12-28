@@ -299,3 +299,5 @@ $RECYCLE.BIN/
 ### Claude Code ###
 # User-specific metadata (userID, timestamps)
 .claude.json
+# Local permissions (machine-specific)
+.claude/settings.local.json
