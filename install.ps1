@@ -107,6 +107,18 @@ Examples:
 "@
 }
 
+function Show-Banner {
+    Write-Host @"
+
+        __      __  _____ __
+   ____/ /___  / /_/ __(_) /__  _____
+  / __  / __ \/ __/ /_/ / / _ \/ ___/
+ / /_/ / /_/ / /_/ __/ / /  __(__  )
+ \__,_/\____/\__/_/ /_/_/\___/____/
+
+"@ -ForegroundColor Cyan
+}
+
 # ------------------------------------------------------------------------------
 # Symlink Functions
 # ------------------------------------------------------------------------------
@@ -691,15 +703,11 @@ function Main {
     }
 
     # Header
-    Write-Host ""
-    Write-Host "==========================================" -ForegroundColor Cyan
-    Write-Host "  Dotfiles Setup Script (Windows)" -ForegroundColor Cyan
-    Write-Host "==========================================" -ForegroundColor Cyan
+    Show-Banner
     Write-Host "  Mode: $(if ($Full) { 'full' } else { 'minimal' })"
     Write-Host "  Dry run: $DryRun"
     Write-Host "  CI mode: $CI"
     Write-Host "  Work mode: $Work"
-    Write-Host "==========================================" -ForegroundColor Cyan
     Write-Host ""
 
     # Check for git
