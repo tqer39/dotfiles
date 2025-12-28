@@ -79,3 +79,5 @@ $RECYCLE.BIN/
 
 # customize
 tmp/
+
+**/.claude/settings.local.json
