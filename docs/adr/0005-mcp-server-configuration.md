@@ -54,7 +54,8 @@ VS Code と Claude Code の両方で MCP（Model Context Protocol）サーバー
 
 - `src/.vscode/mcp.json` を作成
 - `config/platform-files.conf` でシンボリックリンクを設定:
-  ```
+
+  ```text
   .vscode/mcp.json:VSCODE_USER_DIR/mcp.json:all
   ```
 

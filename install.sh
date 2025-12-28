@@ -47,6 +47,18 @@ log_success() { echo -e "${GREEN}[SUCCESS]${NC} $*"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $*" >&2; }
 log_error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
+show_banner() {
+  echo -e "${BLUE}"
+  cat << 'EOF'
+        __      __  _____ __
+   ____/ /___  / /_/ __(_) /__  _____
+  / __  / __ \/ __/ /_/ / / _ \/ ___/
+ / /_/ / /_/ / /_/ __/ / /  __(__  )
+ \__,_/\____/\__/_/ /_/_/\___/____/
+EOF
+  echo -e "${NC}"
+}
+
 # ------------------------------------------------------------------------------
 # Parse command line arguments
 # ------------------------------------------------------------------------------
@@ -277,16 +289,12 @@ main() {
   fi
 
   # Header
-  echo ""
-  echo "=========================================="
-  echo "  Dotfiles Setup Script"
-  echo "=========================================="
+  show_banner
   echo "  Mode: $INSTALL_MODE"
   echo "  OS: $(detect_os)"
   echo "  Dry run: $DRY_RUN"
   echo "  CI mode: $CI_MODE"
   echo "  Work mode: $WORK_MODE"
-  echo "=========================================="
   echo ""
 
   # Check prerequisites
