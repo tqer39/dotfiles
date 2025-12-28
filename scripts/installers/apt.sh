@@ -30,6 +30,89 @@ update_apt() {
   log_success "Package list updated"
 }
 
+# Upgrade apt packages
+upgrade_apt() {
+  log_info "Upgrading apt packages..."
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would run: sudo apt upgrade -y"
+    return 0
+  fi
+
+  sudo apt upgrade -y
+  log_success "Packages upgraded"
+}
+
+# Setup Japanese locale
+setup_japanese_locale() {
+  log_info "Setting up Japanese locale..."
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would setup ja_JP.UTF-8 locale"
+    return 0
+  fi
+
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! (
+      sudo apt install -y locales &&
+      sudo locale-gen ja_JP.UTF-8 &&
+      sudo update-locale LANG=ja_JP.UTF-8
+    ); then
+      log_warn "Failed to setup Japanese locale (CI mode, continuing)"
+      return 0
+    fi
+  else
+    sudo apt install -y locales
+    sudo locale-gen ja_JP.UTF-8
+    sudo update-locale LANG=ja_JP.UTF-8
+  fi
+
+  log_success "Japanese locale configured"
+}
+
+# Install Japanese fonts
+install_japanese_fonts() {
+  log_info "Installing Japanese fonts..."
+
+  local fonts=(
+    "fonts-noto-cjk"
+    "fonts-noto-cjk-extra"
+  )
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install: ${fonts[*]}"
+    return 0
+  fi
+
+  for font in "${fonts[@]}"; do
+    install_apt_package "$font"
+  done
+
+  log_success "Japanese fonts installed"
+}
+
+# Install Japanese input method (fcitx5-mozc)
+install_japanese_input() {
+  log_info "Installing Japanese input method (fcitx5-mozc)..."
+
+  local packages=(
+    "fcitx5"
+    "fcitx5-mozc"
+    "fcitx5-config-qt"
+  )
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install: ${packages[*]}"
+    return 0
+  fi
+
+  for pkg in "${packages[@]}"; do
+    install_apt_package "$pkg"
+  done
+
+  log_success "Japanese input method installed"
+}
+
 # Install a single apt package (idempotent)
 install_apt_package() {
   local package="$1"
@@ -68,8 +151,9 @@ install_apt_packages() {
 
   log_info "Installing packages from apt-packages.txt..."
 
-  # Update package list first
+  # Update and upgrade packages first
   update_apt
+  upgrade_apt
 
   # Read and install packages
   while IFS= read -r line || [[ -n "$line" ]]; do
@@ -83,6 +167,11 @@ install_apt_packages() {
 
     install_apt_package "$package"
   done < "$packages_file"
+
+  # Setup Japanese environment
+  setup_japanese_locale
+  install_japanese_fonts
+  install_japanese_input
 
   log_success "APT packages installed successfully"
 }
