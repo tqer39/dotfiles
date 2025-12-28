@@ -297,7 +297,7 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,powershell,terraform,homebrew,python
 
 ### Claude Code ###
-# User-specific metadata (userID, timestamps)
-.claude.json
+# User-specific metadata (userID, timestamps, cache)
+src/.claude.json
 # Local permissions (machine-specific)
 .claude/settings.local.json
