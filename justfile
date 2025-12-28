@@ -26,6 +26,10 @@ lint:
 lint-hook hook:
     @prek run {{hook}}
 
+# Clean pre-commit cache
+lint-clean:
+    @prek clean
+
 # Wrap terraform with convenient -chdir handling
 # Usage examples:
 #   just tf -chdir=dev/bootstrap init -reconfigure
