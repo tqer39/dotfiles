@@ -64,28 +64,3 @@ repos:
     hooks:
       - id: renovate-config-validator
         files: renovate\.json
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.10
-    hooks:
-      # Run the linter.
-      - id: ruff
-        name: ruff
-        description: "Run 'ruff' for extremely fast Python linting"
-        entry: ruff check --force-exclude
-        language: python
-        types_or: [python, pyi]
-        # --fix: enable lint fixes
-        args: [--fix]
-        require_serial: true
-        additional_dependencies: []
-      # Run the formatter.
-      - id: ruff-format
-        name: ruff-format
-        description: "Run 'ruff' for extremely fast Python formatting"
-        entry: ruff format --force-exclude
-        language: python
-        types_or: [python, pyi]
-        args: []
-        require_serial: true
-        additional_dependencies: []
