@@ -78,15 +78,38 @@ jobs:
             ${{ needs.prek.outputs.prek-output }}
             ```
 
-            各エラーの修正方法：
-            - end-of-file-fixer: ファイル末尾に改行を追加
-            - trailing-whitespace: 行末の空白を削除
-            - mixed-line-ending: 改行コードをLFに統一
-            - shellcheck: シェルスクリプトの問題を修正
-            - markdownlint: Markdownの問題を修正
-            - textlint: 日本語の問題を修正
-            - cspell: Unknown word エラーは cspell.json の words 配列に単語を追加（アルファベット順）
-            - ruff: Pythonのフォーマットとリントを修正
+            ## 修正手順
 
-            修正後、コミットしてください。
+            1. 上記の出力から失敗したフック（Failed と表示されているもの）を特定
+            2. エラーメッセージを確認して修正
+
+            ## 各フックの修正方法
+
+            ### cspell (スペルチェック)
+            - エラー例: `Unknown word (PIPESTATUS)`
+            - 修正: `cspell.json` の `words` 配列に単語を追加（アルファベット順で挿入）
+            - ファイルパス: `cspell.json`
+
+            ### end-of-file-fixer
+            - ファイル末尾に改行を追加
+
+            ### trailing-whitespace
+            - 行末の空白を削除
+
+            ### mixed-line-ending
+            - 改行コードをLFに統一
+
+            ### shellcheck
+            - シェルスクリプトの問題を修正
+
+            ### markdownlint
+            - Markdownの問題を修正
+
+            ### textlint
+            - 日本語の問題を修正
+
+            ### ruff
+            - Pythonのフォーマットとリントを修正
+
+            修正が完了したら、必ずコミットしてください。
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
