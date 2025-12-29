@@ -17,16 +17,32 @@ jobs:
     timeout-minutes: 10
     outputs:
       prek-failed: ${{ steps.prek.outcome == 'failure' }}
+      prek-output: ${{ steps.save-output.outputs.output }}
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
+      # prek-action でインストールのみ（キャッシュ機能を活用）
       - uses: j178/prek-action@v1
+        with:
+          install-only: true
+
+      # prek を直接実行してエラー出力をキャプチャ
+      - name: Run prek
         id: prek
         continue-on-error: true
-        with:
-          extra_args: --all-files
+        run: |
+          prek run --all-files --show-diff-on-failure --color=never 2>&1 | tee /tmp/prek-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Save prek output
+        id: save-output
+        if: steps.prek.outcome == 'failure'
+        run: |
+          echo "output<<EOF" >> "$GITHUB_OUTPUT"
+          cat /tmp/prek-output.txt | tail -200 >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Fail if prek failed on main
         if: steps.prek.outcome == 'failure' && github.event_name != 'pull_request'
@@ -54,15 +70,49 @@ jobs:
       - name: Auto-fix with Claude Code Action
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          show_full_output: true
+          claude_args: |
+            --allowedTools "Edit,Write,Bash(git:*)"
           prompt: |
-            pre-commit チェックが失敗しました。
-            以下のエラーを修正してください：
-            - end-of-file-fixer: ファイル末尾の改行
-            - trailing-whitespace: 末尾の空白
-            - mixed-line-ending: 改行コードをLFに統一
-            - shellcheck: シェルスクリプトの問題
-            - markdownlint: Markdownの問題
-            - ruff: Pythonのフォーマットとリント
+            pre-commit チェックが失敗しました。以下の出力を確認して修正してください：
 
-            修正後、コミットしてください。
+            ```
+            ${{ needs.prek.outputs.prek-output }}
+            ```
+
+            ## 修正手順
+
+            1. 上記の出力から失敗したフック（Failed と表示されているもの）を特定
+            2. エラーメッセージを確認して修正
+
+            ## 各フックの修正方法
+
+            ### cspell (スペルチェック)
+            - エラー例: `Unknown word (PIPESTATUS)`
+            - 修正: `cspell.json` の `words` 配列に単語を追加（アルファベット順で挿入）
+            - ファイルパス: `cspell.json`
+
+            ### end-of-file-fixer
+            - ファイル末尾に改行を追加
+
+            ### trailing-whitespace
+            - 行末の空白を削除
+
+            ### mixed-line-ending
+            - 改行コードをLFに統一
+
+            ### shellcheck
+            - シェルスクリプトの問題を修正
+
+            ### markdownlint
+            - Markdownの問題を修正
+
+            ### textlint
+            - 日本語の問題を修正
+
+            ### ruff
+            - Pythonのフォーマットとリントを修正
+
+            修正が完了したら、必ずコミットしてプッシュしてください。
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
