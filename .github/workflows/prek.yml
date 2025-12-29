@@ -72,6 +72,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           show_full_output: true
+          claude_args: |
+            --allowedTools "Edit,Write,Bash(git:*)"
           prompt: |
             pre-commit チェックが失敗しました。以下の出力を確認して修正してください：
 
