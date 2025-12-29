@@ -50,6 +50,7 @@ irm https://install.tqer39.dev/windows | iex
 
 - **冪等性**: 複数回実行しても安全 - 既存の正しいシンボリックリンクはスキップ
 - **クロスプラットフォーム**: macOS、Linux (Ubuntu)、Windows をサポート
+- **クローン先**: リポジトリは `~/.dotfiles` にクローンされます
 - **バックアップ**: 既存のファイルは `~/.dotfiles_backup/` にバックアップ
 - **モジュラー**: 最小限（dotfiles のみ）またはフル（開発ツール付き）を選択可能
 

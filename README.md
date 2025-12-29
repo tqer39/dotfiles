@@ -50,6 +50,7 @@ irm https://install.tqer39.dev/windows | iex
 
 - **Idempotent**: Safe to run multiple times - existing correct symlinks are skipped
 - **Cross-platform**: Supports macOS, Linux (Ubuntu), and Windows
+- **Location**: Repository is cloned to `~/.dotfiles`
 - **Backup**: Existing files are backed up to `~/.dotfiles_backup/`
 - **Modular**: Choose between minimal (dotfiles only) or full (with dev tools) installation
 
