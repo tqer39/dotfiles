@@ -27,3 +27,7 @@ window-padding-balance = true
 
 # macOS
 macos-titlebar-style = tabs
+
+# Keybindings
+# fzf 履歴検索 (cmd+r → ctrl+r)
+keybind = super+r=text:\x12
