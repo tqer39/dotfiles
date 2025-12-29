@@ -1,4 +1,4 @@
-# Dotfiles
+# ⚡ Dotfiles
 
 [🇺🇸 English](../README.md)
 
@@ -18,7 +18,7 @@
 
 このリポジトリは、自動セットアップスクリプト付きの公開用 dotfiles を含んでいます。これらの設定ファイルは、macOS、Linux (Ubuntu)、Windows 間で一貫した開発環境を維持するのに役立ちます。
 
-## クイックスタート
+## 🚀 クイックスタート
 
 ### macOS / Linux (Ubuntu)
 
@@ -46,14 +46,14 @@ irm https://install.tqer39.dev/windows | iex
 .\install.ps1 -DryRun
 ```
 
-## 特徴
+## ✨ 特徴
 
 - **冪等性**: 複数回実行しても安全 - 既存の正しいシンボリックリンクはスキップ
 - **クロスプラットフォーム**: macOS、Linux (Ubuntu)、Windows をサポート
 - **バックアップ**: 既存のファイルは `~/.dotfiles_backup/` にバックアップ
 - **モジュラー**: 最小限（dotfiles のみ）またはフル（開発ツール付き）を選択可能
 
-## コマンドラインオプション
+## ⚙️ コマンドラインオプション
 
 | オプション | 説明 |
 | --------- | ---- |
@@ -68,7 +68,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--ci` | CI モード（非対話型） |
 | `--doctor` | 環境ヘルスチェックを実行 |
 
-## リポジトリ構造
+## 📁 リポジトリ構造
 
 ```text
 dotfiles/
@@ -93,39 +93,78 @@ dotfiles/
     └── packages/           # パッケージリスト（Brewfile など）
 ```
 
-## プラットフォーム別ファイル
+## 📦 同梱ファイル
 
-一部の dotfiles は特定のプラットフォームでのみインストールされます：
+インストール時に symlink されるすべての dotfiles：
 
-| ファイル | macOS | Linux | Windows |
-| ------- | :---: | :---: | :-----: |
-| `.zshrc`, `.bashrc` | ✓ | ✓ | - |
-| `.gitconfig` | ✓ | ✓ | ✓ |
-| `.hammerspoon/` | ✓ | - | - |
-| `.config/karabiner/` | ✓ | - | - |
-| `.vscode/` | ✓ | ✓ | ✓ |
-| `.config/starship.toml` | ✓ | ✓ | - |
+### 🐚 シェル
 
-## フルインストールの内容
+| ファイル                           | インストール先                 | 説明                                       | プラットフォーム |
+| ---------------------------------- | ------------------------------ | ------------------------------------------ | ---------------- |
+| `.shell_common`                    | `~/.shell_common`              | 共通エイリアス・関数（git, ls, navigation）| 🍎 🐧            |
+| `.zshrc`                           | `~/.zshrc`                     | Zsh 設定                                   | 🍎 🐧            |
+| `.bashrc`                          | `~/.bashrc`                    | Bash 設定                                  | 🍎 🐧            |
+| `.bash_profile`                    | `~/.bash_profile`              | Bash ログインシェル設定                    | 🍎 🐧            |
+| `Microsoft.PowerShell_profile.ps1` | `~/Documents/PowerShell/...`   | PowerShell プロファイル                    | 🪟               |
+
+### 🔀 Git
+
+| ファイル             | インストール先           | 説明                                   | プラットフォーム |
+| -------------------- | ------------------------ | -------------------------------------- | ---------------- |
+| `.gitconfig`         | `~/.gitconfig`           | Git ユーザー設定、GPG 署名、エイリアス | 🍎 🐧 🪟         |
+| `.gitignore`         | `~/.gitignore_global`    | グローバル ignore パターン             | 🍎 🐧 🪟         |
+| `.config/git/ignore` | `~/.config/git/ignore`   | 追加 ignore ルール                     | 🍎 🐧 🪟         |
+
+### 🎨 ターミナル & プロンプト
+
+| ファイル                        | インストール先                       | 説明                                      | プラットフォーム |
+| ------------------------------- | ------------------------------------ | ----------------------------------------- | ---------------- |
+| `.config/starship.toml`         | `~/.config/starship.toml`            | Starship プロンプト（Tokyo Night テーマ） | 🍎 🐧            |
+| `.config/ghostty/config`        | `~/.config/ghostty/config`           | Ghostty ターミナル設定                    | 🍎 🐧            |
+| `.config/sheldon/plugins.toml`  | `~/.config/sheldon/plugins.toml`     | Zsh プラグインマネージャー                | 🍎 🐧            |
+
+### 🔧 ツール
+
+| ファイル                       | インストール先                   | 説明                                          | プラットフォーム |
+| ------------------------------ | -------------------------------- | --------------------------------------------- | ---------------- |
+| `.config/mise/config.toml`     | `~/.config/mise/config.toml`     | mise バージョン管理（Node.js, Claude Code 等）| 🍎 🐧 🪟         |
+
+### ⌨️ macOS 生産性ツール
+
+| ファイル                               | インストール先                           | 説明                   | プラットフォーム |
+| -------------------------------------- | ---------------------------------------- | ---------------------- | ---------------- |
+| `.hammerspoon/init.lua`                | `~/.hammerspoon/init.lua`                | ウィンドウ管理自動化   | 🍎               |
+| `.config/karabiner/karabiner.json`     | `~/.config/karabiner/karabiner.json`     | キーボードリマップ     | 🍎               |
+
+### 💻 VS Code
+
+| ファイル                  | インストール先                    | 説明               | プラットフォーム |
+| ------------------------- | --------------------------------- | ------------------ | ---------------- |
+| `.vscode/extensions.json` | `VSCODE_USER_DIR/extensions.json` | 推奨拡張機能       | 🍎 🐧 🪟         |
+| `.vscode/mcp.json`        | `VSCODE_USER_DIR/mcp.json`        | MCP サーバー設定   | 🍎 🐧 🪟         |
+
+> **凡例**: 🍎 macOS · 🐧 Linux · 🪟 Windows
+
+## 🔌 フルインストールの内容
 
 `--full` オプションを使用すると、以下も一緒にインストールされます：
 
-### パッケージマネージャ
+### 📦 パッケージマネージャ
 
 - **macOS/Linux**: Homebrew + `config/packages/Brewfile` のパッケージ
 - **Ubuntu**: `config/packages/apt-packages.txt` の APT パッケージ
 - **Windows**: Scoop（CLI ツール）+ winget（GUI アプリ）
 
-### 開発ツール
+### 🛠️ 開発ツール
 
 - **anyenv**: 言語ランタイム管理（pyenv、nodenv など）
 - **VS Code 拡張機能**: `src/.vscode/extensions.json` から
 
-## 必要条件
+## 📋 必要条件
 
 - **Git**: リポジトリのクローンに必要
 - **curl** (Unix) または **PowerShell 5.1+** (Windows)
 
-## ライセンス
+## 📄 ライセンス
 
 このプロジェクトは MIT ライセンスの下で公開されています。詳細は [LICENSE](../LICENSE) ファイルを参照してください。
