@@ -66,6 +66,7 @@ jobs:
       - name: Auto-fix with Claude Code Action
         uses: anthropics/claude-code-action@v1
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           prompt: |
             pre-commit チェックが失敗しました。以下のログを確認して修正してください：
 
