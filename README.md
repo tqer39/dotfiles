@@ -1,4 +1,4 @@
-# Dotfiles
+# ⚡ Dotfiles
 
 [🇯🇵 日本語版](docs/README.ja.md)
 
@@ -18,7 +18,7 @@
 
 This repository contains my public dotfiles with an automated setup script. These configuration files help maintain a consistent development environment across macOS, Linux (Ubuntu), and Windows.
 
-## Quick Start
+## 🚀 Quick Start
 
 ### macOS / Linux (Ubuntu)
 
@@ -46,14 +46,15 @@ irm https://install.tqer39.dev/windows | iex
 .\install.ps1 -DryRun
 ```
 
-## Features
+## ✨ Features
 
 - **Idempotent**: Safe to run multiple times - existing correct symlinks are skipped
 - **Cross-platform**: Supports macOS, Linux (Ubuntu), and Windows
+- **Location**: Repository is cloned to `~/.dotfiles`
 - **Backup**: Existing files are backed up to `~/.dotfiles_backup/`
 - **Modular**: Choose between minimal (dotfiles only) or full (with dev tools) installation
 
-## Command Line Options
+## ⚙️ Command Line Options
 
 | Option | Description |
 | ------ | ----------- |
@@ -68,7 +69,7 @@ irm https://install.tqer39.dev/windows | iex
 | `--ci` | CI mode (non-interactive) |
 | `--doctor` | Run environment health check |
 
-## Repository Structure
+## 📁 Repository Structure
 
 ```text
 dotfiles/
@@ -93,41 +94,79 @@ dotfiles/
     └── packages/           # Package lists (Brewfile, etc.)
 ```
 
-## Platform-Specific Files
+## 📦 What's Inside
 
-Some dotfiles are only installed on specific platforms:
+All dotfiles that get symlinked during installation:
 
-| File | macOS | Linux | Windows |
-| ---- | :---: | :---: | :-----: |
-| `.shell_common`, `.zshrc`, `.bashrc` | ✓ | ✓ | - |
-| `.gitconfig` | ✓ | ✓ | ✓ |
-| `.hammerspoon/` | ✓ | - | - |
-| `.config/karabiner/` | ✓ | - | - |
-| `.vscode/` | ✓ | ✓ | ✓ |
-| `.claude.json` | ✓ | ✓ | ✓ |
-| `.config/starship.toml` | ✓ | ✓ | - |
+### 🐚 Shell
 
-## Full Installation Includes
+| File                               | Destination                       | Description                                      | Platform  |
+| ---------------------------------- | --------------------------------- | ------------------------------------------------ | --------- |
+| `.shell_common`                    | `~/.shell_common`                 | Shared aliases & functions (git, ls, navigation) | 🍎 🐧     |
+| `.zshrc`                           | `~/.zshrc`                        | Zsh configuration                                | 🍎 🐧     |
+| `.bashrc`                          | `~/.bashrc`                       | Bash configuration                               | 🍎 🐧     |
+| `.bash_profile`                    | `~/.bash_profile`                 | Bash login shell config                          | 🍎 🐧     |
+| `Microsoft.PowerShell_profile.ps1` | `~/Documents/PowerShell/...`      | PowerShell profile                               | 🪟        |
+
+### 🔀 Git
+
+| File                  | Destination              | Description                           | Platform  |
+| --------------------- | ------------------------ | ------------------------------------- | --------- |
+| `.gitconfig`          | `~/.gitconfig`           | Git user config, GPG signing, aliases | 🍎 🐧 🪟  |
+| `.gitignore`          | `~/.gitignore_global`    | Global ignore patterns                | 🍎 🐧 🪟  |
+| `.config/git/ignore`  | `~/.config/git/ignore`   | Additional ignore rules               | 🍎 🐧 🪟  |
+
+### 🎨 Terminal & Prompt
+
+| File                            | Destination                          | Description                          | Platform  |
+| ------------------------------- | ------------------------------------ | ------------------------------------ | --------- |
+| `.config/starship.toml`         | `~/.config/starship.toml`            | Starship prompt (Tokyo Night theme)  | 🍎 🐧     |
+| `.config/ghostty/config`        | `~/.config/ghostty/config`           | Ghostty terminal config              | 🍎 🐧     |
+| `.config/sheldon/plugins.toml`  | `~/.config/sheldon/plugins.toml`     | Zsh plugin manager                   | 🍎 🐧     |
+
+### 🔧 Tools
+
+| File                        | Destination                      | Description                                      | Platform  |
+| --------------------------- | -------------------------------- | ------------------------------------------------ | --------- |
+| `.config/mise/config.toml`  | `~/.config/mise/config.toml`     | mise version manager (Node.js, Claude Code, etc.)| 🍎 🐧 🪟  |
+
+### ⌨️ macOS Productivity
+
+| File                                | Destination                              | Description                 | Platform  |
+| ----------------------------------- | ---------------------------------------- | --------------------------- | --------- |
+| `.hammerspoon/init.lua`             | `~/.hammerspoon/init.lua`                | Window management automation| 🍎        |
+| `.config/karabiner/karabiner.json`  | `~/.config/karabiner/karabiner.json`     | Keyboard remapping          | 🍎        |
+
+### 💻 VS Code
+
+| File                     | Destination                       | Description            | Platform  |
+| ------------------------ | --------------------------------- | ---------------------- | --------- |
+| `.vscode/extensions.json`| `VSCODE_USER_DIR/extensions.json` | Recommended extensions | 🍎 🐧 🪟  |
+| `.vscode/mcp.json`       | `VSCODE_USER_DIR/mcp.json`        | MCP server config      | 🍎 🐧 🪟  |
+
+> **Legend**: 🍎 macOS · 🐧 Linux · 🪟 Windows
+
+## 🔌 Full Installation Includes
 
 When using `--full`, the following will also be installed:
 
-### Package Managers
+### 📦 Package Managers
 
 - **macOS/Linux**: Homebrew + packages from `config/packages/Brewfile`
 - **Ubuntu**: APT packages from `config/packages/apt-packages.txt`
 - **Windows**: Scoop (CLI tools) + winget (GUI apps)
 
-### Development Tools
+### 🛠️ Development Tools
 
 - **anyenv**: For managing language runtimes (pyenv, nodenv, etc.)
 - **VS Code Extensions**: From `src/.vscode/extensions.json`
 
-## Requirements
+## 📋 Requirements
 
 - **Git**: Required for cloning the repository
 - **curl** (Unix) or **PowerShell 5.1+** (Windows)
 
-## Development
+## 🧑‍💻 Development
 
 This repository uses tools that require macOS or Linux:
 
@@ -138,6 +177,6 @@ This repository uses tools that require macOS or Linux:
 
 Windows is supported for **using** dotfiles, but **developing** this repository requires macOS or Linux.
 
-## License
+## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
