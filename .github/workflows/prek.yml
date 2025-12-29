@@ -17,6 +17,7 @@ jobs:
     timeout-minutes: 10
     outputs:
       prek-failed: ${{ steps.prek.outcome == 'failure' }}
+      prek-log: ${{ steps.save-log.outputs.log }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -27,6 +28,17 @@ jobs:
         continue-on-error: true
         with:
           extra_args: --all-files
+
+      - name: Save prek log
+        id: save-log
+        if: steps.prek.outcome == 'failure'
+        run: |
+          log=$(cat ~/.cache/prek/prek.log 2>/dev/null | tail -100 || echo "No log available")
+          # GitHub outputs の制限対策（改行をエスケープ）
+          log="${log//'%'/'%25'}"
+          log="${log//$'\n'/'%0A'}"
+          log="${log//$'\r'/'%0D'}"
+          echo "log=$log" >> "$GITHUB_OUTPUT"
 
       - name: Fail if prek failed on main
         if: steps.prek.outcome == 'failure' && github.event_name != 'pull_request'
@@ -55,14 +67,21 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           prompt: |
-            pre-commit チェックが失敗しました。
-            以下のエラーを修正してください：
-            - end-of-file-fixer: ファイル末尾の改行
-            - trailing-whitespace: 末尾の空白
+            pre-commit チェックが失敗しました。以下のログを確認して修正してください：
+
+            ```
+            ${{ needs.prek.outputs.prek-log }}
+            ```
+
+            各エラーの修正方法：
+            - end-of-file-fixer: ファイル末尾に改行を追加
+            - trailing-whitespace: 行末の空白を削除
             - mixed-line-ending: 改行コードをLFに統一
-            - shellcheck: シェルスクリプトの問題
-            - markdownlint: Markdownの問題
-            - ruff: Pythonのフォーマットとリント
+            - shellcheck: シェルスクリプトの問題を修正
+            - markdownlint: Markdownの問題を修正
+            - textlint: 日本語の問題を修正
+            - cspell: Unknown word エラーは cspell.json の words 配列に単語を追加（アルファベット順）
+            - ruff: Pythonのフォーマットとリントを修正
 
             修正後、コミットしてください。
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
