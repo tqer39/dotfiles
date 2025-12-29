@@ -114,5 +114,5 @@ jobs:
             ### ruff
             - Pythonのフォーマットとリントを修正
 
-            修正が完了したら、必ずコミットしてください。
+            修正が完了したら、必ずコミットしてプッシュしてください。
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
