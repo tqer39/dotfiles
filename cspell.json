@@ -109,6 +109,7 @@
     "OPENAI",
     "pcra",
     "pipefail",
+    "PIPESTATUS",
     "pmset",
     "Powerpack",
     "prek",
