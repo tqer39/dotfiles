@@ -2,7 +2,7 @@
 add_newline = true
 
 # モジュールの表示順序
-format = """(bg:#A6A6A6 fg:#57686B)\
+format = """\
         $time\
         $memory_usage\
         $username\
@@ -49,26 +49,26 @@ format = """(bg:#A6A6A6 fg:#57686B)\
     """
 
 [username]
-style_user = "white bold"
-style_root = "black bold"
+style_user = "bold #7aa2f7"
+style_root = "bold #f7768e"
 format = "user: [$user]($style) "
 disabled = false
 
 [time]
 disabled = false
-# style = "bg:#b4bbc8 fg:#111111"
-style = "bold #f57800"
+style = "bold #7dcfff"
 use_12hr = false
 time_format = "%H:%M"
 utc_time_offset = "local"
-format = "[🕒(bg:#b4bbc8 fg:#A6A6A6) $time (bg:#A6A6A6 fg:#b4bbc8)]($style)"
+format = "[🕒 $time]($style) "
 
 [directory]
 truncation_length = 5
+style = "#73daca"
 format = "[$path]($style)[$lock_symbol]($lock_style) "
 truncate_to_repo = true
 read_only = "🔒"
-read_only_style = "bold white"
+read_only_style = "bold #f7768e"
 
 [directory.substitutions]
 "~/Documents" = ""
@@ -89,12 +89,13 @@ disabled = true
 
 # コマンドの成功時と失敗時時で行頭を変える
 [character]
-success_symbol = "[▶](bold green)"
-error_symbol = "[▶](bold red)"
+success_symbol = "[▶](bold #9ece6a)"
+error_symbol = "[▶](bold #f7768e)"
 
 # 3,000ミリ秒（= 3秒）を超えるコマンド期間を表示
 [cmd_duration]
 min_time = 3_000
+style = "#e0af68"
 format = "took [$duration]($style)"
 
 # バッテリー残量が20％以下の場合にのみ表示
@@ -106,12 +107,12 @@ full_symbol = "🤗"
 # バッテリー残量が0％から20％の場合に表示
 [[battery.display]]
 threshold = 20
-style = "bold red"
+style = "bold #f7768e"
 
 # バッテリー残量が20％から30％の場合に表示
 [[battery.display]]
 threshold = 30
-style = "bold yellow"
+style = "bold #e0af68"
 discharging_symbol = "💦"
 
 # Gitのステータス表示用アイコン
@@ -128,4 +129,4 @@ renamed = "🏷"
 deleted = "🗑"
 
 [docker_context]
-format = "via [🐋 $context](blue bold)"
+format = "via [🐋 $context](bold #7aa2f7)"
