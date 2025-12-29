@@ -15,54 +15,11 @@ jobs:
   prek:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    outputs:
-      prek-failed: ${{ steps.prek.outcome == 'failure' }}
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref }}
 
       - uses: j178/prek-action@v1
-        id: prek
-        continue-on-error: true
         with:
           extra_args: --all-files
-
-      - name: Fail if prek failed on main
-        if: steps.prek.outcome == 'failure' && github.event_name != 'pull_request'
-        run: exit 1
-
-  autofix:
-    needs: prek
-    if: needs.prek.outputs.prek-failed == 'true' && github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    # 手動承認が必要（無限ループ防止）
-    environment: claude-autofix
-    permissions:
-      # Claude Code Action がファイルを修正してコミットするために必要
-      contents: write
-      # Claude Code Action が PR にコメントを投稿するために必要
-      pull-requests: write
-      # Claude Code Action が OIDC トークンを取得するために必要
-      id-token: write
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Auto-fix with Claude Code Action
-        uses: anthropics/claude-code-action@v1
-        with:
-          prompt: |
-            pre-commit チェックが失敗しました。
-            以下のエラーを修正してください：
-            - end-of-file-fixer: ファイル末尾の改行
-            - trailing-whitespace: 末尾の空白
-            - mixed-line-ending: 改行コードをLFに統一
-            - shellcheck: シェルスクリプトの問題
-            - markdownlint: Markdownの問題
-            - ruff: Pythonのフォーマットとリント
-
-            修正後、コミットしてください。
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
