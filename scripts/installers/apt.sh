@@ -437,6 +437,43 @@ install_ghostty() {
   log_success "Ghostty terminal installed"
 }
 
+# Install Zed editor
+install_zed() {
+  log_info "Installing Zed editor..."
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "Zed installation via script is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v zed &>/dev/null; then
+    log_debug "Zed is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Zed"
+    return 0
+  fi
+
+  log_info "Installing Zed via official install script..."
+
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! curl -f https://zed.dev/install.sh | sh; then
+      log_warn "Failed to install Zed (CI mode, continuing)"
+      return 0
+    fi
+  else
+    curl -f https://zed.dev/install.sh | sh
+  fi
+
+  log_success "Zed editor installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages

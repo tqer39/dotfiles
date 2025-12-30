@@ -1,0 +1,15 @@
+{
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+  "auto_update": true,
+  "buffer_font_family": "HackGen Console NF",
+  "buffer_font_size": 14,
+  "ui_font_family": "HackGen Console NF",
+  "ui_font_size": 14,
+  "theme": "One Dark",
+  "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "tab_size": 2
+}
