@@ -54,6 +54,7 @@ if OS.mac?
 
   # Development
   cask "visual-studio-code"
+  cask "zed"
 
   # Productivity
   cask "1password"

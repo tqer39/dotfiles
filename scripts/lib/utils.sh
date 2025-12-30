@@ -73,6 +73,23 @@ get_vscode_user_dir() {
   esac
 }
 
+# Get Zed user settings directory
+get_zed_user_dir() {
+  local os
+  os=$(detect_os)
+  case "$os" in
+    macos|ubuntu|linux)
+      echo "${HOME}/.config/zed"
+      ;;
+    windows)
+      echo "${APPDATA}/Zed"
+      ;;
+    *)
+      echo "${HOME}/.config/zed"
+      ;;
+  esac
+}
+
 # Check if a platform is supported for a given file
 # Usage: is_platform_supported "macos,linux" -> returns 0 if current OS matches
 is_platform_supported() {
@@ -103,7 +120,7 @@ is_platform_supported() {
 }
 
 # Expand path variables
-# Supports: ~, VSCODE_USER_DIR
+# Supports: ~, VSCODE_USER_DIR, ZED_USER_DIR
 expand_path() {
   local path="$1"
 
@@ -115,6 +132,13 @@ expand_path() {
     local vscode_dir
     vscode_dir=$(get_vscode_user_dir)
     path="${path/VSCODE_USER_DIR/$vscode_dir}"
+  fi
+
+  # Expand ZED_USER_DIR
+  if [[ "$path" == *"ZED_USER_DIR"* ]]; then
+    local zed_dir
+    zed_dir=$(get_zed_user_dir)
+    path="${path/ZED_USER_DIR/$zed_dir}"
   fi
 
   echo "$path"
