@@ -5,7 +5,7 @@ locals {
   organization = local.config.project.organization
   repository   = local.config.project.repository
 
-  install_redirect_url = "https://raw.githubusercontent.com/${local.organization}/${local.repository}/main/install.sh"
+  github_raw_base_url = "https://raw.githubusercontent.com/${local.organization}/${local.repository}/main"
 }
 
 module "cloudflare" {
@@ -37,7 +37,25 @@ module "workers" {
       content = <<-JS
         export default {
           async fetch(request) {
-            return Response.redirect("${local.install_redirect_url}", 302);
+            const url = new URL(request.url);
+            const path = url.pathname;
+
+            let targetUrl;
+            if (path === '/windows' || path === '/windows/') {
+              targetUrl = '${local.github_raw_base_url}/install.ps1';
+            } else {
+              targetUrl = '${local.github_raw_base_url}/install.sh';
+            }
+
+            const response = await fetch(targetUrl);
+            const body = await response.text();
+
+            return new Response(body, {
+              headers: {
+                'Content-Type': 'text/plain; charset=utf-8',
+                'Cache-Control': 'public, max-age=300',
+              },
+            });
           }
         }
       JS
