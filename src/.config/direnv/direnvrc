@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# mise integration
-# https://mise.jdx.dev/direnv.html
-# shellcheck disable=SC1090
-source "$(mise direnv activate)"
+
+use_mise() {
+  direnv_load mise direnv exec
+}
