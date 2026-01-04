@@ -39,6 +39,7 @@
     "difftool",
     "dircolors",
     "direnv",
+    "direnvrc",
     "disablesleep",
     "donotpresent",
     "dpkg",
