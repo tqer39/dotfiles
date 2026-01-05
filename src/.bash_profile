@@ -61,7 +61,6 @@ eval "$(anyenv init -)"
 # shellcheck source=/dev/null
 . "$HOME/.cargo/env"
 
-# Rancher Desktop
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/home/tqer39/.rd/bin:$PATH"
+export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

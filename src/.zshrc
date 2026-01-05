@@ -1,6 +1,36 @@
 #!/bin/bash
 
 # ------------------------------------------------------------------------------
+# Mode detection (personal / work)
+# ------------------------------------------------------------------------------
+if [ -z "${DOTFILES_MODE:-}" ]; then
+  DOTFILES_MODE="personal"
+fi
+
+if [ "$#" -gt 0 ]; then
+  typeset -a _dotfiles_args=()
+  for _arg in "$@"; do
+    if [ "$_arg" = "--work" ]; then
+      DOTFILES_MODE="work"
+    else
+      _dotfiles_args+=("$_arg")
+    fi
+  done
+  set -- "${_dotfiles_args[@]}"
+  unset _arg _dotfiles_args
+fi
+export DOTFILES_MODE
+
+# ------------------------------------------------------------------------------
+# Git config selection
+# ------------------------------------------------------------------------------
+if [ "$DOTFILES_MODE" = "work" ]; then
+  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig.work"
+else
+  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig"
+fi
+
+# ------------------------------------------------------------------------------
 # sheldon (plugin manager)
 # ------------------------------------------------------------------------------
 eval "$(sheldon source)"
@@ -42,7 +72,13 @@ if command -v fzf &> /dev/null; then
 fi
 
 # mise
-if command -v mise &> /dev/null; then
+if [ "$DOTFILES_MODE" = "work" ]; then
+  export MISE_CONFIG_FILE="$HOME/.config/mise/config.work.toml"
+else
+  export MISE_CONFIG_FILE="$HOME/.config/mise/config.personal.toml"
+fi
+if [ "$DOTFILES_MODE" != "work" ] && command -v mise &> /dev/null; then
+  # npm 警告を避けるには一度 `mise install node` を実行しておく
   eval "$(mise activate zsh)"
 fi
 
@@ -55,3 +91,7 @@ fi
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/takeru_ooyama/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

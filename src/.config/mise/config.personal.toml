@@ -1,0 +1,14 @@
+# ------------------------------------------------------------------------------
+# mise global configuration (personal)
+# ------------------------------------------------------------------------------
+# Selected when DOTFILES_MODE is not "work".
+# ------------------------------------------------------------------------------
+
+[tools]
+# Language Runtimes
+node = "24"
+
+# AI CLI Tools
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@google/gemini-cli" = "latest"
+"npm:@openai/codex" = "latest"
