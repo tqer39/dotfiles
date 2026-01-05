@@ -25,10 +25,10 @@ repos:
       - id: cspell
 
   # see: https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.47.0
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.17.2
     hooks:
-      - id: markdownlint
+      - id: markdownlint-cli2
 
   - repo: local
     hooks:
