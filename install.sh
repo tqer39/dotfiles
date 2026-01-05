@@ -357,6 +357,19 @@ main() {
     install_dotfiles
   fi
 
+  # Trust mise config files after symlinks are created
+  if command -v mise &>/dev/null; then
+    log_info "Trusting mise config files..."
+    if [[ "$DRY_RUN" == "true" ]]; then
+      log_info "[DRY-RUN] Would trust mise config files"
+    else
+      mise trust ~/.config/mise/config.toml 2>/dev/null || true
+      mise trust ~/.config/mise/config.personal.toml 2>/dev/null || true
+      mise trust ~/.config/mise/config.work.toml 2>/dev/null || true
+      mise trust ~/.dotfiles 2>/dev/null || true
+    fi
+  fi
+
   # Full installation mode
   if [[ "$INSTALL_MODE" == "full" ]]; then
     # Step 2: Install packages
