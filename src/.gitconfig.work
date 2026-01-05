@@ -1,0 +1,11 @@
+[user]
+	name = tqer39
+	email = tqer39@gmail.com
+[core]
+	editor = code --wait
+[push]
+	default = simple
+	autoSetupRemote = true
+[commit]
+	gpgsign = false
+

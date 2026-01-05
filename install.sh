@@ -284,6 +284,13 @@ main() {
   export VERBOSE
   export CI_MODE
   export WORK_MODE
+  if [[ "$WORK_MODE" == "true" ]]; then
+    export DOTFILES_MODE="work"
+    export GIT_CONFIG_GLOBAL="${GIT_CONFIG_GLOBAL:-${HOME}/.gitconfig.work}"
+  else
+    export DOTFILES_MODE="${DOTFILES_MODE:-personal}"
+    export GIT_CONFIG_GLOBAL="${GIT_CONFIG_GLOBAL:-${HOME}/.gitconfig}"
+  fi
   if [[ "$VERBOSE" == "true" ]]; then
     export LOG_LEVEL="DEBUG"
   fi

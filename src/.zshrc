@@ -27,7 +27,7 @@ export DOTFILES_MODE
 if [ "$DOTFILES_MODE" = "work" ]; then
   export GIT_CONFIG_GLOBAL="$HOME/.gitconfig.work"
 else
-  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig.personal"
+  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig"
 fi
 
 # ------------------------------------------------------------------------------
