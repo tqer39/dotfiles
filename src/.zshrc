@@ -31,9 +31,20 @@ else
 fi
 
 # ------------------------------------------------------------------------------
+# Homebrew (must be before sheldon and other brew-installed tools)
+# ------------------------------------------------------------------------------
+if [[ "$(uname)" = "Linux" ]]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [[ "$(uname)" = "Darwin" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# ------------------------------------------------------------------------------
 # sheldon (plugin manager)
 # ------------------------------------------------------------------------------
-eval "$(sheldon source)"
+if command -v sheldon &> /dev/null; then
+  eval "$(sheldon source)"
+fi
 
 # ------------------------------------------------------------------------------
 # History
