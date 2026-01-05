@@ -1,0 +1,9 @@
+# ------------------------------------------------------------------------------
+# mise configuration for work mode
+# ------------------------------------------------------------------------------
+# Minimal tool set to avoid npm-based plugins during company setup.
+# Add company-approved tools here if needed.
+# ------------------------------------------------------------------------------
+
+[tools]
+

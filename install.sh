@@ -287,9 +287,11 @@ main() {
   if [[ "$WORK_MODE" == "true" ]]; then
     export DOTFILES_MODE="work"
     export GIT_CONFIG_GLOBAL="${GIT_CONFIG_GLOBAL:-${HOME}/.gitconfig.work}"
+    export MISE_CONFIG_FILE="${MISE_CONFIG_FILE:-${HOME}/.config/mise/config.work.toml}"
   else
     export DOTFILES_MODE="${DOTFILES_MODE:-personal}"
     export GIT_CONFIG_GLOBAL="${GIT_CONFIG_GLOBAL:-${HOME}/.gitconfig}"
+    export MISE_CONFIG_FILE="${MISE_CONFIG_FILE:-${HOME}/.config/mise/config.personal.toml}"
   fi
   if [[ "$VERBOSE" == "true" ]]; then
     export LOG_LEVEL="DEBUG"
