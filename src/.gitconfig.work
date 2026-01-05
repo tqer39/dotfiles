@@ -8,4 +8,3 @@
 	autoSetupRemote = true
 [commit]
 	gpgsign = false
-
