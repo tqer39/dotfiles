@@ -1,0 +1,8 @@
+# ------------------------------------------------------------------------------
+# .zprofile.work - Work mode configuration
+# ------------------------------------------------------------------------------
+# This file is sourced by ~/.zprofile when in work mode.
+# It sets DOTFILES_MODE before .zshrc is loaded.
+# ------------------------------------------------------------------------------
+
+export DOTFILES_MODE="work"
