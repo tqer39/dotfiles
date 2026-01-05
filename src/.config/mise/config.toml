@@ -1,15 +1,11 @@
 # ------------------------------------------------------------------------------
-# mise global configuration
+# mise global configuration dispatcher
 # ------------------------------------------------------------------------------
-# This file is symlinked to ~/.config/mise/config.toml
-# Run `mise install` to install all tools
+# Mode-specific configs:
+# - Personal: ~/.config/mise/config.personal.toml
+# - Work    : ~/.config/mise/config.work.toml
+# DOTFILES_MODE and MISE_CONFIG_FILE choose which one to use.
+# This file intentionally keeps no tool definitions.
 # ------------------------------------------------------------------------------
 
 [tools]
-# Language Runtimes
-node = "24"
-
-# AI CLI Tools
-"npm:@anthropic-ai/claude-code" = "latest"
-"npm:@google/gemini-cli" = "latest"
-"npm:@openai/codex" = "latest"
