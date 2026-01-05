@@ -91,3 +91,7 @@ fi
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/takeru_ooyama/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

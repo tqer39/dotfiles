@@ -113,3 +113,7 @@ fi
 if command -v starship &> /dev/null; then
   eval "$(starship init bash)"
 fi
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="$HOME/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
