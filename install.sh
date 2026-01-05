@@ -370,6 +370,22 @@ main() {
     fi
   fi
 
+  # Create symlink for work profile (after other symlinks are created)
+  if [[ "$WORK_MODE" == "true" ]]; then
+    local zprofile_src="${DOTFILES_DIR}/src/.zprofile.work"
+    local zprofile_dest="$HOME/.zprofile"
+    if [[ "$DRY_RUN" == "true" ]]; then
+      log_info "[DRY-RUN] Would symlink ~/.zprofile -> .zprofile.work"
+    else
+      if [[ -e "$zprofile_dest" && ! -L "$zprofile_dest" ]]; then
+        log_info "Backing up existing ~/.zprofile..."
+        mv "$zprofile_dest" "${BACKUP_DIR}/.zprofile"
+      fi
+      log_info "Creating symlink ~/.zprofile -> .zprofile.work..."
+      ln -sf "$zprofile_src" "$zprofile_dest"
+    fi
+  fi
+
   # Full installation mode
   if [[ "$INSTALL_MODE" == "full" ]]; then
     # Step 2: Install packages
