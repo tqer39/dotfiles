@@ -4,6 +4,9 @@
 # Theme
 theme = tokyonight
 
+# Custom palette overrides (improve readability)
+palette = 8=#8a92b5
+
 # Font
 font-family = "BIZ UDGothic Bold"
 font-size = 17
