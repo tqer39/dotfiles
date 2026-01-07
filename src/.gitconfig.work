@@ -8,3 +8,5 @@
 	autoSetupRemote = true
 [commit]
 	gpgsign = false
+[alias]
+	new-feature-branch = "!f() { \\\n  TITLE=\"$1\"; \\\n  DATE=$(date +%y%m%d); \\\n  git checkout main && \\\n  git fetch origin -p && \\\n  git reset --hard origin/main && \\\n  HASH=$(git rev-parse --short=6 HEAD) && \\\n  git checkout -b \"${TITLE}-${DATE}-${HASH}\" ; \\\n}; f"
