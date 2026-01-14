@@ -463,6 +463,39 @@ function Install-PowerShellModules {
     }
 }
 
+function Install-NpmPackages {
+    Write-Info "Installing npm global packages..."
+
+    # Check if npm is available (via mise)
+    if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+        Write-Warn "npm not found. Please install Node.js via mise first."
+        return
+    }
+
+    $npmPackages = @(
+        "vercel"
+    )
+
+    foreach ($package in $npmPackages) {
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would install npm package: $package"
+        } else {
+            Write-Info "Installing npm package: $package"
+            try {
+                npm install -g $package
+            } catch {
+                if ($CI) {
+                    Write-Warn "Failed to install npm package $package (CI mode, continuing): $_"
+                } else {
+                    throw
+                }
+            }
+        }
+    }
+
+    Write-Success "npm packages installed"
+}
+
 function Install-WingetPackages {
     if (-not (Get-Command winget -ErrorAction SilentlyContinue)) {
         Write-Warn "winget is not installed. Skipping winget package installation."
@@ -745,6 +778,8 @@ function Main {
             Install-WingetPackages
             # Install PowerShell modules (PSFzf, etc.)
             Install-PowerShellModules
+            # Install npm global packages (vercel, etc.)
+            Install-NpmPackages
         }
         Install-VSCodeExtensions
     }
