@@ -56,6 +56,9 @@ if OS.mac?
   cask "visual-studio-code"
   cask "zed"
 
+  # AI
+  cask "claude"  # Claude Desktop (includes Cowork)
+
   # Productivity
   cask "1password"
   cask "raycast"
