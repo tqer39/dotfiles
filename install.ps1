@@ -509,7 +509,8 @@ function Install-WingetPackages {
         "Microsoft.VisualStudioCode",
         "Raycast.Raycast",
         "AgileBits.1Password",
-        "Amazon.AWSCLI"
+        "Amazon.AWSCLI",
+        "Spotify.Spotify"
     )
 
     foreach ($package in $packages) {
