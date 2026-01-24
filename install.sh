@@ -408,6 +408,7 @@ main() {
           install_1password
           install_vscode
           install_ghostty
+          install_spotify
         fi
       fi
     else

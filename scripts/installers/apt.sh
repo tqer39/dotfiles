@@ -474,6 +474,46 @@ install_zed() {
   log_success "Zed editor installed"
 }
 
+# Install Spotify
+install_spotify() {
+  log_info "Installing Spotify..."
+
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "Spotify snap installation is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  if command -v spotify &>/dev/null; then
+    log_debug "Spotify is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Spotify"
+    return 0
+  fi
+
+  if ! command -v snap &>/dev/null; then
+    log_warn "Snap is not available. Skipping Spotify installation."
+    return 0
+  fi
+
+  log_info "Installing Spotify via Snap..."
+
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! sudo snap install spotify; then
+      log_warn "Failed to install Spotify (CI mode, continuing)"
+      return 0
+    fi
+  else
+    sudo snap install spotify
+  fi
+
+  log_success "Spotify installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages
