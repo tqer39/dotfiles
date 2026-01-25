@@ -509,9 +509,13 @@ function Install-WingetPackages {
         "Microsoft.VisualStudioCode",
         "Raycast.Raycast",
         "AgileBits.1Password",
-        "Amazon.AWSCLI",
-        "Spotify.Spotify"
+        "Amazon.AWSCLI"
     )
+
+    # Personal packages (skip in work mode)
+    if (-not $Work) {
+        $packages += "Spotify.Spotify"
+    }
 
     foreach ($package in $packages) {
         if ($DryRun) {

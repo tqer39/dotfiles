@@ -69,7 +69,6 @@ if OS.mac?
 
   # Media
   cask "vlc"
-  cask "spotify"
 
   # Other
   cask "rancher"
@@ -80,6 +79,7 @@ end
 # ------------------------------------------------------------------------------
 if OS.mac? && ENV['WORK_MODE'] != 'true'
   cask "orbstack"  # Docker/VM alternative
+  cask "spotify"
 end
 
 # ------------------------------------------------------------------------------

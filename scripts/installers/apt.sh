@@ -478,6 +478,12 @@ install_zed() {
 install_spotify() {
   log_info "Installing Spotify..."
 
+  # Skip in work mode
+  if [[ "${WORK_MODE:-false}" == "true" ]]; then
+    log_info "Skipping Spotify installation in work mode"
+    return 0
+  fi
+
   local os
   os=$(detect_os)
   if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
