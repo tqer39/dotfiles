@@ -1,14 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
-  "files": [
-    "**",
-    ".*/**"
-  ],
-  "ignorePaths": [
-    ".git",
-    ".gitignore",
-    ".claude"
-  ],
+  "files": ["**", ".*/**"],
+  "ignorePaths": [".git", ".gitignore", ".claude"],
   "words": [
     "aahl",
     "albert",
@@ -32,6 +25,7 @@
     "codezombiech",
     "codex",
     "Consolas",
+    "Cowork",
     "dearmor",
     "debugpy",
     "debsig",
@@ -156,6 +150,7 @@
     "USERPROFILE",
     "usernamehw",
     "vdir",
+    "vercel",
     "winget",
     "worktree",
     "worktrees",
