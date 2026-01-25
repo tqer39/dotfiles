@@ -50,12 +50,11 @@ repos:
     hooks:
       - id: shellcheck
 
-  - repo: local
+  - repo: https://github.com/biomejs/pre-commit
+    rev: v0.6.0
     hooks:
       - id: biome-check
-        name: Format JSON files with Biome
-        entry: biome check --write --files-ignore-unknown=true --no-errors-on-unmatched
-        language: system
+        additional_dependencies: ['@biomejs/biome@1.9.4']
         types: [json]
 
   - repo: https://github.com/pre-commit/mirrors-prettier
