@@ -21,7 +21,7 @@ concurrency:
 
 env:
   WORKING_DIRECTORY: infra/terraform/envs/prod/dns
-  TF_VERSION: "1.14.3"
+  TF_VERSION: '1.14.3'
   AWS_REGION: ap-northeast-1
 
 jobs:

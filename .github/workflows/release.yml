@@ -4,16 +4,16 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version (e.g., 1.0.0, 1.2.3)"
+        description: 'Release version (e.g., 1.0.0, 1.2.3)'
         required: true
         type: string
       prerelease:
-        description: "Mark as pre-release"
+        description: 'Mark as pre-release'
         required: false
         type: boolean
         default: false
       draft:
-        description: "Create as draft"
+        description: 'Create as draft'
         required: false
         type: boolean
         default: false

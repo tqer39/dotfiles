@@ -1,3 +1,4 @@
 [tools]
 terraform = "1.14.3"
 trivy = "0.68.2"
+biome = "2.3.11"
