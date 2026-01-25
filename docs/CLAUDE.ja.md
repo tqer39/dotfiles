@@ -42,6 +42,19 @@ just tf -chdir=prod/bootstrap apply
 
 - `.vscode/settings.json` を**作成しない** - VS Code の設定はこのリポジトリで管理しない
 
+## コンテキスト最適化
+
+### 優先ディレクトリ（最初に読む）
+
+- `scripts/` - コアシェルスクリプト
+- `config/` - プラットフォーム設定
+- `src/` - Dotfile ソース
+
+### 低優先度（遅延読み込み）
+
+- `infra/terraform/` - インフラタスクの場合のみ
+- `docs/adr/` - アーキテクチャ決定時のみ
+
 ## ドキュメント
 
 - [docs/local-dev.ja.md](local-dev.ja.md) - 開発環境セットアップ

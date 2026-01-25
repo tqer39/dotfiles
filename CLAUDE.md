@@ -42,6 +42,19 @@ just tf -chdir=prod/bootstrap apply
 
 - **Do NOT create** `.vscode/settings.json` - VS Code settings are not managed in this repository
 
+## Context Optimization
+
+### Priority Directories (Read First)
+
+- `scripts/` - Core shell scripts
+- `config/` - Platform configuration
+- `src/` - Dotfile sources
+
+### Low Priority (Lazy Load)
+
+- `infra/terraform/` - Only for infrastructure tasks
+- `docs/adr/` - Only when making architectural decisions
+
 ## Documentation
 
 - [docs/local-dev.md](docs/local-dev.md) - 開発環境セットアップ
