@@ -437,6 +437,12 @@ function Install-ScoopPackages {
 function Install-PowerShellModules {
     Write-Info "Installing PowerShell modules..."
 
+    # Ensure NuGet provider is installed (required for Install-Module)
+    if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge [version]"2.8.5.201" })) {
+        Write-Info "Installing NuGet provider..."
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+    }
+
     # PSFzf for fzf integration
     if (Get-Command fzf -ErrorAction SilentlyContinue) {
         if (-not (Get-Module -ListAvailable -Name PSFzf)) {
