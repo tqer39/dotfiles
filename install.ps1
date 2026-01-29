@@ -504,6 +504,10 @@ function Install-WingetPackages {
 
     Write-Info "Installing packages with winget..."
 
+    # Set encoding to UTF-8 for proper winget output handling
+    $originalOutputEncoding = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
     # Packages that are better installed via winget (GUI apps, etc.)
     $packages = @(
         "Microsoft.VisualStudioCode",
@@ -547,6 +551,9 @@ function Install-WingetPackages {
             }
         }
     }
+
+    # Restore original encoding
+    [Console]::OutputEncoding = $originalOutputEncoding
 
     Write-Success "winget packages installed"
 }
