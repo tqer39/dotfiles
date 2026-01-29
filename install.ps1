@@ -525,7 +525,15 @@ function Install-WingetPackages {
             try {
                 $result = winget install --id $package --accept-source-agreements --accept-package-agreements --silent 2>&1
                 if ($LASTEXITCODE -ne 0) {
-                    throw "winget exited with code $LASTEXITCODE"
+                    $exitCodeHex = ('0x{0:X8}' -f [uint32]$LASTEXITCODE)
+                    $nonFatalExitCodes = @(
+                        '0x8A15002B' # Winget sometimes returns this for transient/unavailable installer states.
+                    )
+                    if ($nonFatalExitCodes -contains $exitCodeHex) {
+                        Write-Warn "winget returned $exitCodeHex for $package. Output: $result"
+                        continue
+                    }
+                    throw "winget exited with code $LASTEXITCODE ($exitCodeHex)"
                 }
             } catch {
                 if ($CI) {
