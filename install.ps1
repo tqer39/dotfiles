@@ -525,7 +525,9 @@ function Install-WingetPackages {
             try {
                 $result = winget install --id $package --accept-source-agreements --accept-package-agreements --silent 2>&1
                 if ($LASTEXITCODE -ne 0) {
-                    $exitCodeHex = ('0x{0:X8}' -f [uint32]($LASTEXITCODE -band 0xFFFFFFFF))
+                    # Convert signed int32 to unsigned hex representation
+                    $exitCodeUnsigned = [uint32]([System.BitConverter]::ToUInt32([System.BitConverter]::GetBytes([int32]$LASTEXITCODE), 0))
+                    $exitCodeHex = ('0x{0:X8}' -f $exitCodeUnsigned)
                     $nonFatalExitCodes = @(
                         '0x8A15002B' # Winget sometimes returns this for transient/unavailable installer states.
                     )
