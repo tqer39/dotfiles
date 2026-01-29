@@ -42,6 +42,9 @@ irm https://install.tqer39.dev/windows | iex
 # Full install
 .\install.ps1 -Full
 
+# If PowerShell's execution policy blocks the script, use:
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
+
 # Preview changes
 .\install.ps1 -DryRun
 ```

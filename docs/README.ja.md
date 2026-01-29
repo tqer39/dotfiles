@@ -42,6 +42,9 @@ irm https://install.tqer39.dev/windows | iex
 # フルインストール
 .\install.ps1 -Full
 
+# 実行ポリシーでブロックされる場合は次を使用:
+powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
+
 # 変更内容をプレビュー
 .\install.ps1 -DryRun
 ```
