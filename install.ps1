@@ -515,9 +515,9 @@ function Install-WingetPackages {
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
     # Packages that are better installed via winget (GUI apps, etc.)
+    # Note: Raycast is macOS-only, so it's not included here
     $packages = @(
         "Microsoft.VisualStudioCode",
-        "Raycast.Raycast",
         "AgileBits.1Password",
         "Amazon.AWSCLI"
     )
