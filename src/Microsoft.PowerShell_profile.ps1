@@ -4,6 +4,10 @@
 
 # mise (tool version manager) - must be activated early
 if (Get-Command mise -ErrorAction SilentlyContinue) {
+    # Suppress chpwd warning for PowerShell 5.x (Windows PowerShell)
+    if ($PSVersionTable.PSVersion.Major -lt 7) {
+        $env:MISE_PWSH_CHPWD_WARNING = 0
+    }
     (& mise activate pwsh) | Out-String | Invoke-Expression
 }
 
