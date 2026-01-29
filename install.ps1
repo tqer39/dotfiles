@@ -431,6 +431,12 @@ function Install-ScoopPackages {
         }
     }
 
+    # Cleanup old versions to save disk space
+    if (-not $DryRun) {
+        Write-Info "Cleaning up old package versions..."
+        scoop cleanup -a 2>$null
+    }
+
     Write-Success "Scoop packages installed"
 }
 
