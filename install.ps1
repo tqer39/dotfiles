@@ -827,6 +827,15 @@ function Main {
     Write-Host "  Setup Complete!" -ForegroundColor Green
     Write-Host "==========================================" -ForegroundColor Green
     Write-Host ""
+
+    # Manual installation notes
+    if ($Full -and -not $SkipPackages) {
+        Write-Host "Manual Installation Required:" -ForegroundColor Yellow
+        Write-Host "  - Spotify: https://www.spotify.com/download/" -ForegroundColor Yellow
+        Write-Host "  - Raycast (Windows beta): https://www.raycast.com/windows" -ForegroundColor Yellow
+        Write-Host ""
+    }
+
     Write-Info "Please restart your PowerShell session."
 
     # Explicitly exit with success code to ensure $LASTEXITCODE from native commands doesn't affect script exit
