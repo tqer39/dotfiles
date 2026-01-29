@@ -534,7 +534,8 @@ function Install-WingetPackages {
                     $exitCodeHex = ('0x{0:X8}' -f $exitCodeUnsigned)
                     $nonFatalExitCodes = @(
                         '0x8A15002B', # Package already installed, no update available
-                        '0x8A150014'  # Package not found / not available on this platform
+                        '0x8A150014', # Package not found / not available on this platform
+                        '0x8A150006'  # Download error (transient network issue)
                     )
                     if ($nonFatalExitCodes -contains $exitCodeHex) {
                         Write-Warn "winget returned $exitCodeHex for $package. Output: $result"
