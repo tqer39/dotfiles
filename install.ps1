@@ -435,6 +435,12 @@ function Install-ScoopPackages {
         }
     }
 
+    # Cleanup old versions to save disk space
+    if (-not $DryRun) {
+        Write-Info "Cleaning up old package versions..."
+        scoop cleanup -a 2>$null
+    }
+
     Write-Success "Scoop packages installed"
 }
 
@@ -520,9 +526,9 @@ function Install-WingetPackages {
     [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
     # Packages that are better installed via winget (GUI apps, etc.)
+    # Note: Raycast is macOS-only, so it's not included here
     $packages = @(
         "Microsoft.VisualStudioCode",
-        "Raycast.Raycast",
         "AgileBits.1Password",
         "Amazon.AWSCLI"
     )
@@ -825,6 +831,16 @@ function Main {
     Write-Host "  Setup Complete!" -ForegroundColor Green
     Write-Host "==========================================" -ForegroundColor Green
     Write-Host ""
+
+    # Manual installation notes
+    if ($Full -and -not $SkipPackages) {
+        Write-Host "Manual Installation Required:" -ForegroundColor Yellow
+        Write-Host "  - Spotify: https://www.spotify.com/download/" -ForegroundColor Yellow
+        Write-Host "  - Raycast (Windows beta): https://www.raycast.com/windows" -ForegroundColor Yellow
+        Write-Host "  - HackGen font: https://github.com/yuru7/HackGen/releases" -ForegroundColor Yellow
+        Write-Host ""
+    }
+
     Write-Info "Please restart your PowerShell session."
 
     # Explicitly exit with success code to ensure $LASTEXITCODE from native commands doesn't affect script exit
