@@ -399,13 +399,15 @@ function Install-ScoopPackages {
     }
 
     # Scoop packages (prefer these over winget)
+    # Note: HackGen-NF is not available in scoop, use Hack-NF instead
+    # or install HackGen manually from https://github.com/yuru7/HackGen
     $packages = @(
         "git",
         "gh",
         "starship",
         "mise",
         "fzf",
-        "HackGen-NF",
+        "Hack-NF",
         "aws-vault",
         "ripgrep",
         "mobaxterm",
@@ -833,6 +835,7 @@ function Main {
         Write-Host "Manual Installation Required:" -ForegroundColor Yellow
         Write-Host "  - Spotify: https://www.spotify.com/download/" -ForegroundColor Yellow
         Write-Host "  - Raycast (Windows beta): https://www.raycast.com/windows" -ForegroundColor Yellow
+        Write-Host "  - HackGen font: https://github.com/yuru7/HackGen/releases" -ForegroundColor Yellow
         Write-Host ""
     }
 
