@@ -413,7 +413,9 @@ function Install-ScoopPackages {
         "mobaxterm",
         "eza",
         "bat",
-        "jq"
+        "jq",
+        "claude-code",
+        "codex"
     )
 
     foreach ($package in $packages) {
@@ -435,6 +437,8 @@ function Install-ScoopPackages {
 
     # Cleanup old versions to save disk space
     if (-not $DryRun) {
+        Write-Info "Updating installed packages..."
+        scoop update *
         Write-Info "Cleaning up old package versions..."
         scoop cleanup -a 2>$null
     }
@@ -487,7 +491,8 @@ function Install-NpmPackages {
     }
 
     $npmPackages = @(
-        "vercel"
+        "vercel",
+        "@google/gemini-cli"
     )
 
     foreach ($package in $npmPackages) {
