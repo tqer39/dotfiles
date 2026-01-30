@@ -398,6 +398,24 @@ function Install-ScoopPackages {
         scoop bucket add nerd-fonts 2>$null
     }
 
+    # Stop running applications that may interfere with installation/update
+    # This prevents errors like "resource is currently in use"
+    $appsToStop = @(
+        @{ Name = "PowerToys"; ProcessNames = @("PowerToys", "PowerToys.Settings", "PowerToys.Awake", "PowerToys.ColorPickerUI", "PowerToys.FancyZones", "PowerToys.KeyboardManagerEngine", "PowerToys.Launcher", "PowerToys.MouseUtils", "PowerToys.Peek", "PowerToys.PowerLauncher") }
+    )
+
+    if (-not $DryRun) {
+        foreach ($app in $appsToStop) {
+            foreach ($procName in $app.ProcessNames) {
+                $procs = Get-Process -Name $procName -ErrorAction SilentlyContinue
+                if ($procs) {
+                    Write-Info "Stopping $($app.Name) processes for installation/update..."
+                    $procs | Stop-Process -Force -ErrorAction SilentlyContinue
+                }
+            }
+        }
+    }
+
     # Scoop packages (prefer these over winget)
     # Note: HackGen-NF is not available in scoop, use Hack-NF instead
     # or install HackGen manually from https://github.com/yuru7/HackGen
