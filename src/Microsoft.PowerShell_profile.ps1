@@ -2,6 +2,15 @@
 # PowerShell Profile
 # ------------------------------------------------------------------------------
 
+# mise (tool version manager) - must be activated early
+if (Get-Command mise -ErrorAction SilentlyContinue) {
+    # Suppress chpwd warning for PowerShell 5.x (Windows PowerShell)
+    if ($PSVersionTable.PSVersion.Major -lt 7) {
+        $env:MISE_PWSH_CHPWD_WARNING = 0
+    }
+    (& mise activate pwsh) | Out-String | Invoke-Expression
+}
+
 # Starship prompt
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     Invoke-Expression (&starship init powershell)
@@ -24,4 +33,24 @@ if (Get-Command fzf -ErrorAction SilentlyContinue) {
             }
         }
     }
+}
+
+# ------------------------------------------------------------------------------
+# Aliases
+# ------------------------------------------------------------------------------
+
+# Unix-like commands
+function which($command) { Get-Command $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Definition }
+
+# eza (modern ls replacement)
+if (Get-Command eza -ErrorAction SilentlyContinue) {
+    function ll { eza -la --icons --git @args }
+    function la { eza -a --icons @args }
+    function lt { eza --tree --icons @args }
+    Set-Alias -Name ls -Value eza -Option AllScope
+}
+
+# bat (modern cat replacement)
+if (Get-Command bat -ErrorAction SilentlyContinue) {
+    Set-Alias -Name cat -Value bat -Option AllScope
 }
