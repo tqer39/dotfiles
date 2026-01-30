@@ -399,19 +399,23 @@ function Install-ScoopPackages {
     }
 
     # Scoop packages (prefer these over winget)
+    # Note: HackGen-NF is not available in scoop, use Hack-NF instead
+    # or install HackGen manually from https://github.com/yuru7/HackGen
     $packages = @(
         "git",
         "gh",
         "starship",
         "mise",
         "fzf",
-        "HackGen-NF",
+        "Hack-NF",
         "aws-vault",
         "ripgrep",
         "mobaxterm",
         "eza",
         "bat",
-        "jq"
+        "jq",
+        "claude-code",
+        "codex"
     )
 
     foreach ($package in $packages) {
@@ -479,7 +483,8 @@ function Install-NpmPackages {
     }
 
     $npmPackages = @(
-        "vercel"
+        "vercel",
+        "@google/gemini-cli"
     )
 
     foreach ($package in $npmPackages) {
