@@ -524,6 +524,12 @@ install_spotify() {
 install_docker() {
   log_info "Installing Docker..."
 
+  # Skip in work mode
+  if [[ "${WORK_MODE:-false}" == "true" ]]; then
+    log_info "Skipping Docker installation in work mode"
+    return 0
+  fi
+
   # Check if running on Ubuntu/Debian
   local os
   os=$(detect_os)
