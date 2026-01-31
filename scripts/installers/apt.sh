@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC1091
 
 # ------------------------------------------------------------------------------
 # apt.sh - APT package installer for Ubuntu/Debian
