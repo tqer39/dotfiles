@@ -80,9 +80,11 @@ jobs:
 
   # ------------------------------------------------------------------------------
   # Full Install Tests (packages + runtimes)
+  # Runs only on main branch (after merge) to reduce CI time for PRs
   # ------------------------------------------------------------------------------
   test-unix-full:
     name: Full - ${{ matrix.os }}
+    if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -211,9 +213,11 @@ jobs:
 
   # ------------------------------------------------------------------------------
   # Windows Full Tests
+  # Runs only on main branch (after merge) to reduce CI time for PRs
   # ------------------------------------------------------------------------------
   test-windows-full:
     name: Full - Windows
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
