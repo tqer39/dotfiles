@@ -367,6 +367,7 @@ main() {
       mise trust ~/.config/mise/config.personal.toml 2>/dev/null || true
       mise trust ~/.config/mise/config.work.toml 2>/dev/null || true
       mise trust ~/.dotfiles 2>/dev/null || true
+      mise trust ~/.dotfiles/mise.toml 2>/dev/null || true
     fi
   fi
 
@@ -409,6 +410,7 @@ main() {
           install_vscode
           install_ghostty
           install_spotify
+          install_docker
         fi
       fi
     else

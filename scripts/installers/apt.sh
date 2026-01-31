@@ -520,6 +520,94 @@ install_spotify() {
   log_success "Spotify installed"
 }
 
+# Install Docker (container runtime for Linux, equivalent to OrbStack on macOS)
+install_docker() {
+  log_info "Installing Docker..."
+
+  # Skip in work mode
+  if [[ "${WORK_MODE:-false}" == "true" ]]; then
+    log_info "Skipping Docker installation in work mode"
+    return 0
+  fi
+
+  # Check if running on Ubuntu/Debian
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
+    log_warn "Docker apt installation is only available on Ubuntu/Debian. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v docker &>/dev/null; then
+    log_debug "Docker is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Docker"
+    return 0
+  fi
+
+  log_info "Adding Docker repository..."
+
+  # In CI mode, continue even if Docker installation fails
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    if ! (
+      # Remove old versions if present
+      sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true &&
+      # Install prerequisites
+      sudo apt-get update &&
+      sudo apt-get install -y ca-certificates curl gnupg &&
+      # Add Docker's official GPG key
+      sudo install -m 0755 -d /etc/apt/keyrings &&
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
+      sudo chmod a+r /etc/apt/keyrings/docker.gpg &&
+      # Add Docker repository
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null &&
+      # Install Docker
+      sudo apt-get update &&
+      sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    ); then
+      log_warn "Failed to install Docker (CI mode, continuing)"
+      return 0
+    fi
+  else
+    # Remove old versions if present
+    sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
+
+    # Install prerequisites
+    sudo apt-get update
+    sudo apt-get install -y ca-certificates curl gnupg
+
+    # Add Docker's official GPG key
+    sudo install -m 0755 -d /etc/apt/keyrings
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+    sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+    # Add Docker repository
+    echo \
+      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    # Install Docker
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+    # Add current user to docker group (to run docker without sudo)
+    if [[ -n "${USER:-}" ]]; then
+      sudo usermod -aG docker "$USER"
+      log_info "Added $USER to docker group. Please log out and back in for this to take effect."
+    fi
+  fi
+
+  log_success "Docker installed"
+}
+
 # Run if executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   install_apt_packages
