@@ -367,6 +367,7 @@ main() {
       mise trust ~/.config/mise/config.personal.toml 2>/dev/null || true
       mise trust ~/.config/mise/config.work.toml 2>/dev/null || true
       mise trust ~/.dotfiles 2>/dev/null || true
+      mise trust ~/.dotfiles/mise.toml 2>/dev/null || true
     fi
   fi
 
