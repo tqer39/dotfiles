@@ -409,6 +409,7 @@ main() {
           install_vscode
           install_ghostty
           install_spotify
+          install_docker
         fi
       fi
     else
