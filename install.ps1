@@ -404,7 +404,7 @@ function Install-ScoopPackages {
     # Stop running applications that may interfere with installation/update
     # This prevents errors like "resource is currently in use"
     $appsToStop = @(
-        @{ Name = "PowerToys"; ProcessNames = @("PowerToys", "PowerToys.Settings", "PowerToys.Awake", "PowerToys.ColorPickerUI", "PowerToys.FancyZones", "PowerToys.KeyboardManagerEngine", "PowerToys.Launcher", "PowerToys.MouseUtils", "PowerToys.Peek", "PowerToys.PowerLauncher") }
+        @{ Name = "PowerToys"; ProcessNames = @("PowerToys", "PowerToys.Settings", "PowerToys.Awake", "PowerToys.ColorPickerUI", "PowerToys.FancyZones", "PowerToys.KeyboardManagerEngine", "PowerToys.Launcher", "PowerToys.MouseUtils", "PowerToys.Peek", "PowerToys.PowerLauncher", "Microsoft.CommandPalette") }
     )
 
     if (-not $DryRun) {
