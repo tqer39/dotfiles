@@ -198,11 +198,14 @@ function Update-Repository {
             Write-Warn "Local changes detected in $DotfilesDir"
             Write-Warn "Stashing local changes before pulling..."
             $stashName = "Auto-stash by install.ps1 $(Get-Date -Format 'yyyyMMdd_HHmmss')"
-            git stash push -m $stashName
+            git stash push -m $stashName 2>$null
+            if ($LASTEXITCODE -ne 0) {
+                throw "git stash failed with exit code $LASTEXITCODE"
+            }
             Write-Info "Your changes have been stashed. Run 'git -C $DotfilesDir stash pop' to restore."
         }
 
-        git pull --quiet
+        git pull --quiet 2>$null
         if ($LASTEXITCODE -ne 0) {
             throw "git pull failed with exit code $LASTEXITCODE"
         }
