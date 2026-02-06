@@ -401,23 +401,11 @@ function Install-ScoopPackages {
         scoop bucket add nerd-fonts 2>$null
     }
 
-    # Stop running applications that may interfere with installation/update
-    # This prevents errors like "resource is currently in use"
-    $appsToStop = @(
+    # Applications that may interfere with scoop update
+    # If these are running, skip `scoop update *` to avoid installation errors
+    $appsToCheck = @(
         @{ Name = "PowerToys"; ProcessNames = @("PowerToys", "PowerToys.Settings", "PowerToys.Awake", "PowerToys.ColorPickerUI", "PowerToys.FancyZones", "PowerToys.KeyboardManagerEngine", "PowerToys.Launcher", "PowerToys.MouseUtils", "PowerToys.Peek", "PowerToys.PowerLauncher", "Microsoft.CommandPalette") }
     )
-
-    if (-not $DryRun) {
-        foreach ($app in $appsToStop) {
-            foreach ($procName in $app.ProcessNames) {
-                $procs = Get-Process -Name $procName -ErrorAction SilentlyContinue
-                if ($procs) {
-                    Write-Info "Stopping $($app.Name) processes for installation/update..."
-                    $procs | Stop-Process -Force -ErrorAction SilentlyContinue
-                }
-            }
-        }
-    }
 
     # Scoop packages (prefer these over winget)
     # Note: HackGen-NF is not available in scoop, use Hack-NF instead
@@ -456,10 +444,27 @@ function Install-ScoopPackages {
         }
     }
 
-    # Cleanup old versions to save disk space
+    # Update and cleanup old versions to save disk space
     if (-not $DryRun) {
-        Write-Info "Updating installed packages..."
-        scoop update *
+        # Check if any apps that interfere with updates are running
+        $runningApps = @()
+        foreach ($app in $appsToCheck) {
+            foreach ($procName in $app.ProcessNames) {
+                if (Get-Process -Name $procName -ErrorAction SilentlyContinue) {
+                    $runningApps += $app.Name
+                    break
+                }
+            }
+        }
+
+        if ($runningApps.Count -gt 0) {
+            $runningAppsList = ($runningApps | Sort-Object -Unique) -join ", "
+            Write-Warn "Skipping 'scoop update *' because the following apps are running: $runningAppsList"
+            Write-Warn "Close these apps and run 'scoop update *' manually to update all packages."
+        } else {
+            Write-Info "Updating installed packages..."
+            scoop update *
+        }
         Write-Info "Cleaning up old package versions..."
         scoop cleanup -a 2>$null
     }
