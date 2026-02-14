@@ -1,15 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
-  "files": [
-    "**",
-    ".*/**"
-  ],
-  "ignorePaths": [
-    ".git",
-    ".gitignore",
-    ".claude",
-    "**/.terraform.lock.hcl"
-  ],
+  "files": ["**", ".*/**"],
+  "ignorePaths": [".git", ".gitignore", ".claude", "**/.terraform.lock.hcl"],
   "words": [
     "aahl",
     "albert",
