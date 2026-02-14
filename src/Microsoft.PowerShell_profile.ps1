@@ -66,7 +66,43 @@ if (Get-Command git -ErrorAction SilentlyContinue) {
     function gs { git status @args }
     function gsw { git switch @args }
     function gl { git log --oneline -20 @args }
-    function gnf { git new-feature-branch @args }
+    function gnf {
+        param(
+            [Parameter(Position = 0)]
+            [string]$Title
+        )
+
+        $aliasCommand = git config --get alias.new-feature-branch 2>$null
+        if ($LASTEXITCODE -eq 0 -and -not [string]::IsNullOrWhiteSpace($aliasCommand)) {
+            git new-feature-branch @args
+            return
+        }
+
+        if ([string]::IsNullOrWhiteSpace($Title)) {
+            Write-Error "Usage: gnf <title>"
+            return
+        }
+
+        $date = Get-Date -Format "yyMMdd"
+
+        git checkout main
+        if ($LASTEXITCODE -ne 0) { return }
+
+        git fetch origin -p
+        if ($LASTEXITCODE -ne 0) { return }
+
+        git reset --hard origin/main
+        if ($LASTEXITCODE -ne 0) { return }
+
+        $hash = (git rev-parse --short=6 HEAD 2>$null).Trim()
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($hash)) {
+            Write-Error "Failed to resolve commit hash for branch name"
+            return
+        }
+
+        $branchName = "$Title-$date-$hash"
+        git checkout -b $branchName
+    }
 
     function gclean {
         param(
