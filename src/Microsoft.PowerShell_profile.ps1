@@ -54,3 +54,46 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
 if (Get-Command bat -ErrorAction SilentlyContinue) {
     Set-Alias -Name cat -Value bat -Option AllScope
 }
+
+# Git aliases (aligned with src/.shell_common)
+if (Get-Command git -ErrorAction SilentlyContinue) {
+    function g { git @args }
+    function ga { git add @args }
+    function gc { git commit @args }
+    function gd { git diff @args }
+    function gpl { git pull @args }
+    function gps { git push @args }
+    function gs { git status @args }
+    function gsw { git switch @args }
+    function gl { git log --oneline -20 @args }
+    function gnf { git new-feature-branch @args }
+
+    function gclean {
+        param(
+            [switch]$f,
+            [switch]$force
+        )
+
+        $useForce = $f -or $force
+        git fetch -p | Out-Null
+        $branches = git branch -vv | Select-String ': gone\]' | ForEach-Object {
+            ($_.Line -split '\s+')[0]
+        } | Where-Object { $_ }
+
+        if (-not $branches) {
+            Write-Host "No stale branches to clean up."
+            return
+        }
+
+        Write-Host "Deleting stale branches:"
+        $branches | ForEach-Object { Write-Host $_ }
+
+        foreach ($branch in $branches) {
+            if ($useForce) {
+                git branch -D $branch | Out-Null
+            } else {
+                git branch -d $branch | Out-Null
+            }
+        }
+    }
+}
