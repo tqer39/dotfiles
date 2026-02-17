@@ -41,7 +41,7 @@ install_homebrew() {
   os=$(detect_os)
   if [[ "$os" == "macos" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-  elif [[ "$os" == "ubuntu" ]] || [[ "$os" == "linux" ]]; then
+  elif [[ "$os" == "ubuntu" ]] || [[ "$os" == "mint" ]] || [[ "$os" == "linux" ]]; then
     eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   fi
 

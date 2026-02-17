@@ -7,7 +7,7 @@ Claude Code 向けのガイダンス。
 ## Repository Purpose
 
 dotfiles リポジトリ。symlink でファイルをインストール。
-macOS, Linux (Ubuntu), Windows をサポート。
+macOS, Linux (Ubuntu, Linux Mint), Windows をサポート。
 
 ## Commands
 

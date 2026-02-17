@@ -6,8 +6,8 @@ This document describes tool availability and alternatives across macOS, Linux, 
 
 ## CLI Tools
 
-| Tool | macOS | Linux | Windows | Notes |
-| ---- | :---: | :---: | :-----: | ----- |
+| Tool | macOS | Ubuntu/Mint | Windows | Notes |
+| ---- | :---: | :---------: | :-----: | ----- |
 | zsh | Brew | Brew/apt | N/A | Windows uses PowerShell |
 | starship | Brew | Brew | Scoop | Cross-platform prompt |
 | git | Brew | Brew/apt | Scoop | |
@@ -23,12 +23,14 @@ This document describes tool availability and alternatives across macOS, Linux, 
 
 ## GUI Applications
 
-| Application | macOS | Linux | Windows | Notes |
-| ----------- | :---: | :---: | :-----: | ----- |
-| VS Code | Cask | apt | winget | |
-| 1Password | Cask | apt | winget | |
-| Raycast | Cask | N/A | winget | Launcher |
-| VLC | Cask | apt | N/A | Media player |
+| Application | macOS | Ubuntu | Mint | Windows | Notes |
+| ----------- | :---: | :----: | :--: | :-----: | ----- |
+| VS Code | Cask | apt | apt | winget | |
+| 1Password | Cask | apt | apt | winget | |
+| Raycast | Cask | N/A | N/A | winget | Launcher |
+| VLC | Cask | apt | apt | N/A | Media player |
+| Ghostty | Cask | snap | flatpak | N/A | Terminal emulator |
+| Spotify | Cask | snap | flatpak | N/A | Music player |
 
 ## macOS Only (No Alternatives)
 
@@ -42,20 +44,22 @@ These tools have no equivalent on other platforms:
 
 ## Platform-Specific Alternatives
 
-| Feature | macOS | Linux | Windows |
-| ------- | ----- | ----- | ------- |
+| Feature | macOS | Ubuntu/Mint | Windows |
+| ------- | ----- | ----------- | ------- |
 | Launcher | Raycast | Albert | Raycast |
-| Terminal | Ghostty | Ghostty | MobaXterm |
+| Terminal | Ghostty | Ghostty (snap/flatpak) | MobaXterm |
 | Clipboard CLI | pbcopy/pbpaste | xsel/xclip | clip.exe |
 | Keyboard remap | Karabiner | N/A | N/A |
 | Window management | Hammerspoon | N/A | N/A |
 
 ## Package Managers
 
-| Platform | Primary | Secondary |
-| -------- | ------- | --------- |
-| macOS | Homebrew | - |
-| Linux | Homebrew | apt |
-| Windows | Scoop | winget |
+| Platform | Primary | Secondary | Notes |
+| -------- | ------- | --------- | ----- |
+| macOS | Homebrew | - | |
+| Ubuntu | Homebrew | apt | snap for GUI apps |
+| Mint | Homebrew | apt | flatpak for GUI apps (snap disabled by default) |
+| Windows | Scoop | winget | |
 
 Windows uses Scoop for CLI tools (user-space, no admin required) and winget for GUI applications.
+Mint uses flatpak instead of snap for GUI applications (Ghostty, Spotify) as snap is disabled by default.
