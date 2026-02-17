@@ -149,6 +149,68 @@ jobs:
           fi
 
   # ------------------------------------------------------------------------------
+  # Server Mode Tests (Ubuntu Server without GUI)
+  # Runs only on main branch (after merge) to reduce CI time for PRs
+  # ------------------------------------------------------------------------------
+  test-unix-server:
+    name: Server - ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      DOTFILES_DIR: ${{ github.workspace }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Cache APT packages
+        uses: actions/cache@v5
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-server-${{ hashFiles('config/packages/apt-packages.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-server-
+
+      - name: Test server mode install
+        run: |
+          echo "=== Testing server mode install ==="
+          bash install.sh --full --server --ci
+        timeout-minutes: 30
+
+      - name: Verify GUI apps are NOT installed
+        run: |
+          echo "=== Verifying GUI apps are skipped ==="
+          errors=0
+          for cmd in albert 1password ghostty spotify; do
+            if command -v "$cmd" &>/dev/null; then
+              echo "ERROR: $cmd should not be installed in server mode"
+              errors=$((errors + 1))
+            else
+              echo "OK: $cmd is not installed (expected)"
+            fi
+          done
+          if command -v code &>/dev/null; then
+            echo "ERROR: VS Code should not be installed in server mode"
+            errors=$((errors + 1))
+          else
+            echo "OK: VS Code is not installed (expected)"
+          fi
+          if [ "$errors" -gt 0 ]; then
+            echo "FAIL: $errors GUI app(s) were installed in server mode"
+            exit 1
+          fi
+
+      - name: Verify CLI tools installed
+        run: |
+          echo "=== Verifying CLI tools ==="
+          command -v starship && starship --version || echo "starship not found"
+          command -v gh && gh --version || echo "gh not found"
+          command -v eza && eza --version || echo "eza not found"
+          command -v bat && bat --version || echo "bat not found"
+          command -v fzf && fzf --version || echo "fzf not found"
+          command -v rg && rg --version || echo "ripgrep not found"
+
+  # ------------------------------------------------------------------------------
   # Windows Minimal Tests
   # ------------------------------------------------------------------------------
   test-windows-minimal:
