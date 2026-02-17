@@ -13,12 +13,12 @@ Ghostty の公式ドキュメントを参照しながら、設定ファイルを
 設定修正時には WebFetch で参照すること：
 
 | カテゴリ | URL |
-|---------|-----|
-| 設定概要 | https://ghostty.org/docs/config |
-| オプションリファレンス | https://ghostty.org/docs/config/reference |
-| キーバインディング | https://ghostty.org/docs/config/keybind |
-| トリガーシーケンス | https://ghostty.org/docs/config/keybind/sequence |
-| アクションリファレンス | https://ghostty.org/docs/config/keybind/reference |
+| --------- | ----- |
+| 設定概要 | <https://ghostty.org/docs/config> |
+| オプションリファレンス | <https://ghostty.org/docs/config/reference> |
+| キーバインディング | <https://ghostty.org/docs/config/keybind> |
+| トリガーシーケンス | <https://ghostty.org/docs/config/keybind/sequence> |
+| アクションリファレンス | <https://ghostty.org/docs/config/keybind/reference> |
 
 ## 設定ファイル
 
