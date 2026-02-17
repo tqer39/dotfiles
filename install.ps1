@@ -605,6 +605,51 @@ function Install-WingetPackages {
     Write-Success "winget packages installed"
 }
 
+function Setup-Tailscale {
+    Write-Info "Setting up Tailscale..."
+
+    if (Get-Command tailscale -ErrorAction SilentlyContinue) {
+        Write-Info "Tailscale is already installed"
+    } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
+        if ($DryRun) {
+            Write-Info "[DRY-RUN] Would install: Tailscale.Tailscale"
+        } else {
+            Write-Info "Installing: Tailscale.Tailscale"
+            try {
+                winget install --id Tailscale.Tailscale --accept-source-agreements --accept-package-agreements --silent 2>$null | Out-Null
+            } catch {
+                if ($CI) {
+                    Write-Warn "Failed to install Tailscale (CI mode, continuing): $_"
+                    return
+                } else {
+                    throw
+                }
+            }
+        }
+    } else {
+        Write-Warn "winget is not installed. Skipping Tailscale installation."
+        return
+    }
+
+    if (-not (Get-Command tailscale -ErrorAction SilentlyContinue)) {
+        Write-Warn "tailscale command not found after install. Please run Tailscale manually."
+        return
+    }
+
+    if ($DryRun) {
+        Write-Info "[DRY-RUN] Would run: tailscale up"
+    } elseif ($CI) {
+        Write-Info "Skipping 'tailscale up' in CI mode"
+    } else {
+        Write-Info "Running 'tailscale up' (interactive login may be required)..."
+        try {
+            tailscale up
+        } catch {
+            Write-Warn "tailscale up failed. Run 'tailscale up' manually: $_"
+        }
+    }
+}
+
 function Install-VSCodeExtensions {
     $codePath = Get-Command code -ErrorAction SilentlyContinue
     if (-not $codePath) {
@@ -846,6 +891,8 @@ function Main {
             Install-ScoopPackages
             # Install remaining packages via winget (GUI apps)
             Install-WingetPackages
+            # Install and initialize Tailscale
+            Setup-Tailscale
             # Install PowerShell modules (PSFzf, etc.)
             Install-PowerShellModules
             # Install npm global packages (vercel, etc.)

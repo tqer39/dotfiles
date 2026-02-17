@@ -203,6 +203,60 @@ check_prerequisites() {
 }
 
 # ------------------------------------------------------------------------------
+# Tailscale setup
+# ------------------------------------------------------------------------------
+setup_tailscale() {
+  local os
+  os=$(detect_os)
+
+  log_info "Setting up Tailscale..."
+
+  if command -v tailscale >/dev/null 2>&1; then
+    log_info "Tailscale is already installed"
+  else
+    case "$os" in
+      macos)
+        if command -v brew >/dev/null 2>&1; then
+          if [[ "$DRY_RUN" == "true" ]]; then
+            log_info "[DRY-RUN] Would run: brew install --cask tailscale"
+          else
+            brew install --cask tailscale
+          fi
+        else
+          log_warn "Homebrew not found. Skipping Tailscale install on macOS."
+          return
+        fi
+        ;;
+      ubuntu)
+        if [[ "$DRY_RUN" == "true" ]]; then
+          log_info "[DRY-RUN] Would run Tailscale official install script"
+        else
+          curl -fsSL https://tailscale.com/install.sh | sh
+        fi
+        ;;
+      *)
+        log_warn "Unsupported OS for automatic Tailscale installation: $os"
+        return
+        ;;
+    esac
+  fi
+
+  if ! command -v tailscale >/dev/null 2>&1; then
+    log_warn "tailscale command not found after install. Skipping bring-up step."
+    return
+  fi
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    log_info "[DRY-RUN] Would run: sudo tailscale up"
+  elif [[ "$CI_MODE" == "true" ]]; then
+    log_info "Skipping 'tailscale up' in CI mode"
+  else
+    log_info "Bringing up Tailscale (browser-based login may be required)..."
+    sudo tailscale up || log_warn "tailscale up failed. Run 'sudo tailscale up' manually."
+  fi
+}
+
+# ------------------------------------------------------------------------------
 # Clone or update dotfiles repository
 # ------------------------------------------------------------------------------
 setup_repository() {
@@ -413,6 +467,7 @@ main() {
           install_docker
         fi
       fi
+      setup_tailscale
     else
       log_info "Step 2: Skipping packages (--skip-packages)"
     fi
