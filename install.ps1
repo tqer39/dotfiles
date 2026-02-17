@@ -606,28 +606,6 @@ function Install-WingetPackages {
     Write-Success "winget packages installed"
 }
 
-function Initialize-Tailscale {
-    Write-Info "Initializing Tailscale..."
-
-    if (-not (Get-Command tailscale -ErrorAction SilentlyContinue)) {
-        Write-Warn "tailscale command not found. Please install Tailscale first."
-        return
-    }
-
-    if ($DryRun) {
-        Write-Info "[DRY-RUN] Would run: tailscale up"
-    } elseif ($CI) {
-        Write-Info "Skipping 'tailscale up' in CI mode"
-    } else {
-        Write-Info "Running 'tailscale up' (interactive login may be required)..."
-        try {
-            tailscale up
-        } catch {
-            Write-Warn "tailscale up failed. Run 'tailscale up' manually: $_"
-        }
-    }
-}
-
 function Install-VSCodeExtensions {
     $codePath = Get-Command code -ErrorAction SilentlyContinue
     if (-not $codePath) {
@@ -869,8 +847,6 @@ function Main {
             Install-ScoopPackages
             # Install remaining packages via winget (GUI apps)
             Install-WingetPackages
-            # Initialize Tailscale (installed via Scoop above)
-            Initialize-Tailscale
             # Install PowerShell modules (PSFzf, etc.)
             Install-PowerShellModules
             # Install npm global packages (vercel, etc.)

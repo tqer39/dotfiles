@@ -203,27 +203,6 @@ check_prerequisites() {
 }
 
 # ------------------------------------------------------------------------------
-# Tailscale setup
-# ------------------------------------------------------------------------------
-setup_tailscale() {
-  log_info "Setting up Tailscale..."
-
-  if ! command -v tailscale >/dev/null 2>&1; then
-    log_warn "tailscale command not found. Install via Brewfile or manually."
-    return
-  fi
-
-  if [[ "$DRY_RUN" == "true" ]]; then
-    log_info "[DRY-RUN] Would run: sudo tailscale up"
-  elif [[ "$CI_MODE" == "true" ]]; then
-    log_info "Skipping 'tailscale up' in CI mode"
-  else
-    log_info "Bringing up Tailscale (browser-based login may be required)..."
-    sudo tailscale up || log_warn "tailscale up failed. Run 'sudo tailscale up' manually."
-  fi
-}
-
-# ------------------------------------------------------------------------------
 # Clone or update dotfiles repository
 # ------------------------------------------------------------------------------
 setup_repository() {
@@ -434,8 +413,6 @@ main() {
           install_docker
         fi
       fi
-      # Install and initialize Tailscale
-      setup_tailscale
     else
       log_info "Step 2: Skipping packages (--skip-packages)"
     fi
