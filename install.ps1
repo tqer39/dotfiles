@@ -424,7 +424,8 @@ function Install-ScoopPackages {
         "bat",
         "jq",
         "claude-code",
-        "codex"
+        "codex",
+        "tailscale"
     )
 
     foreach ($package in $packages) {
@@ -605,34 +606,11 @@ function Install-WingetPackages {
     Write-Success "winget packages installed"
 }
 
-function Setup-Tailscale {
-    Write-Info "Setting up Tailscale..."
-
-    if (Get-Command tailscale -ErrorAction SilentlyContinue) {
-        Write-Info "Tailscale is already installed"
-    } elseif (Get-Command winget -ErrorAction SilentlyContinue) {
-        if ($DryRun) {
-            Write-Info "[DRY-RUN] Would install: Tailscale.Tailscale"
-        } else {
-            Write-Info "Installing: Tailscale.Tailscale"
-            try {
-                winget install --id Tailscale.Tailscale --accept-source-agreements --accept-package-agreements --silent 2>$null | Out-Null
-            } catch {
-                if ($CI) {
-                    Write-Warn "Failed to install Tailscale (CI mode, continuing): $_"
-                    return
-                } else {
-                    throw
-                }
-            }
-        }
-    } else {
-        Write-Warn "winget is not installed. Skipping Tailscale installation."
-        return
-    }
+function Initialize-Tailscale {
+    Write-Info "Initializing Tailscale..."
 
     if (-not (Get-Command tailscale -ErrorAction SilentlyContinue)) {
-        Write-Warn "tailscale command not found after install. Please run Tailscale manually."
+        Write-Warn "tailscale command not found. Please install Tailscale first."
         return
     }
 
@@ -891,8 +869,8 @@ function Main {
             Install-ScoopPackages
             # Install remaining packages via winget (GUI apps)
             Install-WingetPackages
-            # Install and initialize Tailscale
-            Setup-Tailscale
+            # Initialize Tailscale (installed via Scoop above)
+            Initialize-Tailscale
             # Install PowerShell modules (PSFzf, etc.)
             Install-PowerShellModules
             # Install npm global packages (vercel, etc.)
