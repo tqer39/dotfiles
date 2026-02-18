@@ -171,8 +171,12 @@ install_apt_packages() {
 
   # Setup Japanese environment
   setup_japanese_locale
-  install_japanese_fonts
-  install_japanese_input
+  if [[ "${SERVER_MODE:-false}" != "true" ]]; then
+    install_japanese_fonts
+    install_japanese_input
+  else
+    log_info "Server mode: Skipping Japanese fonts and input method"
+  fi
 
   log_success "APT packages installed successfully"
 }

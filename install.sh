@@ -29,6 +29,7 @@ VERBOSE=false
 UNINSTALL=false
 CI_MODE=false
 WORK_MODE=false
+SERVER_MODE=false
 DOCTOR=false
 
 # Color codes
@@ -92,6 +93,9 @@ parse_args() {
       --work)
         WORK_MODE=true
         ;;
+      --server)
+        SERVER_MODE=true
+        ;;
       --doctor)
         DOCTOR=true
         ;;
@@ -126,6 +130,7 @@ Options:
   --uninstall         Remove dotfiles symlinks
   --ci                CI mode (non-interactive, continue on errors)
   --work              Work/company mode (skip personal packages)
+  --server            Server mode (skip GUI applications)
   --doctor            Run environment health check
   -h, --help          Show this help message
 
@@ -135,6 +140,9 @@ Examples:
 
   # Full install (dotfiles + dev tools)
   curl -fsSL URL | bash -s -- --full
+
+  # Full install on Ubuntu Server (no GUI apps)
+  curl -fsSL URL | bash -s -- --full --server
 
   # Preview changes without executing
   curl -fsSL URL | bash -s -- --dry-run
@@ -284,6 +292,7 @@ main() {
   export VERBOSE
   export CI_MODE
   export WORK_MODE
+  export SERVER_MODE
   if [[ "$WORK_MODE" == "true" ]]; then
     export DOTFILES_MODE="work"
     export GIT_CONFIG_GLOBAL="${GIT_CONFIG_GLOBAL:-${HOME}/.gitconfig.work}"
@@ -304,6 +313,7 @@ main() {
   echo "  Dry run: $DRY_RUN"
   echo "  CI mode: $CI_MODE"
   echo "  Work mode: $WORK_MODE"
+  echo "  Server mode: $SERVER_MODE"
   echo ""
 
   # Check prerequisites
@@ -405,11 +415,15 @@ main() {
           # shellcheck source=/dev/null
           source "${DOTFILES_DIR}/scripts/installers/apt.sh"
           install_apt_packages
-          install_albert
-          install_1password
-          install_vscode
-          install_ghostty
-          install_spotify
+          if [[ "$SERVER_MODE" != "true" ]]; then
+            install_albert
+            install_1password
+            install_vscode
+            install_ghostty
+            install_spotify
+          else
+            log_info "Server mode: Skipping GUI applications"
+          fi
           install_docker
         fi
       fi
@@ -430,11 +444,15 @@ main() {
     fi
 
     # Step 4: Install VS Code extensions
-    log_info "Step 4: Installing VS Code extensions..."
-    if [[ -f "${DOTFILES_DIR}/scripts/installers/vscode.sh" ]]; then
-      # shellcheck source=/dev/null
-      source "${DOTFILES_DIR}/scripts/installers/vscode.sh"
-      install_vscode_extensions
+    if [[ "${SERVER_MODE}" != "true" ]]; then
+      log_info "Step 4: Installing VS Code extensions..."
+      if [[ -f "${DOTFILES_DIR}/scripts/installers/vscode.sh" ]]; then
+        # shellcheck source=/dev/null
+        source "${DOTFILES_DIR}/scripts/installers/vscode.sh"
+        install_vscode_extensions
+      fi
+    else
+      log_info "Step 4: Skipping VS Code extensions (server mode)"
     fi
   fi
 
