@@ -29,6 +29,9 @@ curl -fsSL https://install.tqer39.dev | bash
 # Full install (dotfiles + development environment)
 curl -fsSL https://install.tqer39.dev | bash -s -- --full
 
+# Full install for servers (skip GUI applications)
+curl -fsSL https://install.tqer39.dev | bash -s -- --full --server
+
 # Preview changes without executing
 curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```
@@ -70,6 +73,8 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 | `--uninstall` | Remove dotfiles symlinks |
 | `--work` | Work/company mode (skip personal packages) |
 | `--ci` | CI mode (non-interactive) |
+| `--server` | Server mode (skip GUI applications) |
+| `--os <value>` | Override OS detection (macos, ubuntu, mint, linux, windows) |
 | `--doctor` | Run environment health check |
 
 ## 📁 Repository Structure

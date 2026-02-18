@@ -29,6 +29,9 @@ curl -fsSL https://install.tqer39.dev | bash
 # フルインストール（dotfiles + 開発環境）
 curl -fsSL https://install.tqer39.dev | bash -s -- --full
 
+# サーバー向けフルインストール（GUI アプリケーションをスキップ）
+curl -fsSL https://install.tqer39.dev | bash -s -- --full --server
+
 # 実行せずに変更内容をプレビュー
 curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```
@@ -70,6 +73,8 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 | `--uninstall` | dotfiles のシンボリックリンクを削除 |
 | `--work` | 会社モード（個人用パッケージをスキップ） |
 | `--ci` | CI モード（非対話型） |
+| `--server` | サーバーモード（GUI アプリケーションをスキップ） |
+| `--os <value>` | OS 検出を上書き（macos, ubuntu, mint, linux, windows） |
 | `--doctor` | 環境ヘルスチェックを実行 |
 
 ## 📁 リポジトリ構造
