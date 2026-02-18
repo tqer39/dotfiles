@@ -50,7 +50,9 @@ install_vscode_extension() {
     return 0
   fi
 
-  "$vscode_cmd" --install-extension "$extension" --force
+  if ! "$vscode_cmd" --install-extension "$extension" --force; then
+    log_warn "Failed to install extension: $extension"
+  fi
 }
 
 # Install VS Code extensions from extensions.json
