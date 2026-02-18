@@ -180,6 +180,65 @@ detect_os() {
 }
 
 # ------------------------------------------------------------------------------
+# Install Obsidian (idempotent)
+# ------------------------------------------------------------------------------
+install_obsidian() {
+  local os
+  os=$(detect_os)
+
+  if [[ "${CI_MODE:-false}" == "true" ]]; then
+    log_info "Skipping Obsidian installation in CI mode"
+    return 0
+  fi
+
+  case "$os" in
+    macos)
+      if ! command -v brew &>/dev/null; then
+        log_warn "Homebrew is not available. Skipping Obsidian installation."
+        return 0
+      fi
+
+      if brew list --cask obsidian &>/dev/null; then
+        log_success "Obsidian is already installed"
+        return 0
+      fi
+
+      if [[ "${DRY_RUN:-false}" == "true" ]]; then
+        log_info "[DRY-RUN] Would run: brew install --cask obsidian"
+        return 0
+      fi
+
+      log_info "Installing Obsidian via Homebrew cask..."
+      brew install --cask obsidian
+      log_success "Obsidian installed"
+      ;;
+    ubuntu)
+      if ! command -v snap &>/dev/null; then
+        log_warn "snap is not available. Skipping Obsidian installation."
+        return 0
+      fi
+
+      if snap list obsidian &>/dev/null; then
+        log_success "Obsidian is already installed"
+        return 0
+      fi
+
+      if [[ "${DRY_RUN:-false}" == "true" ]]; then
+        log_info "[DRY-RUN] Would run: sudo snap install obsidian --classic"
+        return 0
+      fi
+
+      log_info "Installing Obsidian via snap..."
+      sudo snap install obsidian --classic
+      log_success "Obsidian installed"
+      ;;
+    *)
+      log_warn "Obsidian auto-install is not supported on this OS: $os"
+      ;;
+  esac
+}
+
+# ------------------------------------------------------------------------------
 # Check prerequisites
 # ------------------------------------------------------------------------------
 check_prerequisites() {
@@ -427,6 +486,8 @@ main() {
           install_docker
         fi
       fi
+
+      install_obsidian
     else
       log_info "Step 2: Skipping packages (--skip-packages)"
     fi

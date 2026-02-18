@@ -559,7 +559,8 @@ function Install-WingetPackages {
     $packages = @(
         "Microsoft.VisualStudioCode",
         "AgileBits.1Password",
-        "Amazon.AWSCLI"
+        "Amazon.AWSCLI",
+        "Obsidian.Obsidian"
     )
 
     # Personal packages (skip in work mode)
