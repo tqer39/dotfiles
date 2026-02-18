@@ -16,11 +16,13 @@
 [![Terraform](https://img.shields.io/badge/Terraform-1.14-844FBA?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-This repository contains my public dotfiles with an automated setup script. These configuration files help maintain a consistent development environment across macOS, Linux (Ubuntu), and Windows.
+This repository contains my public dotfiles with an automated setup script.
+These configuration files help maintain a consistent development environment.
+Supported platforms: macOS, Linux (Ubuntu, Linux Mint), and Windows.
 
 ## 🚀 Quick Start
 
-### macOS / Linux (Ubuntu)
+### macOS / Linux (Ubuntu, Linux Mint)
 
 ```bash
 # Minimal install (dotfiles only)
@@ -28,6 +30,12 @@ curl -fsSL https://install.tqer39.dev | bash
 
 # Full install (dotfiles + development environment)
 curl -fsSL https://install.tqer39.dev | bash -s -- --full
+
+# Full install for servers (skip GUI applications)
+curl -fsSL https://install.tqer39.dev | bash -s -- --full --server
+
+# CI environment (non-interactive, continue on errors)
+curl -fsSL https://install.tqer39.dev | bash -s -- --full --ci
 
 # Preview changes without executing
 curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
@@ -52,7 +60,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 ## ✨ Features
 
 - **Idempotent**: Safe to run multiple times - existing correct symlinks are skipped
-- **Cross-platform**: Supports macOS, Linux (Ubuntu), and Windows
+- **Cross-platform**: Supports macOS, Linux (Ubuntu, Linux Mint), and Windows
 - **Location**: Repository is cloned to `~/.dotfiles`
 - **Backup**: Existing files are backed up to `~/.dotfiles_backup/`
 - **Modular**: Choose between minimal (dotfiles only) or full (with dev tools) installation
@@ -70,6 +78,8 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 | `--uninstall` | Remove dotfiles symlinks |
 | `--work` | Work/company mode (skip personal packages) |
 | `--ci` | CI mode (non-interactive) |
+| `--server` | Server mode (skip GUI applications) |
+| `--os <value>` | Override OS detection (macos, ubuntu, mint, linux, windows) |
 | `--doctor` | Run environment health check |
 
 ## 📁 Repository Structure
