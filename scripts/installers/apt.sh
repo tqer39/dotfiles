@@ -429,19 +429,25 @@ install_ghostty() {
     else
       sudo snap install ghostty --classic
     fi
-  elif command -v flatpak &>/dev/null; then
-    log_info "Installing Ghostty via Flatpak..."
+  else
+    log_info "Snap is not available. Installing snapd first..."
     if [[ "${CI_MODE:-false}" == "true" ]]; then
-      if ! flatpak install -y flathub com.mitchellh.ghostty; then
-        log_warn "Failed to install Ghostty via Flatpak (CI mode, continuing)"
+      if ! sudo apt-get install -y snapd; then
+        log_warn "Failed to install snapd (CI mode, continuing)"
         return 0
       fi
     else
-      flatpak install -y flathub com.mitchellh.ghostty
+      sudo apt-get install -y snapd
     fi
-  else
-    log_warn "Neither snap nor flatpak available. Skipping Ghostty installation."
-    return 0
+    log_info "Installing Ghostty via Snap..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! sudo snap install ghostty --classic; then
+        log_warn "Failed to install Ghostty via Snap (CI mode, continuing)"
+        return 0
+      fi
+    else
+      sudo snap install ghostty --classic
+    fi
   fi
 
   log_success "Ghostty terminal installed"
