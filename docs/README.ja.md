@@ -16,11 +16,11 @@
 [![Terraform](https://img.shields.io/badge/Terraform-1.14-844FBA?style=for-the-badge&logo=terraform&logoColor=white)](https://www.terraform.io/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](../LICENSE)
 
-このリポジトリは、自動セットアップスクリプト付きの公開用 dotfiles を含んでいます。これらの設定ファイルは、macOS、Linux (Ubuntu)、Windows 間で一貫した開発環境を維持するのに役立ちます。
+このリポジトリは、自動セットアップスクリプト付きの公開用 dotfiles を含んでいます。これらの設定ファイルは、macOS、Linux (Ubuntu, Linux Mint)、Windows 間で一貫した開発環境を維持するのに役立ちます。
 
 ## 🚀 クイックスタート
 
-### macOS / Linux (Ubuntu)
+### macOS / Linux (Ubuntu, Linux Mint)
 
 ```bash
 # 最小限のインストール（dotfiles のみ）
@@ -58,7 +58,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 ## ✨ 特徴
 
 - **冪等性**: 複数回実行しても安全 - 既存の正しいシンボリックリンクはスキップ
-- **クロスプラットフォーム**: macOS、Linux (Ubuntu)、Windows をサポート
+- **クロスプラットフォーム**: macOS、Linux (Ubuntu, Linux Mint)、Windows をサポート
 - **クローン先**: リポジトリは `~/.dotfiles` にクローンされます
 - **バックアップ**: 既存のファイルは `~/.dotfiles_backup/` にバックアップ
 - **モジュラー**: 最小限（dotfiles のみ）またはフル（開発ツール付き）を選択可能
