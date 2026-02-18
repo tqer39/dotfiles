@@ -93,7 +93,7 @@ install_vscode_extensions() {
 
   while IFS= read -r extension; do
     [[ -z "$extension" ]] && continue
-    ((count++))
+    count=$((count + 1))
     log_step "$count" "$total" "Installing: $extension"
     install_vscode_extension "$extension"
   done <<< "$extensions"
