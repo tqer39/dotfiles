@@ -521,6 +521,21 @@ main() {
         source "${DOTFILES_DIR}/scripts/installers/anyenv.sh"
         install_anyenv
       fi
+      # Install tools managed by mise (claude-code, gemini-cli, codex, node, etc.)
+      if command -v mise &>/dev/null; then
+        log_info "Installing mise tools..."
+        if [[ "$DRY_RUN" == "true" ]]; then
+          log_info "[DRY-RUN] Would install mise tools"
+        else
+          # Trust config files in case mise was newly installed in Step 2
+          mise trust ~/.config/mise/config.toml 2>/dev/null || true
+          mise trust ~/.config/mise/config.personal.toml 2>/dev/null || true
+          mise trust ~/.config/mise/config.work.toml 2>/dev/null || true
+          mise trust ~/.dotfiles 2>/dev/null || true
+          mise trust ~/.dotfiles/mise.toml 2>/dev/null || true
+          mise install --yes
+        fi
+      fi
     else
       log_info "Step 3: Skipping languages (--skip-languages)"
     fi
