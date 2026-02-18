@@ -559,8 +559,15 @@ main() {
   echo "  Setup Complete!"
   echo "=========================================="
   echo ""
-  log_info "Please restart your shell or run:"
-  log_info "  source ~/.zshrc"
+  if [[ "$(basename "${SHELL:-}")" != "zsh" ]]; then
+    log_info "Your default shell is not zsh. To switch to zsh:"
+    log_info "  chsh -s \$(which zsh)"
+    log_info "Then log out and log back in, and run:"
+    log_info "  source ~/.zshrc"
+  else
+    log_info "Please restart your shell or run:"
+    log_info "  source ~/.zshrc"
+  fi
   echo ""
 }
 
