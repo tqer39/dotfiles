@@ -2,7 +2,7 @@
 # https://ghostty.org/docs/config
 
 # Theme
-theme = tokyonight
+theme = TokyoNight
 
 # Custom palette overrides (improve readability)
 palette = 8=#8a92b5
