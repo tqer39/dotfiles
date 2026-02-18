@@ -22,8 +22,14 @@ trim() {
 }
 
 # Detect operating system
-# Returns: macos, ubuntu, linux, windows, unknown
+# Returns: macos, ubuntu, mint, linux, windows, unknown
+# Can be overridden by DOTFILES_OS_OVERRIDE environment variable
 detect_os() {
+  if [[ -n "${DOTFILES_OS_OVERRIDE:-}" ]]; then
+    echo "$DOTFILES_OS_OVERRIDE"
+    return 0
+  fi
+
   case "$(uname -s)" in
     Darwin)
       echo "macos"
@@ -35,6 +41,9 @@ detect_os() {
         case "$ID" in
           ubuntu|debian)
             echo "ubuntu"
+            ;;
+          linuxmint)
+            echo "mint"
             ;;
           *)
             echo "linux"
@@ -53,6 +62,54 @@ detect_os() {
   esac
 }
 
+# Get Ubuntu codename for Ubuntu-based distributions
+# On Mint, returns UBUNTU_CODENAME; on Ubuntu, returns VERSION_CODENAME
+get_ubuntu_codename() {
+  if [[ -f /etc/os-release ]]; then
+    # shellcheck source=/dev/null
+    . /etc/os-release
+    # Mint provides UBUNTU_CODENAME pointing to the upstream Ubuntu release
+    if [[ -n "${UBUNTU_CODENAME:-}" ]]; then
+      echo "$UBUNTU_CODENAME"
+    else
+      echo "${VERSION_CODENAME:-}"
+    fi
+  fi
+}
+
+# Get Ubuntu VERSION_ID for Ubuntu-based distributions
+# On Mint, maps UBUNTU_CODENAME to Ubuntu VERSION_ID
+get_ubuntu_version_id() {
+  if [[ -f /etc/os-release ]]; then
+    # shellcheck source=/dev/null
+    . /etc/os-release
+    local os_id="${ID:-}"
+    if [[ "$os_id" != "linuxmint" ]]; then
+      echo "${VERSION_ID:-}"
+      return 0
+    fi
+    # Map Ubuntu codename to VERSION_ID
+    local codename
+    codename="${UBUNTU_CODENAME:-}"
+    case "$codename" in
+      plucky)   echo "25.04" ;;
+      oracular) echo "24.10" ;;
+      noble)    echo "24.04" ;;
+      mantic)   echo "23.10" ;;
+      lunar)    echo "23.04" ;;
+      kinetic)  echo "22.10" ;;
+      jammy)    echo "22.04" ;;
+      impish)   echo "21.10" ;;
+      focal)    echo "20.04" ;;
+      bionic)   echo "18.04" ;;
+      *)
+        log_warn "Unknown Ubuntu codename: $codename"
+        echo ""
+        ;;
+    esac
+  fi
+}
+
 # Get VS Code user settings directory
 get_vscode_user_dir() {
   local os
@@ -61,7 +118,7 @@ get_vscode_user_dir() {
     macos)
       echo "${HOME}/Library/Application Support/Code/User"
       ;;
-    ubuntu|linux)
+    ubuntu|mint|linux)
       echo "${HOME}/.config/Code/User"
       ;;
     windows)
@@ -78,7 +135,7 @@ get_zed_user_dir() {
   local os
   os=$(detect_os)
   case "$os" in
-    macos|ubuntu|linux)
+    macos|ubuntu|mint|linux)
       echo "${HOME}/.config/zed"
       ;;
     windows)
@@ -110,8 +167,12 @@ is_platform_supported() {
     if [[ "$platform" == "$current_os" ]]; then
       return 0
     fi
-    # "linux" should also match "ubuntu"
-    if [[ "$platform" == "linux" && "$current_os" == "ubuntu" ]]; then
+    # "linux" should also match "ubuntu" and "mint"
+    if [[ "$platform" == "linux" && ("$current_os" == "ubuntu" || "$current_os" == "mint") ]]; then
+      return 0
+    fi
+    # "ubuntu" should also match "mint" (Ubuntu-based)
+    if [[ "$platform" == "ubuntu" && "$current_os" == "mint" ]]; then
       return 0
     fi
   done

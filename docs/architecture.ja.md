@@ -33,14 +33,15 @@ flowchart TD
 すべてのスクリプトから読み込まれる共通ユーティリティ:
 
 - `log.sh` - カラー付きログ関数 (`log_info`, `log_success`, `log_error` など)
-- `utils.sh` - OS 検出 (`detect_os`)、パス展開、コマンドチェック
+- `utils.sh` - OS 検出 (`detect_os` は `macos`/`ubuntu`/`mint`/`linux`/`windows` を返す)、パス展開、コマンドチェック
 - `symlink.sh` - バックアップ機能付き冪等シンボリックリンク作成
 
 ## 設定
 
 - `config/platform-files.conf` - SOURCE:DESTINATION:PLATFORMS マッピングを定義
   - フォーマット: `.zshrc:~/.zshrc:macos,linux`
-  - プラットフォーム: `all` / `macos` / `linux` / `ubuntu` / `windows`
+  - プラットフォーム: `all` / `macos` / `linux` / `ubuntu` / `mint` / `windows`
+  - `mint` は `linux` と `ubuntu` のプラットフォームフィルターにもマッチ（Ubuntu ベース）
 - `config/packages/Brewfile` - Homebrew パッケージ
 - `config/packages/apt-packages.txt` - Ubuntu 用 APT パッケージ
 
@@ -49,7 +50,7 @@ flowchart TD
 `--full` インストール時に呼び出されるモジュラーインストーラー:
 
 - `homebrew.sh` - Homebrew と Brewfile パッケージ
-- `apt.sh` - APT パッケージ (Ubuntu のみ)
+- `apt.sh` - APT パッケージ (Ubuntu/Mint、Mint では snap 依存アプリに flatpak フォールバック)
 - `anyenv.sh` - 言語ランタイムマネージャー
 - `vscode.sh` - `src/.vscode/extensions.json` の VS Code 拡張機能
 

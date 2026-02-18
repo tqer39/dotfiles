@@ -99,6 +99,19 @@ parse_args() {
       --doctor)
         DOCTOR=true
         ;;
+      --os)
+        shift
+        case "$1" in
+          macos|ubuntu|mint|linux|windows)
+            DOTFILES_OS_OVERRIDE="$1"
+            export DOTFILES_OS_OVERRIDE
+            ;;
+          *)
+            log_error "Invalid OS: $1. Valid values: macos, ubuntu, mint, linux, windows"
+            exit 1
+            ;;
+        esac
+        ;;
       -h|--help)
         show_help
         exit 0
@@ -132,6 +145,7 @@ Options:
   --work              Work/company mode (skip personal packages)
   --server            Server mode (skip GUI applications)
   --doctor            Run environment health check
+  --os <value>        Override OS detection (macos, ubuntu, mint, linux, windows)
   -h, --help          Show this help message
 
 Examples:
@@ -151,9 +165,10 @@ Examples:
   curl -fsSL URL | bash -s -- --uninstall
 
 Environment Variables:
-  DOTFILES_REPO       Git repository URL (default: github.com/tqer39/dotfiles)
-  DOTFILES_BRANCH     Git branch to use (default: main)
-  DOTFILES_DIR        Installation directory (default: ~/.dotfiles)
+  DOTFILES_REPO            Git repository URL (default: github.com/tqer39/dotfiles)
+  DOTFILES_BRANCH          Git branch to use (default: main)
+  DOTFILES_DIR             Installation directory (default: ~/.dotfiles)
+  DOTFILES_OS_OVERRIDE     Override OS detection (same values as --os)
 EOF
 }
 
@@ -161,6 +176,11 @@ EOF
 # Detect OS
 # ------------------------------------------------------------------------------
 detect_os() {
+  if [[ -n "${DOTFILES_OS_OVERRIDE:-}" ]]; then
+    echo "$DOTFILES_OS_OVERRIDE"
+    return 0
+  fi
+
   case "$(uname -s)" in
     Darwin) echo "macos" ;;
     Linux)
@@ -169,6 +189,7 @@ detect_os() {
         . /etc/os-release
         case "$ID" in
           ubuntu|debian) echo "ubuntu" ;;
+          linuxmint) echo "mint" ;;
           *) echo "linux" ;;
         esac
       else
@@ -258,7 +279,7 @@ check_prerequisites() {
       macos)
         log_info "  xcode-select --install"
         ;;
-      ubuntu)
+      ubuntu|mint)
         log_info "  sudo apt update && sudo apt install -y ${missing_deps[*]}"
         ;;
       *)
@@ -470,7 +491,7 @@ main() {
       if [[ -f "${DOTFILES_DIR}/scripts/installers/apt.sh" ]]; then
         local os
         os=$(detect_os)
-        if [[ "$os" == "ubuntu" ]]; then
+        if [[ "$os" == "ubuntu" || "$os" == "mint" ]]; then
           # shellcheck source=/dev/null
           source "${DOTFILES_DIR}/scripts/installers/apt.sh"
           install_apt_packages

@@ -109,7 +109,7 @@ doctor_check_package_manager() {
         doctor_check_warn "Brewfile" "Not found"
       fi
       ;;
-    ubuntu|linux)
+    ubuntu|mint|linux)
       if command_exists apt; then
         doctor_check_ok "apt" "Available"
       else
@@ -121,6 +121,15 @@ doctor_check_package_manager() {
         doctor_check_ok "apt-packages.txt" "Found"
       else
         doctor_check_warn "apt-packages.txt" "Not found"
+      fi
+
+      # Check flatpak availability on Mint (snap is disabled by default)
+      if [[ "$os" == "mint" ]]; then
+        if command_exists flatpak; then
+          doctor_check_ok "flatpak" "Available"
+        else
+          doctor_check_warn "flatpak" "Not installed (recommended on Mint)"
+        fi
       fi
       ;;
     windows)

@@ -2,7 +2,7 @@
 # shellcheck disable=SC1091
 
 # ------------------------------------------------------------------------------
-# apt.sh - APT package installer for Ubuntu/Debian
+# apt.sh - APT package installer for Ubuntu/Debian/Mint
 # ------------------------------------------------------------------------------
 
 set -euo pipefail
@@ -137,11 +137,11 @@ install_apt_package() {
 install_apt_packages() {
   local packages_file="${DOTFILES_DIR}/config/packages/apt-packages.txt"
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "APT is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "APT is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -215,11 +215,11 @@ install_build_essentials() {
 install_albert() {
   log_info "Installing Albert launcher..."
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "Albert is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "Albert is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -234,13 +234,10 @@ install_albert() {
     return 0
   fi
 
-  # Get Ubuntu version
+  # Get Ubuntu version (works for both Ubuntu and Mint)
   local ubuntu_version
-  if [[ -f /etc/os-release ]]; then
-    # shellcheck source=/dev/null
-    . /etc/os-release
-    ubuntu_version="${VERSION_ID}"
-  else
+  ubuntu_version=$(get_ubuntu_version_id)
+  if [[ -z "$ubuntu_version" ]]; then
     log_warn "Cannot detect Ubuntu version. Skipping Albert installation."
     return 0
   fi
@@ -278,11 +275,11 @@ install_albert() {
 install_1password() {
   log_info "Installing 1Password..."
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "1Password apt installation is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "1Password apt installation is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -345,11 +342,11 @@ install_1password() {
 install_vscode() {
   log_info "Installing VS Code..."
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "VS Code apt installation is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "VS Code apt installation is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -403,11 +400,11 @@ install_vscode() {
 install_ghostty() {
   log_info "Installing Ghostty terminal..."
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "Ghostty apt installation is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "Ghostty installation is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -422,21 +419,29 @@ install_ghostty() {
     return 0
   fi
 
-  # Check if snap is available
-  if ! command -v snap &>/dev/null; then
-    log_warn "Snap is not available. Skipping Ghostty installation."
-    return 0
-  fi
-
-  log_info "Installing Ghostty via Snap..."
-
-  if [[ "${CI_MODE:-false}" == "true" ]]; then
-    if ! sudo snap install ghostty --classic; then
-      log_warn "Failed to install Ghostty (CI mode, continuing)"
-      return 0
+  if command -v snap &>/dev/null; then
+    log_info "Installing Ghostty via Snap..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! sudo snap install ghostty --classic; then
+        log_warn "Failed to install Ghostty (CI mode, continuing)"
+        return 0
+      fi
+    else
+      sudo snap install ghostty --classic
+    fi
+  elif command -v flatpak &>/dev/null; then
+    log_info "Installing Ghostty via Flatpak..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! flatpak install -y flathub com.mitchellh.ghostty; then
+        log_warn "Failed to install Ghostty via Flatpak (CI mode, continuing)"
+        return 0
+      fi
+    else
+      flatpak install -y flathub com.mitchellh.ghostty
     fi
   else
-    sudo snap install ghostty --classic
+    log_warn "Neither snap nor flatpak available. Skipping Ghostty installation."
+    return 0
   fi
 
   log_success "Ghostty terminal installed"
@@ -446,11 +451,11 @@ install_ghostty() {
 install_zed() {
   log_info "Installing Zed editor..."
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "Zed installation via script is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "Zed installation via script is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -491,8 +496,8 @@ install_spotify() {
 
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "Spotify snap installation is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "Spotify installation is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -506,20 +511,29 @@ install_spotify() {
     return 0
   fi
 
-  if ! command -v snap &>/dev/null; then
-    log_warn "Snap is not available. Skipping Spotify installation."
-    return 0
-  fi
-
-  log_info "Installing Spotify via Snap..."
-
-  if [[ "${CI_MODE:-false}" == "true" ]]; then
-    if ! sudo snap install spotify; then
-      log_warn "Failed to install Spotify (CI mode, continuing)"
-      return 0
+  if command -v snap &>/dev/null; then
+    log_info "Installing Spotify via Snap..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! sudo snap install spotify; then
+        log_warn "Failed to install Spotify (CI mode, continuing)"
+        return 0
+      fi
+    else
+      sudo snap install spotify
+    fi
+  elif command -v flatpak &>/dev/null; then
+    log_info "Installing Spotify via Flatpak..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! flatpak install -y flathub com.spotify.Client; then
+        log_warn "Failed to install Spotify via Flatpak (CI mode, continuing)"
+        return 0
+      fi
+    else
+      flatpak install -y flathub com.spotify.Client
     fi
   else
-    sudo snap install spotify
+    log_warn "Neither snap nor flatpak available. Skipping Spotify installation."
+    return 0
   fi
 
   log_success "Spotify installed"
@@ -535,11 +549,11 @@ install_docker() {
     return 0
   fi
 
-  # Check if running on Ubuntu/Debian
+  # Check if running on Ubuntu/Debian/Mint
   local os
   os=$(detect_os)
-  if [[ "$os" != "ubuntu" && "$os" != "linux" ]]; then
-    log_warn "Docker apt installation is only available on Ubuntu/Debian. Skipping..."
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "Docker apt installation is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
@@ -568,10 +582,10 @@ install_docker() {
       sudo install -m 0755 -d /etc/apt/keyrings &&
       curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
       sudo chmod a+r /etc/apt/keyrings/docker.gpg &&
-      # Add Docker repository
+      # Add Docker repository (use Ubuntu codename for Mint compatibility)
       echo \
         "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        $(get_ubuntu_codename) stable" | \
         sudo tee /etc/apt/sources.list.d/docker.list > /dev/null &&
       # Install Docker
       sudo apt-get update &&
@@ -593,10 +607,10 @@ install_docker() {
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     sudo chmod a+r /etc/apt/keyrings/docker.gpg
 
-    # Add Docker repository
+    # Add Docker repository (use Ubuntu codename for Mint compatibility)
     echo \
       "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+      $(get_ubuntu_codename) stable" | \
       sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
     # Install Docker
