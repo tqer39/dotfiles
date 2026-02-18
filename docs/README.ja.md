@@ -32,6 +32,9 @@ curl -fsSL https://install.tqer39.dev | bash -s -- --full
 # サーバー向けフルインストール（GUI アプリケーションをスキップ）
 curl -fsSL https://install.tqer39.dev | bash -s -- --full --server
 
+# CI 環境向け（非対話型、エラー時も続行）
+curl -fsSL https://install.tqer39.dev | bash -s -- --full --ci
+
 # 実行せずに変更内容をプレビュー
 curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```

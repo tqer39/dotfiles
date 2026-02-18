@@ -32,6 +32,9 @@ curl -fsSL https://install.tqer39.dev | bash -s -- --full
 # Full install for servers (skip GUI applications)
 curl -fsSL https://install.tqer39.dev | bash -s -- --full --server
 
+# CI environment (non-interactive, continue on errors)
+curl -fsSL https://install.tqer39.dev | bash -s -- --full --ci
+
 # Preview changes without executing
 curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```
