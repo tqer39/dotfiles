@@ -164,7 +164,7 @@ dotfiles/
 ### 📦 パッケージマネージャ
 
 - **macOS/Linux**: Homebrew + `config/packages/Brewfile` のパッケージ
-- **Ubuntu**: `config/packages/apt-packages.txt` の APT パッケージ
+- **Ubuntu/Mint**: `config/packages/apt-packages.txt` の APT パッケージ
 - **Windows**: Scoop（CLI ツール）+ winget（GUI アプリ）
 
 ### 🛠️ 開発ツール
