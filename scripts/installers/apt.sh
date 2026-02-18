@@ -114,6 +114,60 @@ install_japanese_input() {
   log_success "Japanese input method installed"
 }
 
+# Rename Japanese-named HOME directories to English
+rename_japanese_directories() {
+  log_info "Checking for Japanese-named HOME directories..."
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would rename Japanese directories to English"
+    return 0
+  fi
+
+  local -A dir_map=(
+    ["デスクトップ"]="Desktop"
+    ["ダウンロード"]="Downloads"
+    ["テンプレート"]="Templates"
+    ["公開"]="Public"
+    ["ドキュメント"]="Documents"
+    ["ミュージック"]="Music"
+    ["ピクチャ"]="Pictures"
+    ["ビデオ"]="Videos"
+  )
+
+  local has_japanese=false
+  for jp_name in "${!dir_map[@]}"; do
+    if [[ -d "${HOME}/${jp_name}" ]]; then
+      has_japanese=true
+      break
+    fi
+  done
+
+  if [[ "$has_japanese" == "false" ]]; then
+    log_debug "No Japanese-named directories found, skipping"
+    return 0
+  fi
+
+  # Update xdg config to English
+  LANG=C xdg-user-dirs-update --force
+
+  # Rename actual directories
+  for jp_name in "${!dir_map[@]}"; do
+    local en_name="${dir_map[$jp_name]}"
+    if [[ -d "${HOME}/${jp_name}" ]]; then
+      if [[ -d "${HOME}/${en_name}" ]]; then
+        # English dir already exists — move contents
+        mv "${HOME}/${jp_name}"/* "${HOME}/${en_name}/" 2>/dev/null || true
+        rmdir "${HOME}/${jp_name}" 2>/dev/null || true
+      else
+        mv "${HOME}/${jp_name}" "${HOME}/${en_name}"
+      fi
+      log_info "Renamed: ${jp_name} -> ${en_name}"
+    fi
+  done
+
+  log_success "Japanese directories renamed to English"
+}
+
 # Install a single apt package (idempotent)
 install_apt_package() {
   local package="$1"
@@ -174,6 +228,7 @@ install_apt_packages() {
   if [[ "${SERVER_MODE:-false}" != "true" ]]; then
     install_japanese_fonts
     install_japanese_input
+    rename_japanese_directories
   else
     log_info "Server mode: Skipping Japanese fonts and input method"
   fi
