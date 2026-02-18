@@ -166,7 +166,7 @@ When using `--full`, the following will also be installed:
 ### 📦 Package Managers
 
 - **macOS/Linux**: Homebrew + packages from `config/packages/Brewfile`
-- **Ubuntu**: APT packages from `config/packages/apt-packages.txt`
+- **Ubuntu/Mint**: APT packages from `config/packages/apt-packages.txt`
 - **Windows**: Scoop (CLI tools) + winget (GUI apps)
 
 ### 🛠️ Development Tools

@@ -164,13 +164,13 @@ dotfiles/
 ### 📦 パッケージマネージャ
 
 - **macOS/Linux**: Homebrew + `config/packages/Brewfile` のパッケージ
-- **Ubuntu**: `config/packages/apt-packages.txt` の APT パッケージ
+- **Ubuntu/Mint**: `config/packages/apt-packages.txt` の APT パッケージ
 - **Windows**: Scoop（CLI ツール）+ winget（GUI アプリ）
 
 ### 🛠️ 開発ツール
 
 - **anyenv**: 言語ランタイム管理（pyenv、nodenv など）
-- **mise**: mise 設定ファイルで定義されたツール（claude-code、gemini-cli、codex、node など）
+- **mise**: mise 設定ファイルで定義されたツール（Node.js、Claude Code など）
 - **VS Code 拡張機能**: `src/.vscode/extensions.json` から
 
 ## 📋 必要条件
