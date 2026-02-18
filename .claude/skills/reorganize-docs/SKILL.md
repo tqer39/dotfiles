@@ -11,10 +11,10 @@ Reorganize and synchronize project documentation with proper bilingual structure
 
 ```text
 /
-├── CLAUDE.md              # Claude Code guidance (English)
+├── AGENTS.md              # Claude Code guidance (English)
 ├── README.md              # Project introduction (English)
 └── docs/
-    ├── CLAUDE.ja.md       # Claude Code guidance (Japanese)
+    ├── AGENTS.ja.md       # Claude Code guidance (Japanese)
     ├── README.ja.md       # Project introduction (Japanese)
     ├── DEVELOPMENT.md     # Development guide (English)
     └── DEVELOPMENT.ja.md  # Development guide (Japanese)
@@ -24,7 +24,7 @@ Reorganize and synchronize project documentation with proper bilingual structure
 
 | File                   | Purpose                                       |
 | ---------------------- | --------------------------------------------- |
-| `CLAUDE.md`            | Claude Code guidance: overview, commands      |
+| `AGENTS.md`            | Claude Code guidance: overview, commands      |
 | `README.md`            | Project intro: quickstart, prerequisites      |
 | `docs/DEVELOPMENT.md`  | Detailed dev guide: services, troubleshooting |
 
@@ -46,14 +46,14 @@ Reorganize and synchronize project documentation with proper bilingual structure
 
 | English File          | Japanese File             |
 | --------------------- | ------------------------- |
-| `CLAUDE.md`           | `docs/CLAUDE.ja.md`       |
+| `AGENTS.md`           | `docs/AGENTS.ja.md`       |
 | `README.md`           | `docs/README.ja.md`       |
 | `docs/DEVELOPMENT.md` | `docs/DEVELOPMENT.ja.md`  |
 
 English files link to Japanese with `[🇯🇵 日本語版](path/to/file.ja.md)`.
 Japanese files link to English with `[🇺🇸 English](path/to/file.md)`.
 
-## CLAUDE.md Content Requirements
+## AGENTS.md Content Requirements
 
 1. **Project Overview**: Purpose and architecture
 2. **Development Commands**: Just commands with descriptions
@@ -74,7 +74,7 @@ Japanese files link to English with `[🇺🇸 English](path/to/file.md)`.
 1. Read existing documentation files
 2. Read `justfile` to extract command documentation
 3. Read `.github/workflows/` to extract required GitHub Secrets
-4. Generate English `CLAUDE.md` with all required sections
+4. Generate English `AGENTS.md` with all required sections
 5. Generate English `README.md`
 6. Create `docs/` directory if not exists
 7. Generate Japanese translations (`*.ja.md`)
