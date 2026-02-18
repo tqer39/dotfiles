@@ -419,26 +419,8 @@ install_ghostty() {
     return 0
   fi
 
+  local install_url="https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh"
   if command -v snap &>/dev/null; then
-    log_info "Installing Ghostty via Snap..."
-    if [[ "${CI_MODE:-false}" == "true" ]]; then
-      if ! sudo snap install ghostty --classic; then
-        log_warn "Failed to install Ghostty (CI mode, continuing)"
-        return 0
-      fi
-    else
-      sudo snap install ghostty --classic
-    fi
-  else
-    log_info "Snap is not available. Installing snapd first..."
-    if [[ "${CI_MODE:-false}" == "true" ]]; then
-      if ! sudo apt-get install -y snapd; then
-        log_warn "Failed to install snapd (CI mode, continuing)"
-        return 0
-      fi
-    else
-      sudo apt-get install -y snapd
-    fi
     log_info "Installing Ghostty via Snap..."
     if [[ "${CI_MODE:-false}" == "true" ]]; then
       if ! sudo snap install ghostty --classic; then
@@ -447,6 +429,16 @@ install_ghostty() {
       fi
     else
       sudo snap install ghostty --classic
+    fi
+  else
+    log_info "Snap is not available. Installing Ghostty via .deb package..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! /bin/bash -c "$(curl -fsSL "${install_url}")"; then
+        log_warn "Failed to install Ghostty via .deb (CI mode, continuing)"
+        return 0
+      fi
+    else
+      /bin/bash -c "$(curl -fsSL "${install_url}")"
     fi
   fi
 
