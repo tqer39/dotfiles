@@ -38,6 +38,7 @@ brew "uv"         # Python
 brew "curl"
 brew "wget"
 brew "jq"
+brew "tailscale"
 brew "tree"
 brew "gnupg"
 brew "xsel" if OS.linux?  # clipboard support for Linux

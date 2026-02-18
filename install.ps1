@@ -424,7 +424,8 @@ function Install-ScoopPackages {
         "bat",
         "jq",
         "claude-code",
-        "codex"
+        "codex",
+        "tailscale"
     )
 
     foreach ($package in $packages) {
