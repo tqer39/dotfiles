@@ -29,6 +29,13 @@ brew "zellij"       # terminal multiplexer
 brew "direnv"
 brew "shellcheck"
 brew "pre-commit"
+brew "just"          # task runner
+brew "prek"          # pre-commit hooks
+
+# Cloud credentials
+brew "aws-vault"
+tap "jacobbednarz/tap"
+brew "jacobbednarz/tap/cf-vault"
 
 # Runtime managers
 brew "mise"       # Node.js, etc.
