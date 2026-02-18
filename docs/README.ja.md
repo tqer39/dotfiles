@@ -170,6 +170,7 @@ dotfiles/
 ### 🛠️ 開発ツール
 
 - **anyenv**: 言語ランタイム管理（pyenv、nodenv など）
+- **mise**: mise 設定ファイルで定義されたツール（claude-code、gemini-cli、codex、node など）
 - **VS Code 拡張機能**: `src/.vscode/extensions.json` から
 
 ## 📋 必要条件

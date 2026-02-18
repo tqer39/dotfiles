@@ -172,6 +172,7 @@ When using `--full`, the following will also be installed:
 ### 🛠️ Development Tools
 
 - **anyenv**: For managing language runtimes (pyenv, nodenv, etc.)
+- **mise**: Tools defined in mise config files (Node.js, Claude Code, etc.)
 - **VS Code Extensions**: From `src/.vscode/extensions.json`
 
 ## 📋 Requirements
