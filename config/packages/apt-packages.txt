@@ -47,6 +47,6 @@ liblzma-dev
 # mysql-client
 # postgresql-client
 
-# Container tools (prefer Docker Desktop or Rancher Desktop)
-# docker.io
-# docker-compose
+# Container tools (Podman is installed via scripts/installers/apt.sh)
+# podman
+# podman-compose

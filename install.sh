@@ -504,7 +504,7 @@ main() {
           else
             log_info "Server mode: Skipping GUI applications"
           fi
-          install_docker
+          install_podman
         fi
       fi
 
