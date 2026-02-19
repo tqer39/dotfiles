@@ -62,7 +62,6 @@ if OS.mac?
 
   # Development
   cask "visual-studio-code"
-  cask "zed"
 
   # AI
   cask "claude"  # Claude Desktop (includes Cowork)
