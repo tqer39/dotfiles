@@ -37,6 +37,10 @@ Aliases:
     ll        eza -la (long)
     lt        eza -T (tree)
     cat       bat
+
+  Container:
+    docker    podman (if installed)
+    docker-compose  podman compose (if installed)
 EOF
 }
 
@@ -94,6 +98,12 @@ fi
 # bat (cat replacement)
 if command -v bat &> /dev/null; then
   alias cat='bat'
+fi
+
+# Podman (Docker compatibility)
+if command -v podman &> /dev/null; then
+  alias docker='podman'
+  alias docker-compose='podman compose'
 fi
 
 # pbcopy/pbpaste (Linux)

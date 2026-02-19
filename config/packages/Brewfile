@@ -102,8 +102,7 @@ brew "vercel-cli"
 # brew "google-cloud-sdk" if OS.mac?
 
 # Container tools
-# brew "docker"
-# brew "docker-compose"
+brew "podman"
 # brew "kubectl"
 # brew "helm"
 
