@@ -430,6 +430,11 @@ function Install-ScoopPackages {
         "tailscale"
     )
 
+    # Personal packages (skip in work mode)
+    if (-not $Work) {
+        $packages += "podman-desktop"
+    }
+
     foreach ($package in $packages) {
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would install: $package"

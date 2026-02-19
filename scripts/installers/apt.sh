@@ -592,13 +592,13 @@ install_spotify() {
   log_success "Spotify installed"
 }
 
-# Install Docker (container runtime for Linux, equivalent to OrbStack on macOS)
-install_docker() {
-  log_info "Installing Docker..."
+# Install Podman (container runtime, replaces Docker)
+install_podman() {
+  log_info "Installing Podman..."
 
   # Skip in work mode
   if [[ "${WORK_MODE:-false}" == "true" ]]; then
-    log_info "Skipping Docker installation in work mode"
+    log_info "Skipping Podman installation in work mode"
     return 0
   fi
 
@@ -606,78 +606,58 @@ install_docker() {
   local os
   os=$(detect_os)
   if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
-    log_warn "Docker apt installation is only available on Ubuntu/Debian/Mint. Skipping..."
+    log_warn "Podman apt installation is only available on Ubuntu/Debian/Mint. Skipping..."
     return 0
   fi
 
   # Check if already installed
-  if command -v docker &>/dev/null; then
-    log_debug "Docker is already installed"
-    return 0
-  fi
-
-  if [[ "${DRY_RUN:-false}" == "true" ]]; then
-    log_info "[DRY-RUN] Would install Docker"
-    return 0
-  fi
-
-  log_info "Adding Docker repository..."
-
-  # In CI mode, continue even if Docker installation fails
-  if [[ "${CI_MODE:-false}" == "true" ]]; then
-    if ! (
-      # Remove old versions if present
-      sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true &&
-      # Install prerequisites
-      sudo apt-get update &&
-      sudo apt-get install -y ca-certificates curl gnupg &&
-      # Add Docker's official GPG key
-      sudo install -m 0755 -d /etc/apt/keyrings &&
-      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg &&
-      sudo chmod a+r /etc/apt/keyrings/docker.gpg &&
-      # Add Docker repository (use Ubuntu codename for Mint compatibility)
-      echo \
-        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-        $(get_ubuntu_codename) stable" | \
-        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null &&
-      # Install Docker
-      sudo apt-get update &&
-      sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-    ); then
-      log_warn "Failed to install Docker (CI mode, continuing)"
+  if command -v podman &>/dev/null; then
+    log_debug "Podman is already installed"
+  else
+    if [[ "${DRY_RUN:-false}" == "true" ]]; then
+      log_info "[DRY-RUN] Would install Podman"
       return 0
     fi
-  else
-    # Remove old versions if present
-    sudo apt-get remove -y docker docker-engine docker.io containerd runc 2>/dev/null || true
 
-    # Install prerequisites
-    sudo apt-get update
-    sudo apt-get install -y ca-certificates curl gnupg
-
-    # Add Docker's official GPG key
-    sudo install -m 0755 -d /etc/apt/keyrings
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-    sudo chmod a+r /etc/apt/keyrings/docker.gpg
-
-    # Add Docker repository (use Ubuntu codename for Mint compatibility)
-    echo \
-      "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(get_ubuntu_codename) stable" | \
-      sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-    # Install Docker
-    sudo apt-get update
-    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-    # Add current user to docker group (to run docker without sudo)
-    if [[ -n "${USER:-}" ]]; then
-      sudo usermod -aG docker "$USER"
-      log_info "Added $USER to docker group. Please log out and back in for this to take effect."
+    # In CI mode, continue even if Podman installation fails
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! (
+        sudo apt-get update &&
+        sudo apt-get install -y podman podman-compose
+      ); then
+        log_warn "Failed to install Podman (CI mode, continuing)"
+        return 0
+      fi
+    else
+      sudo apt-get update
+      sudo apt-get install -y podman podman-compose
     fi
   fi
 
-  log_success "Docker installed"
+  # Podman Desktop via Flatpak (skip in server mode)
+  if [[ "${SERVER_MODE:-false}" != "true" ]]; then
+    if ! command -v flatpak &>/dev/null; then
+      if [[ "${DRY_RUN:-false}" == "true" ]]; then
+        log_info "[DRY-RUN] Would install flatpak"
+      else
+        sudo apt-get install -y flatpak
+      fi
+    fi
+
+    if [[ "${DRY_RUN:-false}" != "true" ]]; then
+      if ! flatpak list 2>/dev/null | grep -q io.podman_desktop.PodmanDesktop; then
+        if [[ "${CI_MODE:-false}" == "true" ]]; then
+          if ! flatpak install -y flathub io.podman_desktop.PodmanDesktop; then
+            log_warn "Failed to install Podman Desktop (CI mode, continuing)"
+          fi
+        else
+          flatpak install -y flathub io.podman_desktop.PodmanDesktop
+        fi
+      fi
+    fi
+  fi
+
+  log_success "Podman installed"
 }
 
 # Run if executed directly
