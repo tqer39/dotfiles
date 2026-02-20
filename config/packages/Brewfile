@@ -85,6 +85,7 @@ end
 if OS.mac? && ENV['WORK_MODE'] != 'true'
   cask "podman-desktop"  # Container management (replaces OrbStack/Rancher)
   cask "spotify"
+  cask "discord"
 end
 
 # ------------------------------------------------------------------------------

@@ -573,6 +573,7 @@ function Install-WingetPackages {
     # Personal packages (skip in work mode)
     if (-not $Work) {
         $packages += "Spotify.Spotify"
+        $packages += "Discord.Discord"
     }
 
     foreach ($package in $packages) {
