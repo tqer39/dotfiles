@@ -102,6 +102,10 @@ brew "vercel-cli"
 # brew "azure-cli"
 # brew "google-cloud-sdk" if OS.mac?
 
+# Google Workspace
+tap "steipete/tap"
+brew "steipete/tap/gogcli"  # Google Workspace CLI
+
 # Container tools
 brew "podman"
 # brew "kubectl"
