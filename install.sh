@@ -501,6 +501,7 @@ main() {
             install_vscode
             install_ghostty
             install_spotify
+            install_discord
           else
             log_info "Server mode: Skipping GUI applications"
           fi

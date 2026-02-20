@@ -555,6 +555,61 @@ install_spotify() {
   log_success "Spotify installed"
 }
 
+# Install Discord
+install_discord() {
+  log_info "Installing Discord..."
+
+  # Skip in work mode
+  if [[ "${WORK_MODE:-false}" == "true" ]]; then
+    log_info "Skipping Discord installation in work mode"
+    return 0
+  fi
+
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "Discord installation is only available on Ubuntu/Debian/Mint. Skipping..."
+    return 0
+  fi
+
+  if command -v discord &>/dev/null; then
+    log_debug "Discord is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Discord"
+    return 0
+  fi
+
+  if command -v snap &>/dev/null; then
+    log_info "Installing Discord via Snap..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! sudo snap install discord; then
+        log_warn "Failed to install Discord (CI mode, continuing)"
+        return 0
+      fi
+    else
+      sudo snap install discord
+    fi
+  elif command -v flatpak &>/dev/null; then
+    log_info "Installing Discord via Flatpak..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! flatpak install -y flathub com.discordapp.Discord; then
+        log_warn "Failed to install Discord via Flatpak (CI mode, continuing)"
+        return 0
+      fi
+    else
+      flatpak install -y flathub com.discordapp.Discord
+    fi
+  else
+    log_warn "Neither snap nor flatpak available. Skipping Discord installation."
+    return 0
+  fi
+
+  log_success "Discord installed"
+}
+
 # Install Podman (container runtime, replaces Docker)
 install_podman() {
   log_info "Installing Podman..."
