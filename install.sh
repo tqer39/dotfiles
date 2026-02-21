@@ -31,6 +31,7 @@ CI_MODE=false
 WORK_MODE=false
 SERVER_MODE=false
 DOCTOR=false
+NEEDS_REBOOT=false
 
 # Color codes
 RED='\033[0;31m'
@@ -257,6 +258,35 @@ install_obsidian() {
       log_warn "Obsidian auto-install is not supported on this OS: $os"
       ;;
   esac
+}
+
+# ------------------------------------------------------------------------------
+# Install Japanese locale (idempotent)
+# ------------------------------------------------------------------------------
+install_japanese_locale() {
+  local os
+  os=$(detect_os)
+
+  if [[ "$os" != "ubuntu" && "$os" != "mint" ]]; then
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Japanese locale and CJK fonts"
+    return 0
+  fi
+
+  log_info "Installing Japanese language pack..."
+  sudo apt install -y language-pack-ja
+
+  log_info "Setting locale to ja_JP.UTF-8..."
+  sudo update-locale LANG=ja_JP.UTF-8
+
+  log_info "Installing CJK fonts..."
+  sudo apt install -y fonts-noto-cjk
+
+  NEEDS_REBOOT=true
+  log_success "Japanese locale configured"
 }
 
 # ------------------------------------------------------------------------------
@@ -506,6 +536,7 @@ main() {
             log_info "Server mode: Skipping GUI applications"
           fi
           install_podman
+          install_japanese_locale
         fi
       fi
 
@@ -572,6 +603,11 @@ main() {
   else
     log_info "Please restart your shell or run:"
     log_info "  source ~/.zshrc"
+  fi
+  if [[ "${NEEDS_REBOOT}" == "true" ]]; then
+    echo ""
+    log_warn "Locale changes require a system reboot to take effect."
+    log_info "  sudo reboot"
   fi
   echo ""
 }
