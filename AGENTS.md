@@ -31,6 +31,7 @@ just tf -chdir=prod/bootstrap apply
 - **Idempotency**: Re-running is always safe
 - **Backup**: Existing files are moved to `~/.dotfiles_backup/`
 - **Platform filtering**: `config/platform-files.conf` で制御
+- **Server mode**: `--server` skips desktop/GUI application installation
 
 ## Coding Guidelines
 
