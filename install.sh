@@ -509,7 +509,11 @@ main() {
         fi
       fi
 
-      install_obsidian
+      if [[ "$SERVER_MODE" != "true" ]]; then
+        install_obsidian
+      else
+        log_info "Server mode: Skipping Obsidian installation"
+      fi
     else
       log_info "Step 2: Skipping packages (--skip-packages)"
     fi
