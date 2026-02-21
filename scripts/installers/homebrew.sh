@@ -33,6 +33,18 @@ install_homebrew() {
     return 0
   fi
 
+  # Prepare Linuxbrew directory on Linux
+  local os
+  os=$(detect_os)
+  if [[ "$os" == "ubuntu" || "$os" == "mint" || "$os" == "linux" ]]; then
+    local brew_prefix="/home/linuxbrew/.linuxbrew"
+    if [[ ! -d "$brew_prefix" ]]; then
+      log_info "Creating Linuxbrew directory: $brew_prefix"
+      sudo mkdir -p "$brew_prefix"
+      sudo chmod 777 "$brew_prefix"
+    fi
+  fi
+
   # Install Homebrew
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 

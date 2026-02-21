@@ -482,6 +482,8 @@ main() {
     # Step 2: Install packages
     if [[ "$SKIP_PACKAGES" != "true" ]]; then
       log_info "Step 2: Installing packages..."
+      local os
+      os=$(detect_os)
       if [[ -f "${DOTFILES_DIR}/scripts/installers/homebrew.sh" ]]; then
         # shellcheck source=/dev/null
         source "${DOTFILES_DIR}/scripts/installers/homebrew.sh"
@@ -489,8 +491,6 @@ main() {
         install_homebrew_packages
       fi
       if [[ -f "${DOTFILES_DIR}/scripts/installers/apt.sh" ]]; then
-        local os
-        os=$(detect_os)
         if [[ "$os" == "ubuntu" || "$os" == "mint" ]]; then
           # shellcheck source=/dev/null
           source "${DOTFILES_DIR}/scripts/installers/apt.sh"
@@ -509,7 +509,11 @@ main() {
         fi
       fi
 
-      install_obsidian
+      if [[ "$SERVER_MODE" != "true" ]]; then
+        install_obsidian
+      else
+        log_info "Server mode: Skipping Obsidian installation"
+      fi
     else
       log_info "Step 2: Skipping packages (--skip-packages)"
     fi
