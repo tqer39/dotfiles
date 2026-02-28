@@ -31,6 +31,7 @@ just tf -chdir=prod/bootstrap apply
 - **冪等性**: 再実行しても常に安全
 - **バックアップ**: 既存ファイルは `~/.dotfiles_backup/` に移動
 - **プラットフォームフィルタリング**: `config/platform-files.conf` で制御
+- **サーバーモード**: `--server` ではデスクトップ/GUI アプリをインストールしない
 
 ## コーディングガイドライン
 
