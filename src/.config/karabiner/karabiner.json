@@ -981,14 +981,15 @@
             ]
           },
           {
-            "description": "VS Code: 名前の編集開始と終了(F2)",
+            "description": "VS Code / Antigravity: 名前の編集開始と終了(F2)",
             "manipulators": [
               {
                 "conditions": [
                   {
                     "bundle_identifiers": [
                       "com\\.microsoft\\.VSCode",
-                      "com\\.microsoft\\.VSCodeInsiders"
+                      "com\\.microsoft\\.VSCodeInsiders",
+                      "com\\.google\\.antigravity"
                     ],
                     "type": "frontmost_application_if"
                   }
@@ -1000,14 +1001,15 @@
             ]
           },
           {
-            "description": "VS Code: コマンドの履歴表示(cmd+r)",
+            "description": "VS Code / Antigravity: コマンドの履歴表示(cmd+r)",
             "manipulators": [
               {
                 "conditions": [
                   {
                     "bundle_identifiers": [
                       "com\\.microsoft\\.VSCode",
-                      "com\\.microsoft\\.VSCodeInsiders"
+                      "com\\.microsoft\\.VSCodeInsiders",
+                      "com\\.google\\.antigravity"
                     ],
                     "type": "frontmost_application_if"
                   }
