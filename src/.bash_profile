@@ -64,3 +64,6 @@ eval "$(anyenv init -)"
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# Added by Antigravity
+export PATH="/Users/takeruooyama/.antigravity/antigravity/bin:$PATH"
