@@ -526,7 +526,8 @@ function Install-NpmPackages {
 
     $npmPackages = @(
         "vercel",
-        "@google/gemini-cli"
+        "@google/gemini-cli",
+        "ctx7"
     )
 
     foreach ($package in $npmPackages) {
