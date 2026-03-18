@@ -83,7 +83,7 @@ end
 # Personal packages (skipped with --work flag)
 # ------------------------------------------------------------------------------
 if OS.mac? && ENV['WORK_MODE'] != 'true'
-  cask "podman-desktop"  # Container management (replaces OrbStack/Rancher)
+  cask "orbstack"  # Container management (Docker/Kubernetes)
   cask "spotify"
   cask "discord"
 end
@@ -107,7 +107,7 @@ tap "steipete/tap"
 brew "steipete/tap/gogcli"  # Google Workspace CLI
 
 # Container tools
-brew "podman"
+# brew "podman"
 # brew "kubectl"
 # brew "helm"
 
