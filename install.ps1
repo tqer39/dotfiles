@@ -527,6 +527,7 @@ function Install-NpmPackages {
     $npmPackages = @(
         "vercel",
         "@google/gemini-cli",
+        "@githubnext/github-copilot-cli",
         "ctx7"
     )
 
