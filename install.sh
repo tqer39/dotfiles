@@ -569,6 +569,7 @@ main() {
           mise trust ~/.config/mise/config.work.toml 2>/dev/null || true
           mise trust ~/.dotfiles 2>/dev/null || true
           mise trust ~/.dotfiles/mise.toml 2>/dev/null || true
+          mise upgrade --yes 2>/dev/null || true  # 既存ツールを最新に更新
           mise install --yes
         fi
       fi
