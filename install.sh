@@ -571,6 +571,7 @@ main() {
           mise trust ~/.dotfiles/mise.toml 2>/dev/null || true
           mise upgrade --yes 2>/dev/null || true  # 既存ツールを最新に更新
           mise install --yes
+          mise reshim 2>/dev/null || true  # shims を最新に更新
         fi
       fi
     else
@@ -600,10 +601,10 @@ main() {
     log_info "Your default shell is not zsh. To switch to zsh:"
     log_info "  chsh -s \$(which zsh)"
     log_info "Then log out and log back in, and run:"
-    log_info "  source ~/.zshrc"
+    log_info "  exec \$SHELL"
   else
     log_info "Please restart your shell or run:"
-    log_info "  source ~/.zshrc"
+    log_info "  exec \$SHELL"
   fi
   if [[ "${NEEDS_REBOOT}" == "true" ]]; then
     echo ""
