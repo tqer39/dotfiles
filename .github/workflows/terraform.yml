@@ -36,11 +36,11 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       # AWS Credentials
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v6
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6
         with:
           role-to-assume: arn:aws:iam::072693953877:role/portfolio-dotfiles-terraform-deploy
           aws-region: ${{ env.AWS_REGION }}
@@ -56,7 +56,7 @@ jobs:
         shell: bash
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v4
+        uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
 
@@ -74,13 +74,13 @@ jobs:
         run: terraform validate -no-color
 
       - name: Cache TFLint Plugins
-        uses: actions/cache@v5
+        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5
         with:
           path: ~/.tflint.d/plugins
           key: ${{ runner.os }}-tflint-${{ hashFiles('.tflint.hcl') }}
 
       - name: Setup TFLint
-        uses: terraform-linters/setup-tflint@v6
+        uses: terraform-linters/setup-tflint@b480b8fcdaa6f2c577f8e4fa799e89e756bb7c93 # v6
         with:
           tflint_version: latest
 
@@ -118,7 +118,7 @@ jobs:
 
       - name: Comment Plan on PR
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v8
+        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
           script: |
             const fs = require('fs');
@@ -148,7 +148,7 @@ jobs:
       # Deploy
       - name: Start Deployment
         if: steps.plan.outputs.status == 'has-diff' && github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: bobheadxi/deployments@v1
+        uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8 # v1
         id: deployment
         with:
           step: start
@@ -166,7 +166,7 @@ jobs:
 
       - name: Finish Deployment
         if: steps.plan.outputs.status == 'has-diff' && always() && github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: bobheadxi/deployments@v1
+        uses: bobheadxi/deployments@648679e8e4915b27893bd7dbc35cb504dc915bc8 # v1
         with:
           step: finish
           token: ${{ secrets.GITHUB_TOKEN }}
