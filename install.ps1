@@ -528,6 +528,7 @@ function Install-NpmPackages {
         "vercel",
         "@google/gemini-cli",
         "@github/copilot",
+        "@linear/cli",
         "ctx7"
     )
 
