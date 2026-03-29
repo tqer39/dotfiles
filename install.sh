@@ -530,6 +530,7 @@ main() {
             install_1password
             install_vscode
             install_ghostty
+            install_wezterm
             install_spotify
             install_discord
           else

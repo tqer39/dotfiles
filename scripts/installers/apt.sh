@@ -500,6 +500,66 @@ install_ghostty() {
   log_success "Ghostty terminal installed"
 }
 
+# Install WezTerm terminal
+install_wezterm() {
+  log_info "Installing WezTerm terminal..."
+
+  # Check if running on Ubuntu/Debian/Mint
+  local os
+  os=$(detect_os)
+  if [[ "$os" != "ubuntu" && "$os" != "mint" && "$os" != "linux" ]]; then
+    log_warn "WezTerm installation is only available on Ubuntu/Debian/Mint. Skipping..."
+    return 0
+  fi
+
+  # Check if already installed
+  if command -v wezterm &>/dev/null; then
+    log_debug "WezTerm is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install WezTerm"
+    return 0
+  fi
+
+  if command -v flatpak &>/dev/null; then
+    log_info "Installing WezTerm via Flatpak..."
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! flatpak install -y flathub org.wezfurlong.wezterm; then
+        log_warn "Failed to install WezTerm via Flatpak (CI mode, continuing)"
+        return 0
+      fi
+    else
+      flatpak install -y flathub org.wezfurlong.wezterm
+    fi
+  else
+    log_info "Flatpak is not available. Installing WezTerm via .deb package..."
+    local tmp_deb
+    tmp_deb=$(mktemp /tmp/wezterm-XXXXXX.deb)
+    local deb_url="https://github.com/wez/wezterm/releases/latest/download/wezterm-nightly.Ubuntu22.04.deb"
+    if [[ "${CI_MODE:-false}" == "true" ]]; then
+      if ! curl -fsSL -o "$tmp_deb" "$deb_url"; then
+        log_warn "Failed to download WezTerm .deb (CI mode, continuing)"
+        rm -f "$tmp_deb"
+        return 0
+      fi
+      if ! sudo dpkg -i "$tmp_deb"; then
+        sudo apt install -f -y || true
+        log_warn "Failed to install WezTerm .deb (CI mode, continuing)"
+        rm -f "$tmp_deb"
+        return 0
+      fi
+    else
+      curl -fsSL -o "$tmp_deb" "$deb_url"
+      sudo dpkg -i "$tmp_deb" || sudo apt install -f -y
+    fi
+    rm -f "$tmp_deb"
+  fi
+
+  log_success "WezTerm terminal installed"
+}
+
 # Install Spotify
 install_spotify() {
   log_info "Installing Spotify..."
