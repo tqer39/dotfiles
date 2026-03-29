@@ -21,7 +21,7 @@ setup-hooks:
 
 # Lint
 lint:
-    @prek run -a
+    @prek run --all-files
 
 lint-hook hook:
     @prek run {{hook}}
