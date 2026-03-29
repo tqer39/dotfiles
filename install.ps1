@@ -569,7 +569,8 @@ function Install-WingetPackages {
         "Microsoft.VisualStudioCode",
         "AgileBits.1Password",
         "Amazon.AWSCLI",
-        "Obsidian.Obsidian"
+        "Obsidian.Obsidian",
+        "wez.wezterm"
     )
 
     # Personal packages (skip in work mode)
