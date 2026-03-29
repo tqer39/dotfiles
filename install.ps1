@@ -427,7 +427,8 @@ function Install-ScoopPackages {
         "jq",
         "claude-code",
         "codex",
-        "tailscale"
+        "tailscale",
+        "tmux"
     )
 
     # Personal packages (skip in work mode)
