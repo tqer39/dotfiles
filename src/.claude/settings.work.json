@@ -1,0 +1,103 @@
+{
+  "env": {
+    "ENABLE_TOOL_SEARCH": "true"
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(pnpm install:*)",
+      "Bash(mise trust:*)",
+      "Bash(mise install:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm biome check:*)",
+      "Bash(uv run ruff:*)",
+      "Bash(echo:*)",
+      "Bash(git add:*)",
+      "Bash(mise exec:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git log:*)",
+      "Bash(gh auth status:*)",
+      "Bash(gh label:*)",
+      "Bash(gh label create:*)",
+      "Bash(gh api:*)",
+      "Bash(gh issue create:*)",
+      "Bash(gh issue list:*)",
+      "Bash(lefthook install:*)",
+      "Bash(pnpm lefthook:*)",
+      "Bash(just lint:*)",
+      "Bash(just test)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(git push:*)",
+      "Bash(npx vitest run)",
+      "Bash(git commit:*)",
+      "Bash(gh issue close:*)",
+      "Bash(gh run view:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(git check-ignore:*)",
+      "Bash(cat:*)",
+      "Bash(git fetch:*)",
+      "Bash(pnpm exec cspell:*)",
+      "WebSearch",
+      "Bash(pre-commit run:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh pr create:*)",
+      "Bash(git checkout:*)",
+      "Bash(gh run list:*)",
+      "Bash(pnpm prettier:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(git pull:*)",
+      "Bash(git reset:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(git branch:*)",
+      "Bash(gh issue edit:*)",
+      "Bash(just worktree-list:*)",
+      "Bash(just worktree-create:*)",
+      "Bash(just worktree-remove-with-branch:*)",
+      "Bash(git rebase:*)",
+      "Bash(find:*)",
+      "Bash(git stash push:*)",
+      "Bash(git stash:*)",
+      "Bash(chmod:*)",
+      "Bash(shellcheck:*)"
+    ],
+    "defaultMode": "plan"
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "example-skills@anthropic-agent-skills": true,
+    "code-simplifier@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "context7@claude-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
+    }
+  },
+  "language": "日本語"
+}
