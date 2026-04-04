@@ -110,6 +110,74 @@ install_claude_settings() {
   create_symlink "$config_src" "${HOME}/.claude/plugins/config.json"
 }
 
+# Uninstall Claude Code settings symlinks
+uninstall_claude_settings() {
+  local src_dir="${DOTFILES_DIR}/src/.claude"
+
+  log_info "Uninstalling Claude Code settings"
+
+  local targets=(
+    "${HOME}/.claude/settings.json"
+    "${HOME}/.claude/plugins/installed_plugins.json"
+    "${HOME}/.claude/plugins/config.json"
+  )
+
+  for target in "${targets[@]}"; do
+    if [[ -L "$target" ]]; then
+      local link_target
+      link_target=$(readlink "$target")
+      # Only remove if it points to our dotfiles
+      if [[ "$link_target" == "${src_dir}/"* ]]; then
+        remove_symlink "$target" true
+      fi
+    fi
+  done
+}
+
+# Show status of Claude Code settings symlinks
+status_claude_settings() {
+  local mode="${DOTFILES_MODE:-personal}"
+  local src_dir="${DOTFILES_DIR}/src/.claude"
+
+  echo ""
+  printf "%-40s %-10s %s\n" "CLAUDE CODE" "STATUS" "DETAILS"
+  printf "%-40s %-10s %s\n" "----------" "------" "-------"
+
+  local names=("settings.json" "plugins/installed_plugins.json" "plugins/config.json")
+  local sources=("settings.${mode}.json" "plugins/installed_plugins.${mode}.json" "plugins/config.${mode}.json")
+
+  for i in "${!names[@]}"; do
+    local target_name="${names[$i]}"
+    local source_name="${sources[$i]}"
+    local full_src="${src_dir}/${source_name}"
+    local full_dest="${HOME}/.claude/${target_name}"
+    local status details
+
+    if [[ ! -e "$full_src" ]]; then
+      status="MISSING"
+      details="Source not found"
+    elif [[ -L "$full_dest" ]]; then
+      local target
+      target=$(readlink "$full_dest")
+      if [[ "$target" == "$full_src" ]]; then
+        status="OK"
+        details="Linked correctly (mode: $mode)"
+      else
+        status="WRONG"
+        details="Links to: $target"
+      fi
+    elif [[ -e "$full_dest" ]]; then
+      status="EXISTS"
+      details="Not a symlink"
+    else
+      status="NONE"
+      details="Not installed"
+    fi
+
+    printf "%-40s %-10s %s\n" ".claude/${target_name}" "$status" "$details"
+  done
+}
+
 # Uninstall dotfiles by removing symlinks
 uninstall_dotfiles() {
   local config_file="${DOTFILES_DIR}/config/platform-files.conf"
@@ -154,6 +222,9 @@ uninstall_dotfiles() {
     fi
 
   done < "$config_file"
+
+  # Uninstall Claude Code settings
+  uninstall_claude_settings
 
   echo ""
   log_success "Dotfiles uninstallation complete!"
@@ -217,6 +288,9 @@ status_dotfiles() {
     printf "%-40s %-10s %s\n" "$src" "$status" "$details"
 
   done < "$config_file"
+
+  # Show Claude Code settings status
+  status_claude_settings
 }
 
 # Main entry point when script is run directly
