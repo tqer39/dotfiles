@@ -81,9 +81,33 @@ install_dotfiles() {
 
   done < "$config_file"
 
+  # Install Claude Code settings
+  install_claude_settings
+
   echo ""
   log_success "Dotfiles installation complete!"
   log_info "Installed: $installed_count, Skipped: $skipped_count"
+}
+
+# Install Claude Code settings based on DOTFILES_MODE
+install_claude_settings() {
+  local mode="${DOTFILES_MODE:-personal}"
+  local src_dir="${DOTFILES_DIR}/src/.claude"
+
+  log_info "Installing Claude Code settings (mode: $mode)"
+
+  local settings_src="${src_dir}/settings.${mode}.json"
+  local plugins_src="${src_dir}/plugins/installed_plugins.${mode}.json"
+  local config_src="${src_dir}/plugins/config.${mode}.json"
+
+  if [[ ! -f "$settings_src" ]]; then
+    log_warn "Claude Code settings not found for mode '$mode': $settings_src"
+    return 0
+  fi
+
+  create_symlink "$settings_src" "${HOME}/.claude/settings.json"
+  create_symlink "$plugins_src" "${HOME}/.claude/plugins/installed_plugins.json"
+  create_symlink "$config_src" "${HOME}/.claude/plugins/config.json"
 }
 
 # Uninstall dotfiles by removing symlinks
