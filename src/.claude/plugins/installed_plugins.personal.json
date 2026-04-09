@@ -36,6 +36,47 @@
         "installedAt": "",
         "lastUpdated": ""
       }
+    ],
+    "git@tqer39-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/git/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-06T15:13:02.449Z",
+        "lastUpdated": "2026-04-06T15:13:02.449Z",
+        "gitCommitSha": "7e860b33bf1c4f12c2b7d342aa058b1393d90c3b"
+      }
+    ],
+    "architecture@tqer39-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/architecture/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-06T15:13:46.023Z",
+        "lastUpdated": "2026-04-06T15:13:46.023Z",
+        "gitCommitSha": "7e860b33bf1c4f12c2b7d342aa058b1393d90c3b"
+      }
+    ],
+    "agent-config@tqer39-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/agent-config/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-06T15:14:32.510Z",
+        "lastUpdated": "2026-04-06T15:14:32.510Z",
+        "gitCommitSha": "7e860b33bf1c4f12c2b7d342aa058b1393d90c3b"
+      }
+    ],
+    "claude-api@anthropic-agent-skills": [
+      {
+        "scope": "local",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/anthropic-agent-skills/claude-api/b0cbd3df1533",
+        "version": "b0cbd3df1533",
+        "installedAt": "2026-04-09T17:41:01.728Z",
+        "lastUpdated": "2026-04-09T17:41:01.728Z",
+        "gitCommitSha": "b0cbd3df1533b396d281a6886d5132f623393a9c",
+        "projectPath": "/Users/takeruooyama/.dotfiles"
+      }
     ]
   }
 }

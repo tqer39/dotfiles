@@ -1,0 +1,159 @@
+<mxfile host="app.diagrams.net" agent="Claude Code" version="26.0.0">
+  <diagram name="Claude Code Settings Management" id="claude-code-settings">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Claude Code Settings Management" style="text;html=1;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="500" y="20" width="400" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- ========== dotfiles repo (src/.claude/) ========== -->
+        <mxCell id="repo-group" value="~/.dotfiles/src/.claude/  (Git 管理)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;verticalAlign=top;fontStyle=1;fontSize=13;spacingTop=5;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="520" height="340" as="geometry" />
+        </mxCell>
+
+        <!-- personal files -->
+        <mxCell id="personal-label" value="personal モード" style="text;html=1;fontSize=12;fontStyle=5;fontColor=#1a5276;align=center;" vertex="1" parent="repo-group">
+          <mxGeometry x="20" y="35" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="personal-settings" value="settings.personal.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="repo-group">
+          <mxGeometry x="30" y="65" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="personal-plugins" value="plugins/installed_plugins.personal.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;" vertex="1" parent="repo-group">
+          <mxGeometry x="30" y="110" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="personal-config" value="plugins/config.personal.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="repo-group">
+          <mxGeometry x="30" y="155" width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- work files -->
+        <mxCell id="work-label" value="work モード" style="text;html=1;fontSize=12;fontStyle=5;fontColor=#1a5276;align=center;" vertex="1" parent="repo-group">
+          <mxGeometry x="270" y="35" width="220" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="work-settings" value="settings.work.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="repo-group">
+          <mxGeometry x="280" y="65" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="work-plugins" value="plugins/installed_plugins.work.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="repo-group">
+          <mxGeometry x="280" y="110" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="work-config" value="plugins/config.work.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="repo-group">
+          <mxGeometry x="280" y="155" width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- DOTFILES_MODE switcher -->
+        <mxCell id="mode-switch" value="DOTFILES_MODE&#xa;環境変数" style="rhombus;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontStyle=1;" vertex="1" parent="repo-group">
+          <mxGeometry x="185" y="220" width="140" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Target (~/.claude/) ========== -->
+        <mxCell id="target-group" value="~/.claude/  (User スコープ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;verticalAlign=top;fontStyle=1;fontSize=13;spacingTop=5;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="660" y="100" width="280" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="target-settings" value="settings.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;fontStyle=1;" vertex="1" parent="target-group">
+          <mxGeometry x="40" y="40" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="target-plugins" value="plugins/installed_plugins.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="target-group">
+          <mxGeometry x="40" y="85" width="200" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="target-config" value="plugins/config.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;" vertex="1" parent="target-group">
+          <mxGeometry x="40" y="130" width="200" height="35" as="geometry" />
+        </mxCell>
+
+        <!-- Symlink arrows -->
+        <mxCell id="arrow-switch-to-target" value="symlink" style="endArrow=block;endFill=1;html=1;strokeWidth=2;strokeColor=#9673a6;fontColor=#9673a6;fontSize=11;fontStyle=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="mode-switch" target="target-group">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Git 管理対象外 ========== -->
+        <mxCell id="excluded-group" value="Git 管理対象外" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;strokeDashArray=8;verticalAlign=top;fontStyle=3;fontSize=12;fontColor=#666666;spacingTop=5;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="660" y="340" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="local-settings" value="settings.local.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;fontColor=#666666;" vertex="1" parent="excluded-group">
+          <mxGeometry x="40" y="35" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="claude-json" value="~/.claude.json" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#999999;fontSize=11;fontColor=#666666;" vertex="1" parent="excluded-group">
+          <mxGeometry x="40" y="70" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Security Policy ========== -->
+        <mxCell id="security-group" value="セキュリティ方針: deny-first" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcccc;strokeColor=#cc0000;verticalAlign=top;fontStyle=1;fontSize=13;spacingTop=5;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="100" width="320" height="340" as="geometry" />
+        </mxCell>
+        <mxCell id="sec-principle" value="allow リストは使用しない&#xa;defaultMode: plan で都度確認" style="text;html=1;fontSize=11;fontStyle=0;align=left;verticalAlign=top;spacingLeft=5;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="30" width="300" height="35" as="geometry" />
+        </mxCell>
+
+        <mxCell id="deny-title" value="deny ルール" style="text;html=1;fontSize=12;fontStyle=5;fontColor=#cc0000;align=left;spacingLeft=5;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="65" width="300" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="deny-destructive" value="&#x1f6ab; 破壊的操作" style="text;html=1;fontSize=11;fontStyle=1;align=left;spacingLeft=15;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="85" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-d1" value="Bash(gh repo delete:*)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="105" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-d2" value="Bash(git add -A:*) / Bash(git add --all:*) / Bash(git add .)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="123" width="300" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="deny-secrets" value="&#x1f512; 機密ファイル読み取り" style="text;html=1;fontSize=11;fontStyle=1;align=left;spacingLeft=15;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="150" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-s1" value="Read(.env) / Read(.env.*)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="170" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-s2" value="Read(secrets/**)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="188" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-s3" value="Read(**/*.pem) / Read(**/*.key)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="206" width="300" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="deny-abs" value="&#x1f513; 絶対パス deny (// prefix)" style="text;html=1;fontSize=11;fontStyle=1;align=left;spacingLeft=15;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="233" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-a1" value="Read(//Users/*/.aws/credentials)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="253" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-a2" value="Read(//Users/*/.aws/config)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="271" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-a3" value="Read(//Users/*/.ssh/id_*)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="289" width="300" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="deny-a4" value="Read(//Users/*/.netrc)" style="text;html=1;fontSize=10;fontFamily=monospace;align=left;spacingLeft=25;" vertex="1" parent="security-group">
+          <mxGeometry x="10" y="307" width="300" height="18" as="geometry" />
+        </mxCell>
+
+        <!-- Arrow from target to security -->
+        <mxCell id="arrow-target-to-security" value="設定内容" style="endArrow=block;endFill=1;html=1;strokeWidth=1;strokeColor=#cc0000;fontColor=#cc0000;fontSize=10;dashed=1;" edge="1" parent="1" source="target-group" target="security-group">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- ========== Scope Priority ========== -->
+        <mxCell id="scope-group" value="設定優先順位" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e6e6e6;strokeColor=#999999;verticalAlign=top;fontStyle=1;fontSize=12;spacingTop=5;container=1;collapsible=0;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="480" width="320" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="scope-local" value="Local (.claude/settings.local.json)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d4edda;strokeColor=#28a745;fontSize=11;fontStyle=1;" vertex="1" parent="scope-group">
+          <mxGeometry x="10" y="30" width="295" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="scope-project" value="Project (.claude/settings.json)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff3cd;strokeColor=#ffc107;fontSize=11;" vertex="1" parent="scope-group">
+          <mxGeometry x="10" y="55" width="295" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="scope-user" value="User (~/.claude/settings.json)  ← dotfiles で管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8d7da;strokeColor=#dc3545;fontSize=11;" vertex="1" parent="scope-group">
+          <mxGeometry x="10" y="80" width="295" height="25" as="geometry" />
+        </mxCell>
+
+        <!-- Priority arrow -->
+        <mxCell id="priority-arrow" value="優先度 高 → 低" style="text;html=1;fontSize=10;fontStyle=2;fontColor=#666666;align=right;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="510" width="80" height="80" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
