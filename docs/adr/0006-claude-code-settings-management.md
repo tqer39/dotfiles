@@ -55,6 +55,65 @@ Claude Code のユーザースコープ設定（`~/.claude/settings.json`）を 
 
 ## 結果
 
+### 全体像
+
+![Claude Code Settings Management](../claude-code-settings.drawio.svg)
+
+<!-- Mermaid data source for the drawio diagram above -->
+
+```mermaid
+graph LR
+    subgraph repo["~/.dotfiles/src/.claude/ (Git 管理)"]
+        subgraph personal["personal モード"]
+            P1["settings.personal.json"]
+            P2["plugins/installed_plugins.personal.json"]
+            P3["plugins/config.personal.json"]
+        end
+        subgraph work["work モード"]
+            W1["settings.work.json"]
+            W2["plugins/installed_plugins.work.json"]
+            W3["plugins/config.work.json"]
+        end
+        MODE{"DOTFILES_MODE\n環境変数"}
+    end
+
+    subgraph target["~/.claude/ (User スコープ)"]
+        T1["settings.json"]
+        T2["plugins/installed_plugins.json"]
+        T3["plugins/config.json"]
+    end
+
+    subgraph excluded["Git 管理対象外"]
+        E1["settings.local.json"]
+        E2["~/.claude.json"]
+    end
+
+    MODE -- "symlink" --> T1
+    MODE -- "symlink" --> T2
+    MODE -- "symlink" --> T3
+
+    subgraph deny["セキュリティ方針: deny-first"]
+        direction TB
+        D0["allow リスト不使用 / defaultMode: plan"]
+        D1["🚫 Bash#40;gh repo delete:*#41;"]
+        D2["🚫 Bash#40;git add -A / --all / .#41;"]
+        D3["🔒 Read#40;.env / .env.*#41;"]
+        D4["🔒 Read#40;secrets/** / *.pem / *.key#41;"]
+        D5["🔒 Read#40;//Users/*/.aws/credentials#41;"]
+        D6["🔒 Read#40;//Users/*/.ssh/id_*#41;"]
+        D7["🔒 Read#40;//Users/*/.netrc#41;"]
+    end
+
+    T1 -. "設定内容" .-> deny
+
+    subgraph priority["設定優先順位"]
+        direction TB
+        S1["🥇 Local #40;.claude/settings.local.json#41;"]
+        S2["🥈 Project #40;.claude/settings.json#41;"]
+        S3["🥉 User #40;~/.claude/settings.json#41; ← dotfiles 管理"]
+    end
+```
+
 ### ファイル構成
 
 ```text
