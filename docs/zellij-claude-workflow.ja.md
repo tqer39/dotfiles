@@ -146,6 +146,7 @@ Zellij タブを追加で作る:
 | `cmd + t` | 新規タブ |
 | `cmd + w` | タブを閉じる |
 | `cmd + shift + [` / `]` | タブ切替 |
+| `cmd + shift + click` | URL を開く（zellij バイパス） |
 | `cmd + r` | fzf 履歴検索（`ctrl+r` にリマップ） |
 
 ### Zellij モード切替（プレフィックス）
@@ -278,6 +279,14 @@ mise でインストールしている場合、zellij のログイン時点で m
 - `zellij list-sessions` で EXITED 状態になっているか確認
 - `session_serialization true` が有効か `config.kdl` を確認
 - キャッシュ: `~/Library/Caches/org.Zellij-Contributors.Zellij/` or `~/.cache/zellij/`
+
+### URL をマウスクリックで開けない／テキスト選択できない
+
+zellij がマウスイベントを捕捉しているため、ターミナル出力中の URL を普通にクリックしても Ghostty まで届かない。
+
+**対処**: `cmd + shift + クリック` で URL を開く。テキスト選択したい場合は `cmd + shift + ドラッグ`。`cmd` か `shift` 単体ではバイパスできず、同時押しが必要。
+
+**恒久対応（オプション）**: `src/.config/zellij/config.kdl` に `mouse_mode false` を追加すれば、zellij のマウスキャプチャを無効化してマウス操作を常に Ghostty 側へ渡せる。ただし zellij のマウス操作（ペインクリック切替、タブクリック、ドラッグリサイズ等）は使えなくなるトレードオフを伴う。通常は上記ショートカットで十分。
 
 ### Ghostty のキーバインドと衝突した
 

@@ -31,6 +31,7 @@ Aliases:
     gl        git log --oneline
     gnf       git new-feature-branch
     gclean    delete stale local branches (-f to force)
+    ccw       Claude Code を worktree sandbox で起動してブレスト開始
 
   Files:
     ls        eza --icons
@@ -90,6 +91,22 @@ if command -v git &> /dev/null; then
     fi
   }
   alias gclean='git_cleanup_branches'
+
+  # Claude Code を worktree sandbox で起動し、そのままブレストに入る
+  # Usage: ccw [トピック...]
+  ccw() {
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      echo "ccw: not inside a git repository" >&2
+      return 1
+    fi
+    if ! command -v claude >/dev/null 2>&1; then
+      echo "ccw: claude command not found" >&2
+      return 1
+    fi
+
+    local topic="${*:-（トピックはこれから相談する）}"
+    claude "git:worktree スキルの Start フェーズを実行して、最新の base ブランチから新しい worktree を作成してください。作成後すぐに superpowers:brainstorming スキルを起動して、次のトピックでブレストを始めてください: ${topic}"
+  }
 fi
 
 # eza (ls replacement)
