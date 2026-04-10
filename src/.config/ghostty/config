@@ -30,6 +30,8 @@ window-padding-balance = true
 
 # macOS
 macos-titlebar-style = tabs
+# Option キーを Alt として扱う（Zellij の Alt キーバインドで必要）
+macos-option-as-alt = true
 
 # Keybindings
 # fzf 履歴検索 (cmd+r → ctrl+r)
