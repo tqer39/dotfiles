@@ -25,6 +25,7 @@ brew "ripgrep"      # grep replacement
 brew "zoxide"       # cd replacement
 brew "tmux"         # terminal multiplexer
 brew "zellij"       # terminal multiplexer
+brew "yazi"         # terminal file manager
 
 # Development tools
 brew "direnv"
