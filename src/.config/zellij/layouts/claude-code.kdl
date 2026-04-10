@@ -6,10 +6,13 @@ layout {
         plugin location="tab-bar"
     }
     pane split_direction="vertical" {
-        pane size="70%" name="claude" {
+        pane size="20%" name="files" {
+            command "yazi"
+        }
+        pane size="55%" name="claude" {
             command "claude"
         }
-        pane size="30%" name="shell"
+        pane size="25%" name="shell"
     }
     pane size=2 borderless=true {
         plugin location="https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm" {
