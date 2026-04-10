@@ -88,8 +88,7 @@ if [ "$DOTFILES_MODE" = "work" ]; then
 else
   export MISE_CONFIG_FILE="$HOME/.config/mise/config.personal.toml"
 fi
-if [ "$DOTFILES_MODE" != "work" ] && command -v mise &> /dev/null; then
-  # npm 警告を避けるには一度 `mise install node` を実行しておく
+if command -v mise &> /dev/null; then
   eval "$(mise activate zsh)"
 fi
 
