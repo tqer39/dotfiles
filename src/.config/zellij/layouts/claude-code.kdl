@@ -1,0 +1,17 @@
+// Claude Code layout
+// Usage: zellij --layout claude-code
+
+layout {
+    pane size=1 borderless=true {
+        plugin location="tab-bar"
+    }
+    pane split_direction="vertical" {
+        pane size="70%" name="claude" {
+            command "claude"
+        }
+        pane size="30%" name="shell"
+    }
+    pane size=1 borderless=true {
+        plugin location="status-bar"
+    }
+}
