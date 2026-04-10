@@ -97,6 +97,19 @@ if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
+# zellij zjstatus: push cwd to status bar via pipe
+if [ -n "${ZELLIJ:-}" ] && command -v zellij &> /dev/null; then
+  _zjstatus_cwd_pipe() {
+    zellij pipe \
+      --plugin 'https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm' \
+      --name 'zjstatus::pipe::pipe_cwd' \
+      -- "$PWD" 2>/dev/null
+  }
+  autoload -U add-zsh-hook
+  add-zsh-hook precmd _zjstatus_cwd_pipe
+  add-zsh-hook chpwd _zjstatus_cwd_pipe
+fi
+
 # Starship (must be at the end)
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"

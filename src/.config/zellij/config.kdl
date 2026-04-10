@@ -11,6 +11,9 @@ on_force_close "detach"
 show_startup_tips false
 show_release_notes false
 
+// Default layout (custom, adds zjstatus cwd indicator)
+default_layout "default"
+
 keybinds clear-defaults=true {
     locked {
         bind "Ctrl g" { SwitchToMode "normal"; }
