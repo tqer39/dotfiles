@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "plugins": {
+    "example-skills@anthropic-agent-skills": [
+      {
+        "scope": "user",
+        "installPath": "",
+        "version": "latest",
+        "installedAt": "",
+        "lastUpdated": ""
+      }
+    ],
+    "code-simplifier@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "",
+        "version": "latest",
+        "installedAt": "",
+        "lastUpdated": ""
+      }
+    ],
+    "superpowers@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "",
+        "version": "latest",
+        "installedAt": "",
+        "lastUpdated": ""
+      }
+    ],
+    "context7@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "",
+        "version": "latest",
+        "installedAt": "",
+        "lastUpdated": ""
+      }
+    ]
+  }
+}

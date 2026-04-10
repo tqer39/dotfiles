@@ -188,6 +188,39 @@ doctor_check_symlinks() {
   done < "$config_file"
 }
 
+doctor_check_claude_settings() {
+  local mode="${DOTFILES_MODE:-personal}"
+  local src_dir="${DOTFILES_DIR}/src/.claude"
+
+  _doctor_section_header "Claude Code Settings (mode: $mode)"
+
+  local names=("settings.json" "plugins/installed_plugins.json" "plugins/config.json")
+  local sources=("settings.${mode}.json" "plugins/installed_plugins.${mode}.json" "plugins/config.${mode}.json")
+
+  for i in "${!names[@]}"; do
+    local target_name="${names[$i]}"
+    local source_name="${sources[$i]}"
+    local full_src="${src_dir}/${source_name}"
+    local full_dest="${HOME}/.claude/${target_name}"
+
+    if [[ ! -e "$full_src" ]]; then
+      doctor_check_fail ".claude/${target_name}" "Source not found: ${source_name}"
+    elif [[ -L "$full_dest" ]]; then
+      local target
+      target=$(readlink "$full_dest")
+      if [[ "$target" == "$full_src" ]]; then
+        doctor_check_ok ".claude/${target_name}" "Linked correctly"
+      else
+        doctor_check_fail ".claude/${target_name}" "Wrong target: $target"
+      fi
+    elif [[ -e "$full_dest" ]]; then
+      doctor_check_fail ".claude/${target_name}" "Exists but not a symlink"
+    else
+      doctor_check_warn ".claude/${target_name}" "Not installed"
+    fi
+  done
+}
+
 doctor_check_mise_npm_tools() {
   local mise_config="${DOTFILES_DIR}/src/.config/mise/config.toml"
 
@@ -319,6 +352,7 @@ run_doctor() {
   doctor_check_symlinks
   doctor_check_runtimes
   doctor_check_vscode
+  doctor_check_claude_settings
 
   # Print summary
   doctor_print_summary
