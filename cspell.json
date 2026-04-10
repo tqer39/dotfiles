@@ -1,7 +1,13 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "files": ["**", ".*/**"],
-  "ignorePaths": [".git", ".gitignore", ".claude", "**/.terraform.lock.hcl"],
+  "ignorePaths": [
+    ".git",
+    ".gitignore",
+    ".claude",
+    "**/.terraform.lock.hcl",
+    "**/*.drawio.svg"
+  ],
   "words": [
     "aahl",
     "albert",
@@ -118,6 +124,7 @@
     "MSYS",
     "mypy",
     "nodenv",
+    "netrc",
     "noto",
     "O'oyama",
     "octocat",
