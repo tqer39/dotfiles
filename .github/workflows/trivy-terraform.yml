@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Run Trivy for Terraform
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # master
+        uses: aquasecurity/trivy-action@f685ba721536b1ff19093eb4e1b1bf994c2bdbe2 # master
         with:
           scan-type: 'config'
           scan-ref: 'infra/terraform'
@@ -39,7 +39,7 @@ jobs:
           exit-code: '0'
 
       - name: Run Trivy for Terraform (SARIF)
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # master
+        uses: aquasecurity/trivy-action@f685ba721536b1ff19093eb4e1b1bf994c2bdbe2 # master
         with:
           scan-type: 'config'
           scan-ref: 'infra/terraform'
@@ -57,7 +57,7 @@ jobs:
 
       - name: Comment on PR with Trivy results
         if: github.event_name == 'pull_request'
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1 # master
+        uses: aquasecurity/trivy-action@f685ba721536b1ff19093eb4e1b1bf994c2bdbe2 # master
         id: trivy-pr
         with:
           scan-type: 'config'
