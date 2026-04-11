@@ -16,6 +16,7 @@ brew "starship"
 # Git
 brew "git"
 brew "gh"
+brew "lazygit"      # terminal UI for git
 
 # Modern CLI replacements
 brew "eza"          # ls replacement

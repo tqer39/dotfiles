@@ -44,8 +44,8 @@ Aliases:
     docker-compose  podman compose (if installed)
 
   Zellij:
-    zj        attach/create zellij session
-    zj claude claude-code layout で起動
+    zj        attach/create zellij session (default layout)
+    zj <name> attach/create named session; inside zellij → switch-session
 EOF
 }
 
@@ -130,17 +130,55 @@ fi
 # Zellij
 if command -v zellij &> /dev/null; then
   zj() {
-    if [ "$1" = "claude" ]; then
-      zellij --session claude-code --layout claude-code 2>/dev/null \
-        || zellij attach claude-code
-    elif [ -n "$1" ]; then
-      zellij attach "$1" 2>/dev/null \
-        || zellij --session "$1"
+    local name="${1:-}"
+    local sessions
+    sessions="$(zellij list-sessions --no-formatting 2>/dev/null || true)"
+    if [ -n "$name" ] && printf '%s\n' "$sessions" | grep -q "^${name} .*EXITED"; then
+      zellij delete-session "$name" >/dev/null 2>&1 || true
+      sessions="$(zellij list-sessions --no-formatting 2>/dev/null || true)"
+    fi
+
+    if [ -n "${ZELLIJ:-}" ]; then
+      if [ -z "$name" ]; then
+        echo "zj: already inside zellij session '${ZELLIJ_SESSION_NAME:-?}'" >&2
+        return 0
+      fi
+      if [ "${ZELLIJ_SESSION_NAME:-}" = "$name" ]; then
+        echo "zj: already in session '$name'" >&2
+        return 0
+      fi
+      if printf '%s\n' "$sessions" | grep -q "^${name} "; then
+        zellij action switch-session "$name"
+      else
+        echo "zj: session '$name' not found. detach (Ctrl-o d) first, then run: zj $name" >&2
+        return 1
+      fi
+      return
+    fi
+
+    if [ -z "$name" ]; then
+      zellij attach 2>/dev/null || zellij
+    elif printf '%s\n' "$sessions" | grep -q "^${name} "; then
+      zellij attach "$name"
     else
-      zellij attach 2>/dev/null \
-        || zellij
+      zellij --session "$name"
     fi
   }
+
+  # Push current working directory to zjstatus status bar (pipe_cwd).
+  _zj_pipe_cwd() {
+    [ -z "${ZELLIJ:-}" ] && return 0
+    zellij pipe --name "zjstatus::pipe::cwd" -- "${PWD/#$HOME/~}" >/dev/null 2>&1 || true
+  }
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    autoload -Uz add-zsh-hook 2>/dev/null && add-zsh-hook chpwd _zj_pipe_cwd
+    add-zsh-hook precmd _zj_pipe_cwd 2>/dev/null || true
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    case "${PROMPT_COMMAND:-}" in
+      *_zj_pipe_cwd*) ;;
+      *) PROMPT_COMMAND="_zj_pipe_cwd${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+    esac
+  fi
 fi
 
 # pbcopy/pbpaste (Linux)

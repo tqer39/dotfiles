@@ -157,6 +157,13 @@ keybinds clear-defaults=true {
         }
     }
     shared_except "locked" {
+        bind "Alt g" {
+            Run "lazygit" {
+                floating true
+                hold_on_close false
+            }
+            SwitchToMode "normal"
+        }
         bind "Alt left" { MoveFocusOrTab "left"; }
         bind "Alt down" { MoveFocus "down"; }
         bind "Alt up" { MoveFocus "up"; }
