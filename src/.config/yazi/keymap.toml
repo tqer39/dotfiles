@@ -1,7 +1,7 @@
 # keymap.toml
 # https://yazi-rs.github.io/docs/configuration/keymap
 #
-# Custom bindings for the claude-code zellij layout:
+# Custom bindings for the default zellij layout:
 #   - `cd`  → cd the neighbouring shell pane to the hovered directory
 #   - `yr`  → copy the git-root-relative path of the hovered entry to the clipboard
 #
