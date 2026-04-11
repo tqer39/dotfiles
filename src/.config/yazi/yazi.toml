@@ -1,7 +1,7 @@
 # yazi.toml
 # https://yazi-rs.github.io/docs/configuration/yazi
 #
-# Intentionally minimal — defaults work well for the claude-code zellij layout.
+# Intentionally minimal — defaults work well for the default zellij layout.
 # Extend here when preview helpers, openers, or previewers are needed.
 
 [mgr]
