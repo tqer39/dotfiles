@@ -413,6 +413,7 @@ function Install-ScoopPackages {
     $packages = @(
         "git",
         "gh",
+        "lazygit",
         "starship",
         "mise",
         "fzf",
