@@ -165,23 +165,21 @@ if command -v zellij &> /dev/null; then
     fi
   }
 
-  # Push current working directory to zjstatus status bar (pipe_cwd).
-  # zellij pipe without --plugin can block waiting for a plugin response,
-  # so we fire-and-forget in a backgrounded subshell and dedupe on $PWD.
+  # Set terminal title to cwd (shows in zellij tab-bar).
   _zj_last_cwd=""
-  _zj_pipe_cwd() {
+  _zj_set_title() {
     [ -z "${ZELLIJ:-}" ] && return 0
     [ "$PWD" = "${_zj_last_cwd:-}" ] && return 0
     _zj_last_cwd="$PWD"
-    ( zellij pipe --name "zjstatus::pipe::cwd" -- "${PWD/#$HOME/~}" >/dev/null 2>&1 & ) 2>/dev/null
+    printf '\033]0;%s\007' "${PWD/#$HOME/~}"
   }
   if [ -n "${ZSH_VERSION:-}" ]; then
-    autoload -Uz add-zsh-hook 2>/dev/null && add-zsh-hook chpwd _zj_pipe_cwd
-    _zj_pipe_cwd
+    autoload -Uz add-zsh-hook 2>/dev/null && add-zsh-hook chpwd _zj_set_title
+    _zj_set_title
   elif [ -n "${BASH_VERSION:-}" ]; then
     case "${PROMPT_COMMAND:-}" in
-      *_zj_pipe_cwd*) ;;
-      *) PROMPT_COMMAND="_zj_pipe_cwd${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
+      *_zj_set_title*) ;;
+      *) PROMPT_COMMAND="_zj_set_title${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
     esac
   fi
 fi

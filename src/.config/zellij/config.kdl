@@ -11,7 +11,7 @@ on_force_close "detach"
 show_startup_tips false
 show_release_notes false
 
-// Default layout (custom, adds zjstatus cwd indicator)
+// Default layout
 default_layout "default"
 
 keybinds clear-defaults=true {
@@ -173,6 +173,13 @@ keybinds clear-defaults=true {
         bind "Alt =" { Resize "Increase"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
+        bind "Alt e" {
+            LaunchPlugin "filepicker" {
+                floating true
+                close_on_selection false
+            }
+            SwitchToMode "normal"
+        }
         bind "Alt f" { ToggleFloatingPanes; }
         bind "Ctrl g" { SwitchToMode "locked"; }
         bind "Alt h" { MoveFocusOrTab "left"; }
@@ -184,7 +191,7 @@ keybinds clear-defaults=true {
         bind "Alt o" { MoveTab "right"; }
         bind "Alt p" { TogglePaneInGroup; }
         bind "Alt Shift p" { ToggleGroupMarking; }
-        bind "Ctrl q" { Quit; }
+        bind "Ctrl q" { Detach; }
     }
     shared_except "locked" "move" {
         bind "Ctrl h" { SwitchToMode "move"; }

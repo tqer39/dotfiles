@@ -97,17 +97,14 @@ if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# zellij zjstatus: push cwd to status bar via pipe
-if [ -n "${ZELLIJ:-}" ] && command -v zellij &> /dev/null; then
-  _zjstatus_cwd_pipe() {
-    zellij pipe \
-      --plugin 'https://github.com/dj95/zjstatus/releases/latest/download/zjstatus.wasm' \
-      --name 'zjstatus::pipe::pipe_cwd' \
-      -- "$PWD" 2>/dev/null
+# zellij: set terminal title to cwd (shows in tab-bar)
+if [ -n "${ZELLIJ:-}" ]; then
+  _zj_set_title() {
+    printf '\033]0;%s\007' "${PWD/#$HOME/~}"
   }
   autoload -U add-zsh-hook
-  add-zsh-hook precmd _zjstatus_cwd_pipe
-  add-zsh-hook chpwd _zjstatus_cwd_pipe
+  add-zsh-hook precmd _zj_set_title
+  add-zsh-hook chpwd _zj_set_title
 fi
 
 # Starship (must be at the end)
