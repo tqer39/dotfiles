@@ -7,7 +7,7 @@
         "installPath": "",
         "version": "latest",
         "installedAt": "",
-        "lastUpdated": ""
+        "lastUpdated": "2026-04-12T23:13:07.476Z"
       }
     ],
     "code-simplifier@claude-plugins-official": [
@@ -16,7 +16,7 @@
         "installPath": "",
         "version": "latest",
         "installedAt": "",
-        "lastUpdated": ""
+        "lastUpdated": "2026-04-12T23:13:07.476Z"
       }
     ],
     "superpowers@claude-plugins-official": [
@@ -25,7 +25,7 @@
         "installPath": "/Users/takeruooyama/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7",
         "version": "5.0.7",
         "installedAt": "",
-        "lastUpdated": "2026-04-11T22:57:07.403Z"
+        "lastUpdated": "2026-04-12T23:13:07.476Z"
       }
     ],
     "context7@claude-plugins-official": [
@@ -34,7 +34,7 @@
         "installPath": "",
         "version": "latest",
         "installedAt": "",
-        "lastUpdated": ""
+        "lastUpdated": "2026-04-12T23:13:07.476Z"
       }
     ],
     "git@tqer39-plugins": [
@@ -43,7 +43,7 @@
         "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/git/0.1.0",
         "version": "0.1.0",
         "installedAt": "2026-04-06T15:13:02.449Z",
-        "lastUpdated": "2026-04-06T15:13:02.449Z",
+        "lastUpdated": "2026-04-12T23:13:07.476Z",
         "gitCommitSha": "7e860b33bf1c4f12c2b7d342aa058b1393d90c3b"
       }
     ],
@@ -53,7 +53,7 @@
         "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/architecture/0.1.0",
         "version": "0.1.0",
         "installedAt": "2026-04-06T15:13:46.023Z",
-        "lastUpdated": "2026-04-06T15:13:46.023Z",
+        "lastUpdated": "2026-04-12T23:13:07.476Z",
         "gitCommitSha": "7e860b33bf1c4f12c2b7d342aa058b1393d90c3b"
       }
     ],
@@ -63,7 +63,7 @@
         "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/agent-config/0.1.0",
         "version": "0.1.0",
         "installedAt": "2026-04-06T15:14:32.510Z",
-        "lastUpdated": "2026-04-06T15:14:32.510Z",
+        "lastUpdated": "2026-04-12T23:13:07.476Z",
         "gitCommitSha": "7e860b33bf1c4f12c2b7d342aa058b1393d90c3b"
       }
     ],
@@ -84,7 +84,7 @@
         "installPath": "/Users/takeruooyama/.claude/plugins/cache/claude-plugins-official/discord/0.0.4",
         "version": "0.0.4",
         "installedAt": "2026-04-11T22:56:29.277Z",
-        "lastUpdated": "2026-04-11T22:56:29.277Z"
+        "lastUpdated": "2026-04-12T23:13:07.476Z"
       }
     ]
   }
