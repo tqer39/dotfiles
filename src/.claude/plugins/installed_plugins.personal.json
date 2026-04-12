@@ -22,10 +22,10 @@
     "superpowers@claude-plugins-official": [
       {
         "scope": "user",
-        "installPath": "",
-        "version": "latest",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7",
+        "version": "5.0.7",
         "installedAt": "",
-        "lastUpdated": ""
+        "lastUpdated": "2026-04-11T22:57:07.403Z"
       }
     ],
     "context7@claude-plugins-official": [
@@ -70,12 +70,21 @@
     "claude-api@anthropic-agent-skills": [
       {
         "scope": "local",
+        "projectPath": "/Users/takeruooyama/.dotfiles",
         "installPath": "/Users/takeruooyama/.claude/plugins/cache/anthropic-agent-skills/claude-api/b0cbd3df1533",
         "version": "b0cbd3df1533",
         "installedAt": "2026-04-09T17:41:01.728Z",
         "lastUpdated": "2026-04-09T17:41:01.728Z",
-        "gitCommitSha": "b0cbd3df1533b396d281a6886d5132f623393a9c",
-        "projectPath": "/Users/takeruooyama/.dotfiles"
+        "gitCommitSha": "b0cbd3df1533b396d281a6886d5132f623393a9c"
+      }
+    ],
+    "discord@claude-plugins-official": [
+      {
+        "scope": "user",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/claude-plugins-official/discord/0.0.4",
+        "version": "0.0.4",
+        "installedAt": "2026-04-11T22:56:29.277Z",
+        "lastUpdated": "2026-04-11T22:56:29.277Z"
       }
     ]
   }

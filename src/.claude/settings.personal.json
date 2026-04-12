@@ -42,7 +42,8 @@
     "git@tqer39-plugins": true,
     "architecture@tqer39-plugins": true,
     "agent-config@tqer39-plugins": true,
-    "skill-matcher@tqer39-plugins": true
+    "skill-matcher@tqer39-plugins": true,
+    "discord@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
