@@ -1,6 +1,6 @@
 // Default layout
 // - default_tab_template: tab-bar (top) + zjstatus (bottom, shows cwd via pipe)
-// - Initial tab: yazi on the left (20%), shell on the right (focused)
+// - Initial tab: shell pane (focused)
 // - cwd is pushed to zjstatus from the shell precmd hook in .shell_common
 //   (pipe name: zjstatus::pipe::cwd)
 
@@ -41,11 +41,6 @@ layout {
     }
 
     tab name="main" {
-        pane split_direction="vertical" {
-            pane size="20%" name="files" {
-                command "yazi"
-            }
-            pane name="shell" focus=true
-        }
+        pane name="shell" focus=true
     }
 }
