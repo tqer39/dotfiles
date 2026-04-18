@@ -28,6 +28,17 @@
     "defaultMode": "plan"
   },
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/require-worktree.sh"
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [
