@@ -55,7 +55,7 @@ repos:
         entry: shellcheck
 
   - repo: https://github.com/biomejs/pre-commit
-    rev: v2.4.11
+    rev: v2.4.12
     hooks:
       - id: biome-check
         additional_dependencies: ['@biomejs/biome@1.9.4']
