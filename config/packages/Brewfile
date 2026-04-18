@@ -33,6 +33,7 @@ brew "shellcheck"
 brew "pre-commit"
 brew "just"          # task runner
 brew "prek"          # pre-commit hooks
+brew "rtk"           # CLI proxy for LLM token optimization
 
 # Cloud credentials
 brew "aws-vault"

@@ -1,5 +1,4 @@
 {
-  "effortLevel": "high",
   "env": {
     "CLAUDE_CODE_DISABLE_1M_CONTEXT": "1",
     "CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING": "1",
@@ -70,5 +69,6 @@
       }
     }
   },
-  "language": "日本語"
+  "language": "日本語",
+  "effortLevel": "high"
 }
