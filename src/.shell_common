@@ -92,8 +92,9 @@ if command -v git &> /dev/null; then
   }
   alias gclean='git_cleanup_branches'
 
-  # Claude Code を worktree sandbox で起動し、そのままブレストに入る
+  # Claude Code を新規 worktree + auto permission mode で起動する
   # Usage: ccw [トピック...]
+  # worktree 名は Claude Code が自動採番。origin/HEAD を毎回同期してから起動。
   ccw() {
     if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
       echo "ccw: not inside a git repository" >&2
@@ -104,8 +105,17 @@ if command -v git &> /dev/null; then
       return 1
     fi
 
+    local root
+    root="$(git rev-parse --show-toplevel)"
+    cd "$root" || return 1
+
+    git remote set-head origin -a >/dev/null 2>&1 || true
+
     local topic="${*:-（トピックはこれから相談する）}"
-    claude "git:worktree スキルの Start フェーズを実行して、最新の base ブランチから新しい worktree を作成してください。作成後すぐに superpowers:brainstorming スキルを起動して、次のトピックでブレストを始めてください: ${topic}"
+    local prompt
+    prompt="superpowers:using-git-worktrees スキルの Start フェーズを実行し、作成した worktree に移動してください。その worktree 内で superpowers:brainstorming スキルを起動し、次のトピックでブレストを始めてください: ${topic}"
+
+    exec claude --permission-mode auto --worktree -- "$prompt"
   }
 fi
 
