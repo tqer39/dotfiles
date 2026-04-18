@@ -40,7 +40,11 @@ assert_deny() {
     fail_count=$((fail_count + 1))
     return
   fi
-  decision="$(printf '%s' "$output" | jq -r '.hookSpecificOutput.permissionDecision // empty')"
+  if ! decision="$(printf '%s' "$output" | jq -r '.hookSpecificOutput.permissionDecision // empty' 2>/dev/null)"; then
+    echo "FAIL [$label]: jq parse error — hook stdout was not valid JSON: $output" >&2
+    fail_count=$((fail_count + 1))
+    return
+  fi
   if [[ "$decision" != "deny" ]]; then
     echo "FAIL [$label]: expected permissionDecision=deny, got: $decision (output: $output)" >&2
     fail_count=$((fail_count + 1))
