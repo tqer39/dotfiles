@@ -48,6 +48,7 @@ FASTMCP
 fcitx
 fgrep
 flathub
+frontmatter
 frontmost
 fseventsd
 fukushi
@@ -61,6 +62,7 @@ googlecode
 GOPATH
 gpgsign
 gpso
+grillme
 gsts
 gstt
 gswc
@@ -73,6 +75,7 @@ ignoredups
 ignorespace
 iterm
 jacobbednarz
+Jekudy
 karabiner
 kentaro
 keybind
@@ -94,6 +97,7 @@ linuxmint
 lrwxr
 Lucida
 manuelschneid3r
+mattpocock
 Menlo
 mitchellh
 mobaxterm
@@ -114,6 +118,7 @@ pcra
 pipefail
 PIPESTATUS
 pmset
+Pocock
 Powerpack
 prek
 procs
@@ -144,6 +149,7 @@ statusline
 steipete
 symref
 Takeru
+takeruooyama
 textlint
 textlintcache
 tfaa
