@@ -92,7 +92,7 @@
 | `shellcheck` (system) | `shellcheck {staged_files}` | `*.sh` | — |
 | `biome-check` (json) | `pnpm exec biome check --write --no-errors-on-unmatched {staged_files}` | `*.json` | ✓ |
 | `prettier` (yaml) | `pnpm exec prettier --write {staged_files}` | `*.{yml,yaml}` | ✓ |
-| `renovate-config-validator` | `pnpm exec --package=renovate -- renovate-config-validator {staged_files}` | `renovate.json5` | — |
+| `renovate-config-validator` | `npx --yes --package=renovate -- renovate-config-validator {staged_files}` | `renovate.json5` | — |
 
 ### `lefthook.yml` (本体)
 
@@ -134,7 +134,7 @@ pre-commit:
       run: pnpm exec cspell lint --no-progress --no-must-find-files {staged_files}
     renovate-config-validator:
       glob: "renovate.json5"
-      run: pnpm exec --package=renovate -- renovate-config-validator {staged_files}
+      run: npx --yes --package=renovate -- renovate-config-validator {staged_files}
 
     # ── フォーマッタ系 ──
     biome-check:
