@@ -96,6 +96,16 @@
         "lastUpdated": "2026-04-19T04:27:13.730Z",
         "gitCommitSha": "27774303d5e58f06e29fb376370c0080700d6167"
       }
+    ],
+    "grill-me@tqer39-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/grill-me/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-19T08:23:04.000Z",
+        "lastUpdated": "2026-04-19T08:23:04.000Z",
+        "gitCommitSha": "0ca8ea83e7c645fce64f362d6e9c28bf253d95ea"
+      }
     ]
   }
 }
