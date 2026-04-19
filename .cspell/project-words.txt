@@ -9,6 +9,7 @@ armhf
 automode
 awscli
 awslabs
+betterleaks
 biomejs
 bobheadxi
 buildx
@@ -84,6 +85,7 @@ keymaps
 Keypirinha
 keyrings
 LASTEXITCODE
+lefthook
 lesspipe
 libbz
 libcrypt
@@ -128,6 +130,7 @@ remotehub
 reshim
 Rofi
 romkatv
+rwxr
 rxvt
 sarif
 SAVEHIST
