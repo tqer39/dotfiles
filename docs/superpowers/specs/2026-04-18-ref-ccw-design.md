@@ -80,7 +80,7 @@ ccw() {
 
   local topic="${*:-（トピックはこれから相談する）}"
   local prompt
-  prompt="superpowers:using-git-worktrees スキルの Start フェーズを実行し、作成した worktree に移動してください。その worktree 内で superpowers:brainstorming スキルを起動し、次のトピックでブレストを始めてください: ${topic}"
+  prompt="このセッションは Claude Code の --worktree sandbox 内です。superpowers:brainstorming → superpowers:writing-plans → superpowers:executing-plans の順で進めてください。トピック: ${topic}"
 
   exec claude --permission-mode auto --worktree -- "$prompt"
 }
@@ -105,14 +105,14 @@ cwd="$(printf '%s' "$input" | jq -r '.cwd // empty')"
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty')"
 
 case "$cwd" in
-  */.worktrees/*|*/.worktrees)
+  */.claude/worktrees/*|*/.claude/worktrees)
     exit 0
     ;;
 esac
 
 case "$tool" in
   Edit|Write|NotebookEdit)
-    jq -n --arg reason "This session is not running inside a git worktree (.worktrees/*). Exit and relaunch with: ccw <topic>, or ask Claude to start a worktree before editing." '{
+    jq -n --arg reason "This session is not running inside a Claude Code worktree (.claude/worktrees/*). Exit and relaunch with: ccw <topic>." '{
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "deny",
@@ -128,7 +128,7 @@ esac
 
 注意点:
 
-- `.worktrees/` のみ対象（superpowers skill のデフォルト配置）
+- `.claude/worktrees/` のみ対象（Claude Code `--worktree` の sandbox 配置）
 - jq 依存（dotfiles の既存前提）
 - shebang `#!/usr/bin/env bash` + `set -euo pipefail` は dotfiles の規約準拠
 
@@ -180,7 +180,7 @@ esac
 ## Worktree Workflow
 
 - 実装を伴う作業では `ccw <topic>` で Claude Code を起動すること
-- `.worktrees/` 外のセッションでは Edit/Write/NotebookEdit が deny される（hook による保護）
+- `.claude/worktrees/` 外のセッションでは Edit/Write/NotebookEdit が deny される（hook による保護）
 - 素 `claude` で起動した場合、編集したくなったら `ccw` で切り直すか、セッション中に worktree の作成を依頼する
 ```
 
@@ -194,14 +194,14 @@ user $ ccw "ref-ccw ブレスト"
   └─ exec claude --permission-mode auto --worktree -- "…topic…"
        └─ Claude Code: worktree 作成 (origin/HEAD 基準)
        └─ Claude Code: worktree cwd でセッション開始 (auto mode)
-       └─ Claude: skill Start フェーズ → brainstorming
+       └─ Claude: brainstorming → writing-plans → executing-plans
 ```
 
 ### 素 claude での誤起動時
 
 ```text
 user $ claude  # repo root
-  └─ Claude Code: cwd = repo root (NOT .worktrees/*)
+  └─ Claude Code: cwd = repo root (NOT .claude/worktrees/*)
        └─ Claude: Edit を試行
             └─ PreToolUse → require-worktree.sh → deny
                  └─ Claude は救済メッセージを受け、ユーザーに ccw 再起動を促す or
@@ -258,5 +258,5 @@ user $ claude  # repo root
 
 - `claude --help` → `-w, --worktree [name]`, `--permission-mode auto`（v2.1.113 で確認）
 - Claude Code docs — Hooks reference の `PreToolUse.permissionDecision`
-- `superpowers:using-git-worktrees` skill（本 worktree 作成に使用）
+- Claude Code `-w, --worktree` フラグ（sandbox worktree を `.claude/worktrees/<auto-name>/` に自動作成）
 - 既存の `hooks.Stop` 実装（`src/.claude/settings.personal.json`）

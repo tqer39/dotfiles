@@ -55,7 +55,7 @@ assert_deny() {
 
 # Case 1: cwd inside worktree + Edit → allow
 assert_allow "inside-worktree-edit" \
-  '{"cwd":"/Users/me/project/.worktrees/foo","tool_name":"Edit"}'
+  '{"cwd":"/Users/me/project/.claude/worktrees/foo","tool_name":"Edit"}'
 
 # Case 2: cwd outside worktree + Edit → deny
 assert_deny "outside-edit" \

@@ -304,3 +304,4 @@ src/.claude.json
 
 ### Git worktrees ###
 .worktrees/
+.claude/worktrees/
