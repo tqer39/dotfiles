@@ -1,5 +1,7 @@
 # ref-cspell: cspell 辞書の外出しと未使用語クリーンアップ
 
+<!-- cspell:ignore sampleword -->
+
 - 作成日: 2026-04-19
 - Topic: ref-cspell
 - ブランチ: `feature/ref-cspell`
@@ -159,8 +161,8 @@ just lint                                   # → cspell 以外に影響なし
 cspell lint --no-progress '**' '.*/**'      # → 0 issues
 
 # 4. 新語追加の動作確認
-echo "newtestword" >> .cspell/project-words.txt
-# 対象 md に "newtestword" を含めて一度 fail させ、辞書追加後に解決することを確認
+echo "sampleword" >> .cspell/project-words.txt
+# 対象 md に sampleword を含めて一度 fail させ、辞書追加後に解決することを確認
 ```
 
 ## ロールバック
