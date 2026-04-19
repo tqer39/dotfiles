@@ -86,6 +86,16 @@
         "installedAt": "2026-04-11T22:56:29.277Z",
         "lastUpdated": "2026-04-12T23:13:07.476Z"
       }
+    ],
+    "skill-matcher@tqer39-plugins": [
+      {
+        "scope": "user",
+        "installPath": "/Users/takeruooyama/.claude/plugins/cache/tqer39-plugins/skill-matcher/0.1.0",
+        "version": "0.1.0",
+        "installedAt": "2026-04-19T04:27:13.730Z",
+        "lastUpdated": "2026-04-19T04:27:13.730Z",
+        "gitCommitSha": "27774303d5e58f06e29fb376370c0080700d6167"
+      }
     ]
   }
 }

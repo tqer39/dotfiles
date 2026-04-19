@@ -24,7 +24,7 @@
       "Read(//Users/*/.ssh/*.pem)",
       "Read(//Users/*/.netrc)"
     ],
-    "defaultMode": "plan"
+    "defaultMode": "auto"
   },
   "hooks": {
     "PreToolUse": [
@@ -81,5 +81,6 @@
     }
   },
   "language": "日本語",
-  "effortLevel": "high"
+  "effortLevel": "high",
+  "skipAutoPermissionPrompt": true
 }
