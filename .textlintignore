@@ -6,5 +6,6 @@
 .textlintcache
 .yamllint.yml
 cspell.json
+docs/superpowers/**
 renovate.json
 tmp/
