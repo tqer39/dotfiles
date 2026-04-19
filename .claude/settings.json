@@ -1,11 +1,4 @@
 {
-  "env": {
-    "ENABLE_TOOL_SEARCH": "true"
-  },
-  "includeCoAuthoredBy": false,
-  "permissions": {
-    "defaultMode": "plan"
-  },
   "hooks": {
     "PostToolUse": [
       {
@@ -17,28 +10,9 @@
           }
         ]
       }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "afplay /System/Library/Sounds/Glass.aiff"
-          }
-        ]
-      }
     ]
   },
   "enabledPlugins": {
     "claude-api@anthropic-agent-skills": true
-  },
-  "extraKnownMarketplaces": {
-    "anthropic-agent-skills": {
-      "source": {
-        "source": "github",
-        "repo": "anthropics/skills"
-      }
-    }
-  },
-  "language": "日本語"
+  }
 }
