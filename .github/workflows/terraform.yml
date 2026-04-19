@@ -21,7 +21,6 @@ concurrency:
 
 env:
   WORKING_DIRECTORY: infra/terraform/envs/prod/dns
-  TF_VERSION: '1.14.3'
   AWS_REGION: ap-northeast-1
 
 jobs:
@@ -38,6 +37,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
+      - name: Setup mise
+        uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
+        with:
+          cache: true
+
       # AWS Credentials
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # v6
@@ -47,18 +51,6 @@ jobs:
 
       - name: Verify AWS Credentials
         run: aws sts get-caller-identity
-
-      # Setup Terraform
-      - name: Get current Terraform version
-        run: |
-          echo "TERRAFORM_VERSION=$(cat .terraform-version)" >> $GITHUB_ENV
-          echo "AWS_ACCOUNT_ID=${{ env.AWS_ACCOUNT_ID }}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@5e8dbf3c6d9deaf4193ca7a8fb23f2ac83bb6c85 # v4
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
 
       - name: Terraform Format Check
         working-directory: infra/terraform

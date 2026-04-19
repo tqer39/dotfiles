@@ -21,6 +21,7 @@ chsh
 codezombiech
 Consolas
 Cowork
+cpython
 dearmor
 dearu
 debsig
