@@ -11,14 +11,14 @@ cwd="$(printf '%s' "$input" | jq -r '.cwd // empty')"
 tool="$(printf '%s' "$input" | jq -r '.tool_name // empty')"
 
 case "$cwd" in
-  */.worktrees/*|*/.worktrees)
+  */.claude/worktrees/*|*/.claude/worktrees)
     exit 0
     ;;
 esac
 
 case "$tool" in
   Edit|Write|NotebookEdit)
-    jq -n --arg reason "This session is not running inside a git worktree (.worktrees/*). Exit and relaunch with: ccw <topic>, or ask Claude to start a worktree before editing." '{
+    jq -n --arg reason "This session is not running inside a Claude Code worktree (.claude/worktrees/*). Exit and relaunch with: ccw <topic>." '{
       hookSpecificOutput: {
         hookEventName: "PreToolUse",
         permissionDecision: "deny",

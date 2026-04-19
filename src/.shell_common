@@ -93,9 +93,26 @@ if command -v git &> /dev/null; then
   alias gclean='git_cleanup_branches'
 
   # Claude Code を新規 worktree + auto permission mode で起動する
-  # Usage: ccw [トピック...]
+  # Usage: ccw [トピック...] | ccw -h | ccw --help
   # worktree 名は Claude Code が自動採番。origin/HEAD を毎回同期してから起動。
   ccw() {
+    if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+      cat <<'EOF'
+ccw - Claude Code を新規 worktree sandbox + auto permission mode で起動
+
+Usage:
+  ccw [topic...]      指定トピックでブレストを開始
+  ccw                 トピックを後で相談する形で起動
+  ccw -h | --help     このヘルプを表示
+
+仕組み:
+  - claude --worktree が .claude/worktrees/<auto-name>/ に sandbox worktree を作成
+  - --permission-mode auto でツール承認をスキップ
+  - 起動前に origin/HEAD を同期 (git remote set-head origin -a)
+  - sandbox 外の Edit/Write/NotebookEdit は require-worktree.sh hook で deny
+EOF
+      return 0
+    fi
     if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
       echo "ccw: not inside a git repository" >&2
       return 1
@@ -113,7 +130,7 @@ if command -v git &> /dev/null; then
 
     local topic="${*:-（トピックはこれから相談する）}"
     local prompt
-    prompt="superpowers:using-git-worktrees スキルの Start フェーズを実行し、作成した worktree に移動してください。その worktree 内で superpowers:brainstorming スキルを起動し、次のトピックでブレストを始めてください: ${topic}"
+    prompt="このセッションは Claude Code の --worktree sandbox 内です。superpowers:brainstorming → superpowers:writing-plans → superpowers:executing-plans の順で進めてください。トピック: ${topic}"
 
     exec claude --permission-mode auto --worktree -- "$prompt"
   }
