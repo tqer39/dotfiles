@@ -2,7 +2,7 @@ brew "mise"
 brew "just"
 brew "git"
 brew "direnv"
-brew "prek"
+brew "lefthook"
 brew "aws-vault"
 
 # Cloudflare tools

@@ -420,7 +420,7 @@ function Install-ScoopPackages {
         "Hack-NF",
         "aws-vault",
         "just",
-        "prek",
+        "lefthook",
         "ripgrep",
         "mobaxterm",
         "eza",

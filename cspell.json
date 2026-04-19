@@ -6,7 +6,9 @@
     ".gitignore",
     ".claude",
     "**/.terraform.lock.hcl",
-    "**/*.drawio.svg"
+    "**/*.drawio.svg",
+    "pnpm-lock.yaml",
+    "node_modules/**"
   ],
   "dictionaryDefinitions": [
     {
