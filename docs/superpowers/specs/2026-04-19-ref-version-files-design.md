@@ -14,9 +14,9 @@
 | `.terraform-version` | `1.14.8` | `.github/workflows/terraform.yml:54`（`cat` で env 化） |
 | `mise.toml` | `terraform = "1.14.8"`, `trivy = "0.69.3"`, `biome = "2.3.11"` | mise（ローカル開発） |
 
-`terraform = 1.14.8` は `.terraform-version` と `mise.toml` の **二重管理** で drift リスクを抱える。さらに `.github/workflows/terraform.yml:24` には `TF_VERSION: '1.14.3'` という **dead env** が残っており、実際の terraform バージョン（1.14.8）と乖離している（同 env はどこからも参照されない）。
+`terraform = 1.14.8` は `.terraform-version` と `mise.toml` の **二重管理** で drift リスクを抱える。さらに `.github/workflows/terraform.yml:24` には `TF_VERSION: '1.14.3'` という **dead env** が残っている。実際の terraform バージョン (1.14.8) と乖離しているうえに、同 env はどこからも参照されない。
 
-`ref-cspell` spec の Non-Goals で「`.python-version` と `mise.toml` の統合 (`ref-mise` として別 spec)」とした課題を、terraform を含めた version file 全体の整合として本 spec で扱う。
+`ref-cspell` spec の Non-Goals で「`.python-version` と `mise.toml` の統合 (`ref-mise` として別 spec)」とした課題があった。これを terraform も含めた version file 全体の整合として本 spec で扱う。
 
 ## Goals
 
@@ -155,7 +155,7 @@ DRY_RUN=true bash scripts/installers/anyenv.sh
 
 ## ロールバック
 
-`git revert` のみで原状復帰可能。`.python-version` / `.terraform-version` を復元し、`terraform.yml` の旧 step（`Get current Terraform version` + `Setup Terraform`）と `TF_VERSION` env を戻すだけ。`jdx/mise-action` 追加も同 commit に含まれるため副作用なし。
+`git revert` のみで原状復帰可能。`.python-version` / `.terraform-version` を復元する。`terraform.yml` の旧 step (`Get current Terraform version` + `Setup Terraform`) と `TF_VERSION` env を戻すだけ。`jdx/mise-action` 追加も同 commit に含まれるため副作用なし。
 
 ## リスク
 
