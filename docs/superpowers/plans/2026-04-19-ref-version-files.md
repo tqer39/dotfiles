@@ -315,7 +315,7 @@ Run: `rg -n '\.python-version|\.terraform-version' docs/ README.md AGENTS.md 2>/
 
 - [ ] **Step 4.2: cspell 辞書の不要語確認**
 
-Run: `rg -n 'pythonversion|terraformversion|tfenv|pyenv' .cspell/project-words.txt 2>/dev/null`
+Run: `rg -n '\.python-version|\.terraform-version|tfenv|pyenv' .cspell/project-words.txt 2>/dev/null`
 
 該当が **0 件** なら Step 4.3 へ skip。該当があり、リポ全体 (`rg -iw '<word>' --hidden`) でも参照されない場合は削除する。
 
