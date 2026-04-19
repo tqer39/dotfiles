@@ -10,25 +10,28 @@ help:
 default: help
 
 # Setup
-setup: setup-mise setup-hooks
+setup: setup-mise setup-node setup-hooks
     @echo "Setup completed"
 
 setup-mise:
     @mise install
 
+setup-node:
+    @pnpm install --frozen-lockfile
+
 setup-hooks:
-    @prek install
+    @lefthook install
 
 # Lint
 lint:
-    @prek run --all-files
+    @lefthook run pre-commit --all-files
 
 lint-hook hook:
-    @prek run {{hook}}
+    @lefthook run pre-commit --commands {{hook}} --all-files
 
-# Clean pre-commit cache
+# Clean lefthook cache
 lint-clean:
-    @prek clean
+    @rm -rf .lefthook
 
 # Wrap terraform with convenient -chdir handling
 # Usage examples:
