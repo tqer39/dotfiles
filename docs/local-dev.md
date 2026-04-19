@@ -23,7 +23,7 @@ This installs the following:
 - mise (version management)
 - just (task runner)
 - direnv (environment variable management)
-- prek (pre-commit hooks)
+- lefthook (git hooks)
 - aws-vault
 - cf-vault
 

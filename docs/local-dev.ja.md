@@ -23,7 +23,7 @@ make bootstrap
 - mise (バージョン管理)
 - just (タスクランナー)
 - direnv (環境変数管理)
-- prek (pre-commit フック)
+- lefthook (git フック)
 - aws-vault
 - cf-vault
 
