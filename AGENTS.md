@@ -39,12 +39,6 @@ just tf -chdir=prod/bootstrap apply
 - Variable/function names: snake_case
 - Arithmetic: `count=$((count + 1))` (not `((count++))`)
 
-## Worktree Workflow
-
-- 実装を伴う作業では `ccw <topic>` で Claude Code を起動すること
-- `.claude/worktrees/` 外のセッションでは Edit/Write/NotebookEdit が `PreToolUse` hook で deny される
-- 素 `claude` で起動した場合、編集したくなったら `ccw` で切り直すか、セッション中に worktree の作成を依頼する
-
 ## File Restrictions
 
 - **Do NOT create** `.vscode/settings.json` - VS Code settings are not managed in this repository
