@@ -1,4 +1,4 @@
-# AGENTS.md
+# エージェントガイド
 
 [🇺🇸 English](../AGENTS.md)
 
