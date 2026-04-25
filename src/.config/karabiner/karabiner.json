@@ -1191,6 +1191,30 @@
                 "type": "basic"
               }
             ]
+          },
+          {
+            "description": "cmux: コマンドの履歴表示(cmd+r)",
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["^com\\.cmuxterm\\.app$"],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": {
+                  "key_code": "r",
+                  "modifiers": { "mandatory": ["command"] }
+                },
+                "to": [
+                  {
+                    "key_code": "r",
+                    "modifiers": ["control"]
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
           }
         ]
       },
