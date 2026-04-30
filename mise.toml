@@ -3,7 +3,7 @@ python = "3.14.4"
 terraform = "1.14.8"
 trivy = "0.70.0"
 biome = "2.3.11"
-lefthook = "1.13.6"
+lefthook = "2.1.6"
 node = "22"
 pnpm = "10.33.0"
 
