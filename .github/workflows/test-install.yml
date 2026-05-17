@@ -73,7 +73,7 @@ jobs:
           else
             echo "Warning: No expected symlinks found"
           fi
-          ls -la ~ | grep "^l" || true
+          find ~ -maxdepth 1 -type l -exec ls -ld {} + || true
 
       - name: Test status command
         run: |
@@ -90,7 +90,7 @@ jobs:
           echo "=== Verifying uninstall ==="
           if [ -L ~/.gitconfig ] || [ -L ~/.zshrc ] || [ -L ~/.bashrc ]; then
             echo "Warning: Some symlinks still exist after uninstall"
-            ls -la ~ | grep "^l" || true
+            find ~ -maxdepth 1 -type l -exec ls -ld {} + || true
           else
             echo "Uninstall completed successfully"
           fi
