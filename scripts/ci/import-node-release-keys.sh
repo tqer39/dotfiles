@@ -2,10 +2,27 @@
 # Node.js リリース署名鍵を GnuPG キーリングへ pre-import する。
 # mise が node をインストールする際に行う tarball の GPG 検証で利用される。
 # 参考: https://github.com/nodejs/release-keys
+#
+# ===============================================================
+# メンテナンス手順 (issue #406)
+# ===============================================================
+# 下記 `keys` 配列は nodejs/release-keys の keys.list と同期して
+# 手動で更新する。CI で node のインストール / 検証が
+# 「gpg: Can't check signature: No public key」等で fail した場合は
+# 鍵が追加 / rotate された可能性があるため、以下のコマンドで最新の
+# long key id 一覧を取得し、本スクリプトの配列を差し替える:
+#
+#   curl -fsSL https://raw.githubusercontent.com/nodejs/release-keys/main/keys.list
+#
+# 差分があれば PR を作成して merge する。fail 頻度が増えてきたら
+# issue #406 で検討した案 A (動的取得) や案 B (Renovate / scheduled
+# job による自動 PR) への移行を検討する。
+# ===============================================================
 set -euo pipefail
 
 # 現行 / 直近の node リリース署名者の long key id。
-# release-keys リポジトリと同期して更新する。
+# nodejs/release-keys の keys.list と同期して更新する。
+# 最終同期日: 2026-05-17 (issue #406)
 keys=(
   4ED778F539E3634C779C87C6D7062848A1AB005C
   141F07595B7B3FFE74309A937405533BE57C7D57
@@ -45,6 +62,8 @@ done
 if [ "${#failed[@]}" -gt 0 ]; then
   echo "ERROR: ${#failed[@]} 鍵のインポートに失敗しました" >&2
   printf '  - %s\n' "${failed[@]}" >&2
+  echo "ヒント: nodejs/release-keys の keys.list と差分がないか確認してください" >&2
+  echo "  curl -fsSL https://raw.githubusercontent.com/nodejs/release-keys/main/keys.list" >&2
   exit 1
 fi
 
