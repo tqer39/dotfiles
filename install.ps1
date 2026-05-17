@@ -49,9 +49,6 @@ param(
 # Configuration
 # ------------------------------------------------------------------------------
 $ErrorActionPreference = "Stop"
-# PowerShell 7.3+ では既定で native command の stderr が terminating error 化する。
-# git の "LF will be replaced by CRLF" 等の警告で catch が暴発するため明示的に無効化する。
-$PSNativeCommandUseErrorActionPreference = $false
 $DotfilesRepo = "https://github.com/tqer39/dotfiles.git"
 $DotfilesBranch = "main"
 $DotfilesDir = if ($env:DOTFILES_DIR) { $env:DOTFILES_DIR } else { Join-Path $env:USERPROFILE ".dotfiles" }
