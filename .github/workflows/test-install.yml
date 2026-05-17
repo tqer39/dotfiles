@@ -101,8 +101,7 @@ jobs:
   # ------------------------------------------------------------------------------
   test-unix-full:
     name: Full - ${{ matrix.os }}
-    # NOTE: head_ref 条件は PR 検証用の一時的な開放。issue #403 task 2 の動作確認後に削除する
-    if: github.ref == 'refs/heads/main' || github.head_ref == 'fix/test-install-mise-node-gpg'
+    if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -177,8 +176,7 @@ jobs:
   # ------------------------------------------------------------------------------
   test-unix-server:
     name: Server - ubuntu-latest
-    # NOTE: head_ref 条件は PR 検証用の一時的な開放。issue #403 task 2 の動作確認後に削除する
-    if: github.ref == 'refs/heads/main' || github.head_ref == 'fix/test-install-mise-node-gpg'
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
@@ -310,8 +308,7 @@ jobs:
   # ------------------------------------------------------------------------------
   test-windows-full:
     name: Full - Windows
-    # NOTE: head_ref 条件は PR 検証用の一時的な開放。issue #403 task 2 の動作確認後に削除する
-    if: github.ref == 'refs/heads/main' || github.head_ref == 'fix/test-install-mise-node-gpg'
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
