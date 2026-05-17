@@ -111,8 +111,6 @@ jobs:
       DOTFILES_DIR: ${{ github.workspace }}
       # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # GitHub Actions ランナーで node の GPG 公開鍵取得が失敗するため検証をスキップ
-      MISE_NODE_VERIFY: 'false'
 
     steps:
       - name: Checkout
@@ -137,6 +135,9 @@ jobs:
           key: ${{ runner.os }}-apt-${{ hashFiles('config/packages/apt-packages.txt') }}
           restore-keys: |
             ${{ runner.os }}-apt-
+
+      - name: Import Node.js release signing keys
+        run: bash scripts/ci/import-node-release-keys.sh
 
       - name: Test full install
         run: |
@@ -181,8 +182,6 @@ jobs:
       DOTFILES_DIR: ${{ github.workspace }}
       # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # GitHub Actions ランナーで node の GPG 公開鍵取得が失敗するため検証をスキップ
-      MISE_NODE_VERIFY: 'false'
 
     steps:
       - name: Checkout
@@ -195,6 +194,9 @@ jobs:
           key: ${{ runner.os }}-apt-server-${{ hashFiles('config/packages/apt-packages.txt') }}
           restore-keys: |
             ${{ runner.os }}-apt-server-
+
+      - name: Import Node.js release signing keys
+        run: bash scripts/ci/import-node-release-keys.sh
 
       - name: Test server mode install
         run: |
@@ -312,8 +314,6 @@ jobs:
       DOTFILES_DIR: ${{ github.workspace }}
       # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # GitHub Actions ランナーで node の GPG 公開鍵取得が失敗するため検証をスキップ
-      MISE_NODE_VERIFY: 'false'
 
     steps:
       - name: Checkout
@@ -326,6 +326,10 @@ jobs:
           key: windows-scoop-${{ hashFiles('install.ps1') }}
           restore-keys: |
             windows-scoop-
+
+      - name: Import Node.js release signing keys
+        shell: bash
+        run: bash scripts/ci/import-node-release-keys.sh
 
       - name: Test full install
         shell: pwsh

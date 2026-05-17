@@ -73,6 +73,7 @@ hackgen
 hammerspoon
 helperselector
 histappend
+hkps
 idempotently
 ignoredups
 ignorespace
@@ -86,6 +87,8 @@ keymap
 keymaps
 Keypirinha
 keyrings
+keyserver
+keyservers
 LASTEXITCODE
 lefthook
 lesspipe
@@ -116,6 +119,7 @@ O'oyama
 octocat
 oneline
 ooyama
+openpgp
 OPENROUTER
 orbstack
 pcra
