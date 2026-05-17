@@ -1,0 +1,8 @@
+# 行末方針
+# - 既定: テキストファイルは LF に正規化 (チェックアウト時も LF)
+# - Windows 固有スクリプト (*.ps1, *.cmd, *.bat) は CRLF に固定
+* text=auto eol=lf
+
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
