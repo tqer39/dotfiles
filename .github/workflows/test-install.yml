@@ -109,6 +109,10 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     env:
       DOTFILES_DIR: ${{ github.workspace }}
+      # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # GitHub Actions ランナーで node の GPG 公開鍵取得が失敗するため検証をスキップ
+      MISE_NODE_VERIFY: 'false'
 
     steps:
       - name: Checkout
@@ -175,6 +179,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
+      # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # GitHub Actions ランナーで node の GPG 公開鍵取得が失敗するため検証をスキップ
+      MISE_NODE_VERIFY: 'false'
 
     steps:
       - name: Checkout
@@ -302,6 +310,10 @@ jobs:
     runs-on: windows-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
+      # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # GitHub Actions ランナーで node の GPG 公開鍵取得が失敗するため検証をスキップ
+      MISE_NODE_VERIFY: 'false'
 
     steps:
       - name: Checkout
