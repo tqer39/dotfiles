@@ -18,6 +18,7 @@ chdir
 checkwinsize
 chpwd
 chsh
+cmux
 codezombiech
 Consolas
 Cowork
