@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# Node.js リリース署名鍵を GnuPG キーリングへ pre-import する。
+# mise が node をインストールする際に行う tarball の GPG 検証で利用される。
+# 参考: https://github.com/nodejs/release-keys
+set -euo pipefail
+
+# 現行 / 直近の node リリース署名者の long key id。
+# release-keys リポジトリと同期して更新する。
+keys=(
+  4ED778F539E3634C779C87C6D7062848A1AB005C
+  141F07595B7B3FFE74309A937405533BE57C7D57
+  74F12602B6F1C4E913FAA37AD3A89613643B6201
+  DD792F5973C6DE52C432CBDAC77ABFA00DDBF2B7
+  CC68F5A3106FF448322E48ED27F5E38D5B0A215F
+  8FCCA13FEF1D0C2E91008E09770F7A9A5AE15600
+  890C08DB8579162FEE0DF9DB8BEAB4DFCF555EF4
+  C82FA3AE1CBEDC6BE46B9360C43CEC45C17AB93C
+  108F52B48DB57BB0CC439B2997B01419BD92F80A
+  A363A499291CBBC940DD62E41F10027AF002F8B0
+)
+
+# CI ランナーの DNS / firewall 事情に左右されないよう複数 keyserver を順に試す。
+keyservers=(
+  hkps://keys.openpgp.org
+  hkps://keyserver.ubuntu.com
+  hkp://pgp.mit.edu
+)
+
+failed=()
+for key in "${keys[@]}"; do
+  imported=0
+  for ks in "${keyservers[@]}"; do
+    if gpg --batch --keyserver "$ks" --recv-keys "$key" >/dev/null 2>&1; then
+      echo "imported: $key (from $ks)"
+      imported=1
+      break
+    fi
+  done
+  if [ "$imported" -eq 0 ]; then
+    echo "failed: $key (all keyservers exhausted)" >&2
+    failed+=("$key")
+  fi
+done
+
+if [ "${#failed[@]}" -gt 0 ]; then
+  echo "ERROR: ${#failed[@]} 鍵のインポートに失敗しました" >&2
+  printf '  - %s\n' "${failed[@]}" >&2
+  exit 1
+fi
+
+echo "全 ${#keys[@]} 鍵のインポートに成功しました"
