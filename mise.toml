@@ -5,7 +5,7 @@ trivy = "0.70.0"
 biome = "2.3.11"
 lefthook = "2.1.6"
 node = "22"
-pnpm = "10.33.2"
+pnpm = "10.33.4"
 
 [settings]
 # cpython-3.13.0+20241016 ビルドに GitHub artifact attestation がなく
