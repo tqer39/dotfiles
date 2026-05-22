@@ -1,6 +1,6 @@
 [tools]
 python = "3.14.4"
-terraform = "1.14.8"
+terraform = "1.15.2"
 trivy = "0.70.0"
 biome = "2.3.11"
 lefthook = "2.1.6"
