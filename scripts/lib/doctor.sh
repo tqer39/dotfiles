@@ -221,22 +221,6 @@ doctor_check_claude_settings() {
   done
 }
 
-doctor_list_claude_skill_dirs() {
-  local skill_root="${DOTFILES_DIR}/.claude/skills"
-
-  if [[ -d "$skill_root" ]]; then
-    find "$skill_root" -mindepth 2 -maxdepth 2 -name SKILL.md -print |
-      while IFS= read -r skill_file; do
-        dirname "$skill_file"
-      done
-  fi
-
-  find "${DOTFILES_DIR}/src" -path "*/.claude/skills/*/SKILL.md" -print |
-    while IFS= read -r skill_file; do
-      dirname "$skill_file"
-    done
-}
-
 doctor_check_codex_skills() {
   _doctor_section_header "Codex Skills"
 
@@ -262,7 +246,7 @@ doctor_check_codex_skills() {
     else
       doctor_check_warn ".codex/skills/${skill_name}" "Not installed"
     fi
-  done < <(doctor_list_claude_skill_dirs)
+  done < <(list_claude_skill_dirs)
 }
 
 doctor_check_mise_npm_tools() {

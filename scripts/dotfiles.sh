@@ -18,6 +18,8 @@ source "${SCRIPT_DIR}/lib/utils.sh"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/symlink.sh"
 # shellcheck source=/dev/null
+source "${SCRIPT_DIR}/lib/skills.sh"
+# shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/doctor.sh"
 
 # Install dotfiles by creating symlinks
@@ -113,23 +115,6 @@ install_claude_settings() {
   create_symlink "$config_src" "${HOME}/.claude/plugins/config.json"
 }
 
-# List Claude Code skill directories managed by this repository.
-list_claude_skill_dirs() {
-  local skill_root="${DOTFILES_DIR}/.claude/skills"
-
-  if [[ -d "$skill_root" ]]; then
-    find "$skill_root" -mindepth 2 -maxdepth 2 -name SKILL.md -print |
-      while IFS= read -r skill_file; do
-        dirname "$skill_file"
-      done
-  fi
-
-  find "${DOTFILES_DIR}/src" -path "*/.claude/skills/*/SKILL.md" -print |
-    while IFS= read -r skill_file; do
-      dirname "$skill_file"
-    done
-}
-
 # Install Codex skills by linking Claude Code skills into ~/.codex/skills.
 install_codex_skills() {
   log_info "Installing Codex skills from Claude Code skills"
@@ -141,8 +126,9 @@ install_codex_skills() {
     local skill_name
     skill_name=$(basename "$skill_dir")
 
-    create_symlink "$skill_dir" "${HOME}/.codex/skills/${skill_name}"
-    installed_count=$((installed_count + 1))
+    if create_symlink "$skill_dir" "${HOME}/.codex/skills/${skill_name}"; then
+      installed_count=$((installed_count + 1))
+    fi
   done < <(list_claude_skill_dirs)
 
   log_info "Codex skills installed: $installed_count"
