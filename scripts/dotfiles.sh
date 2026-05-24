@@ -18,6 +18,8 @@ source "${SCRIPT_DIR}/lib/utils.sh"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/symlink.sh"
 # shellcheck source=/dev/null
+source "${SCRIPT_DIR}/lib/skills.sh"
+# shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/doctor.sh"
 
 # Install dotfiles by creating symlinks
@@ -84,6 +86,9 @@ install_dotfiles() {
   # Install Claude Code settings
   install_claude_settings
 
+  # Install Codex skills from Claude Code skills
+  install_codex_skills
+
   echo ""
   log_success "Dotfiles installation complete!"
   log_info "Installed: $installed_count, Skipped: $skipped_count"
@@ -110,6 +115,25 @@ install_claude_settings() {
   create_symlink "$config_src" "${HOME}/.claude/plugins/config.json"
 }
 
+# Install Codex skills by linking Claude Code skills into ~/.codex/skills.
+install_codex_skills() {
+  log_info "Installing Codex skills from Claude Code skills"
+
+  local installed_count=0
+  local skill_dir
+
+  while IFS= read -r skill_dir; do
+    local skill_name
+    skill_name=$(basename "$skill_dir")
+
+    if create_symlink "$skill_dir" "${HOME}/.codex/skills/${skill_name}"; then
+      installed_count=$((installed_count + 1))
+    fi
+  done < <(list_claude_skill_dirs)
+
+  log_info "Codex skills installed: $installed_count"
+}
+
 # Uninstall Claude Code settings symlinks
 uninstall_claude_settings() {
   local src_dir="${DOTFILES_DIR}/src/.claude"
@@ -132,6 +156,27 @@ uninstall_claude_settings() {
       fi
     fi
   done
+}
+
+# Uninstall Codex skill symlinks managed by this repository.
+uninstall_codex_skills() {
+  log_info "Uninstalling Codex skills"
+
+  local skill_dir
+
+  while IFS= read -r skill_dir; do
+    local skill_name target
+    skill_name=$(basename "$skill_dir")
+    target="${HOME}/.codex/skills/${skill_name}"
+
+    if [[ -L "$target" ]]; then
+      local link_target
+      link_target=$(readlink "$target")
+      if [[ "$link_target" == "${DOTFILES_DIR}/"* ]]; then
+        remove_symlink "$target" true
+      fi
+    fi
+  done < <(list_claude_skill_dirs)
 }
 
 # Show status of Claude Code settings symlinks
@@ -176,6 +221,44 @@ status_claude_settings() {
 
     printf "%-40s %-10s %s\n" ".claude/${target_name}" "$status" "$details"
   done
+}
+
+# Show status of Codex skill symlinks.
+status_codex_skills() {
+  echo ""
+  printf "%-40s %-10s %s\n" "CODEX SKILLS" "STATUS" "DETAILS"
+  printf "%-40s %-10s %s\n" "------------" "------" "-------"
+
+  local skill_dir
+
+  while IFS= read -r skill_dir; do
+    local skill_name full_dest status details
+    skill_name=$(basename "$skill_dir")
+    full_dest="${HOME}/.codex/skills/${skill_name}"
+
+    if [[ ! -f "${skill_dir}/SKILL.md" ]]; then
+      status="MISSING"
+      details="Source not found"
+    elif [[ -L "$full_dest" ]]; then
+      local target
+      target=$(readlink "$full_dest")
+      if [[ "$target" == "$skill_dir" ]]; then
+        status="OK"
+        details="Linked correctly"
+      else
+        status="WRONG"
+        details="Links to: $target"
+      fi
+    elif [[ -e "$full_dest" ]]; then
+      status="EXISTS"
+      details="Not a symlink"
+    else
+      status="NONE"
+      details="Not installed"
+    fi
+
+    printf "%-40s %-10s %s\n" ".codex/skills/${skill_name}" "$status" "$details"
+  done < <(list_claude_skill_dirs)
 }
 
 # Uninstall dotfiles by removing symlinks
@@ -225,6 +308,9 @@ uninstall_dotfiles() {
 
   # Uninstall Claude Code settings
   uninstall_claude_settings
+
+  # Uninstall Codex skills
+  uninstall_codex_skills
 
   echo ""
   log_success "Dotfiles uninstallation complete!"
@@ -291,6 +377,9 @@ status_dotfiles() {
 
   # Show Claude Code settings status
   status_claude_settings
+
+  # Show Codex skills status
+  status_codex_skills
 }
 
 # Main entry point when script is run directly

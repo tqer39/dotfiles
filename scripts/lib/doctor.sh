@@ -221,6 +221,34 @@ doctor_check_claude_settings() {
   done
 }
 
+doctor_check_codex_skills() {
+  _doctor_section_header "Codex Skills"
+
+  local skill_dir
+
+  while IFS= read -r skill_dir; do
+    local skill_name full_dest
+    skill_name=$(basename "$skill_dir")
+    full_dest="${HOME}/.codex/skills/${skill_name}"
+
+    if [[ ! -f "${skill_dir}/SKILL.md" ]]; then
+      doctor_check_fail ".codex/skills/${skill_name}" "Source not found"
+    elif [[ -L "$full_dest" ]]; then
+      local target
+      target=$(readlink "$full_dest")
+      if [[ "$target" == "$skill_dir" ]]; then
+        doctor_check_ok ".codex/skills/${skill_name}" "Linked correctly"
+      else
+        doctor_check_fail ".codex/skills/${skill_name}" "Wrong target: $target"
+      fi
+    elif [[ -e "$full_dest" ]]; then
+      doctor_check_fail ".codex/skills/${skill_name}" "Exists but not a symlink"
+    else
+      doctor_check_warn ".codex/skills/${skill_name}" "Not installed"
+    fi
+  done < <(list_claude_skill_dirs)
+}
+
 doctor_check_mise_npm_tools() {
   local mise_config="${DOTFILES_DIR}/src/.config/mise/config.toml"
 
@@ -353,6 +381,7 @@ run_doctor() {
   doctor_check_runtimes
   doctor_check_vscode
   doctor_check_claude_settings
+  doctor_check_codex_skills
 
   # Print summary
   doctor_print_summary
