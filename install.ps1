@@ -188,6 +188,13 @@ function Update-Repository {
     # Helper function to stash local changes and pull
     Push-Location $DotfilesDir
     try {
+        # git writes informational messages (e.g. "CRLF will be replaced by LF")
+        # to stderr. Under $ErrorActionPreference = "Stop", PowerShell 5.1 wraps a
+        # native command's stderr in NativeCommandError records and promotes them to
+        # terminating errors even when the command's exit code is 0. Relax the
+        # preference locally and rely on $LASTEXITCODE to detect real failures.
+        $ErrorActionPreference = "Continue"
+
         # Check for uncommitted changes (tracked files)
         git diff --quiet 2>$null
         $hasDiff = $LASTEXITCODE -ne 0
@@ -251,7 +258,15 @@ function Install-Repository {
         if ($DryRun) {
             Write-Info "[DRY-RUN] Would run: git clone $DotfilesRepo $DotfilesDir"
         } else {
+            # See Update-Repository: git clone reports progress on stderr, which
+            # $ErrorActionPreference = "Stop" would turn into a terminating error in
+            # PowerShell 5.1. Relax locally and check the exit code instead.
+            $ErrorActionPreference = "Continue"
             git clone --branch $DotfilesBranch $DotfilesRepo $DotfilesDir
+            if ($LASTEXITCODE -ne 0) {
+                Write-Err "Failed to clone dotfiles repository (exit code $LASTEXITCODE)"
+                exit 1
+            }
             Write-Success "Cloned dotfiles repository"
         }
     }
