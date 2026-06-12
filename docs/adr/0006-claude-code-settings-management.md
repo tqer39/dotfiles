@@ -162,6 +162,6 @@ src/.claude.json          # Claude Code のグローバルメタデータ
 
 ### 注意事項
 
-- `allow` リストの追加は慎重に行う。`gh api:*` や `cat:*` のようなワイルドカードは機密ファイルへのアクセスや破壊的 API 呼び出しを許可してしまう
-- `settings.local.json` は `.gitignore` 済みのため、machine-specific な設定や一時的な権限緩和はそちらで行う
+- `allow` リストの追加は慎重に実施する。`gh api:*` や `cat:*` のようなワイルドカードは機密ファイルへのアクセスや破壊的 API 呼び出しを許可してしまう
+- `settings.local.json` は `.gitignore` 済みのため、machine-specific な設定や一時的な権限緩和はそちらで設定する
 - 絶対パスの deny パターンは `//` プレフィックスで指定する（例: `Read(//Users/*/.aws/credentials)`）
