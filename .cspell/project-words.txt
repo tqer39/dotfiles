@@ -71,6 +71,7 @@ gstt
 gswc
 hackgen
 hammerspoon
+herdr
 helperselector
 histappend
 hkps
