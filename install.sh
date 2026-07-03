@@ -290,6 +290,56 @@ install_japanese_locale() {
 }
 
 # ------------------------------------------------------------------------------
+# Install Herdr (idempotent)
+# ------------------------------------------------------------------------------
+install_herdr() {
+  if command -v herdr &>/dev/null; then
+    log_success "Herdr is already installed"
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Herdr"
+    return 0
+  fi
+
+  local os
+  os=$(detect_os)
+
+  case "$os" in
+    macos)
+      if command -v brew &>/dev/null && brew list herdr &>/dev/null; then
+        log_success "Herdr is already installed via Homebrew"
+        return 0
+      fi
+      ;;
+  esac
+
+  log_info "Installing Herdr..."
+  curl -fsSL https://herdr.dev/install.sh | sh
+  log_success "Herdr installed"
+}
+
+# ------------------------------------------------------------------------------
+# Install Herdr integrations (idempotent)
+# ------------------------------------------------------------------------------
+install_herdr_integrations() {
+  if ! command -v herdr &>/dev/null; then
+    log_warn "Herdr is not installed. Skipping integration setup."
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    log_info "[DRY-RUN] Would install Herdr integrations"
+    return 0
+  fi
+
+  log_info "Installing Herdr Claude Code integration..."
+  herdr integration install claude 2>/dev/null || log_warn "Failed to install Herdr Claude integration (may already exist)"
+  log_success "Herdr integrations configured"
+}
+
+# ------------------------------------------------------------------------------
 # Check prerequisites
 # ------------------------------------------------------------------------------
 check_prerequisites() {
@@ -546,6 +596,9 @@ main() {
       else
         log_info "Server mode: Skipping Obsidian installation"
       fi
+
+      install_herdr
+      install_herdr_integrations
     else
       log_info "Step 2: Skipping packages (--skip-packages)"
     fi
