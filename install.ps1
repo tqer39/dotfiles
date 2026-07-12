@@ -884,6 +884,7 @@ function Main {
         Write-Host "  - Spotify: https://www.spotify.com/download/" -ForegroundColor Yellow
         Write-Host "  - Raycast (Windows beta): https://www.raycast.com/windows" -ForegroundColor Yellow
         Write-Host "  - HackGen font: https://github.com/yuru7/HackGen/releases" -ForegroundColor Yellow
+        Write-Host "  - herdr (Windows beta): irm https://herdr.dev/install.ps1 | iex" -ForegroundColor Yellow
         Write-Host ""
     }
 
