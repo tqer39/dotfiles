@@ -2,7 +2,7 @@
   "name": "dotfiles-devtools",
   "private": true,
   "description": "Development tool dependencies for dotfiles (run via lefthook).",
-  "packageManager": "pnpm@11.5.0",
+  "packageManager": "pnpm@11.8.0",
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "cspell": "10.0.0",
