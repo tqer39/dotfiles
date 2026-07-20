@@ -4,7 +4,7 @@ terraform = "1.15.5"
 trivy = "0.70.0"
 biome = "2.3.11"
 lefthook = "2.1.9"
-node = "22"
+node = "24"
 pnpm = "11.8.0"
 
 [settings]
