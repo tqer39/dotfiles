@@ -26,6 +26,7 @@ brew "ripgrep"      # grep replacement
 brew "zoxide"       # cd replacement
 brew "tmux"         # terminal multiplexer
 brew "zellij"       # terminal multiplexer
+brew "herdr"        # agent multiplexer (AI coding agents)
 
 # Development tools
 brew "direnv"

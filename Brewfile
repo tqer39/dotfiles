@@ -4,6 +4,7 @@ brew "git"
 brew "direnv"
 brew "lefthook"
 brew "aws-vault"
+brew "herdr"
 
 # Cloudflare tools
 tap "jacobbednarz/tap"              # cf-vault 公式リポジトリ
