@@ -1,5 +1,5 @@
 [tools]
-python = "3.14.5"
+python = "3.14.6"
 terraform = "1.15.5"
 trivy = "0.70.0"
 biome = "2.3.11"
