@@ -15,8 +15,8 @@ importers:
         specifier: 10.0.1
         version: 10.0.1
       markdownlint-cli2:
-        specifier: 0.22.1
-        version: 0.22.1
+        specifier: 0.23.0
+        version: 0.23.0
       prettier:
         specifier: 3.9.5
         version: 3.9.5
@@ -1387,6 +1387,10 @@ packages:
     resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
     hasBin: true
 
+  js-yaml@5.2.0:
+    resolution: {integrity: sha512-YeLUMlvR4Ou1B119LIaM0r65JvbOBooJDc9yEu0dClb/uSC5P4FrLU8OCCz/HXWvtPoIrR0dRzABTjo1sTN9Bw==}
+    hasBin: true
+
   json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
 
@@ -1428,8 +1432,8 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  linkify-it@5.0.0:
-    resolution: {integrity: sha512-5aHCbzQRADcdP+ATqnDuhhJ/MRIqDkZX5pyjFHRRysS8vZ5AbqGEoFIb6pYHPZ+L/OC2Lc+xT8uHVVR5CAK/wQ==}
+  linkify-it@5.0.2:
+    resolution: {integrity: sha512-ONTm2jCMAVZjgQa/Fy1kScXsuOoF5NPTsoFBdE1KVIZ2vAh/r9+Bqo+0jINCBYnavTPQZz38QzFTme79ENoN3Q==}
 
   lodash.sortby@4.7.0:
     resolution: {integrity: sha512-HDWXG8isMntAyRF5vZ7xKuEvOhT4AhlRt/3czTSjvGUxjYCBVRQY48ViDHyfYz9VIoBkW4TMGQNapx+l3RUwdA==}
@@ -1459,8 +1463,8 @@ packages:
   lru_map@0.4.1:
     resolution: {integrity: sha512-I+lBvqMMFfqaV8CJCISjI3wbjmwVu/VyOoU7+qtu9d7ioW5klMgsTTiUOUp+DJvfTTzKXoPbyC6YfgkNcyPSOg==}
 
-  markdown-it@14.1.1:
-    resolution: {integrity: sha512-BuU2qnTti9YKgK5N+IeMubp14ZUKUUw7yeJbkjtosvHiP0AZ5c8IAgEMk79D0eC8F23r4Ac/q8cAIFdm2FtyoA==}
+  markdown-it@14.2.0:
+    resolution: {integrity: sha512-1TGiQiJVRQ3NPmZH6sx5Cfnmg6GQm9jvC1ch4TK511NjSJvjzKLzn5pPfZRNZkRPZP0HqCioSndqH8v2nRaWVQ==}
     hasBin: true
 
   markdown-table@2.0.0:
@@ -1471,14 +1475,14 @@ packages:
     peerDependencies:
       markdownlint-cli2: '>=0.0.4'
 
-  markdownlint-cli2@0.22.1:
-    resolution: {integrity: sha512-X14ZbytybDCXAViDmtN4DKLt9ZTrRn+oOrxTYlg3a65jS6QcYYbAkGPh/En2L/GDNbFYJ6lKaQSUNrrbN1bPrw==}
-    engines: {node: '>=20'}
+  markdownlint-cli2@0.23.0:
+    resolution: {integrity: sha512-1nmgQmU/ZTMRVwYCDs7i1HI3zfBISnT2NNRv+9V01oOLZbAtqL+a7tldpPhBWBVBten3FqhMCGV6EUh9McqutQ==}
+    engines: {node: '>=22'}
     hasBin: true
 
-  markdownlint@0.40.0:
-    resolution: {integrity: sha512-UKybllYNheWac61Ia7T6fzuQNDZimFIpCg2w6hHjgV1Qu0w1TV0LlSgryUGzM0bkKQCBhy2FDhEELB73Kb0kAg==}
-    engines: {node: '>=20'}
+  markdownlint@0.41.0:
+    resolution: {integrity: sha512-xMUI3ChBuRuxuLF4ENvCZyS8z/+Jly1coUcZwErKLIB3sDj7ojpaTBa1e9YVPhSN4jGEIjYGQCldbTJS/hqS+A==}
+    engines: {node: '>=22'}
 
   match-index@1.0.3:
     resolution: {integrity: sha512-1XjyBWqCvEFFUDW/MPv0RwbITRD4xQXOvKoPYtLDq8IdZTfdF/cQSo5Yn4qvhfSSZgjgkTFsqJD2wOUG4ovV8Q==}
@@ -1989,6 +1993,10 @@ packages:
     resolution: {integrity: sha512-dWUG8F5sIIARXih1DTaQAX4SsiTXhInKf1buxdY9DIg4ZYPZK5nGM1VRIYmEbDbsHt7USo99xSLFu5Q1IqTmsg==}
     engines: {node: '>= 18'}
 
+  smol-toml@1.7.0:
+    resolution: {integrity: sha512-aqVvWoyO21L23mb+drl4RmMXbf6N7FdHjAhTRA9ZBL7apWBgfWC16KjrASI+1p9GAroljyMHj6fK67i0UiTNvQ==}
+    engines: {node: '>= 18'}
+
   space-separated-tokens@1.1.5:
     resolution: {integrity: sha512-q/JSVd1Lptzhf5bkYm4ob4iWPjx0KiRe3sRFBNrVqbJkFaBm5vbbowy1mymoPNLRa52+oadOhJ+K49wsSeSjTA==}
 
@@ -2019,8 +2027,8 @@ packages:
     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
     engines: {node: '>=8'}
 
-  string-width@8.1.0:
-    resolution: {integrity: sha512-Kxl3KJGb/gxkaUMOjRsQ8IrXiGW75O4E3RPjFIINOVH8AMl2SQ/yWdTzWwF3FevIX9LcMAjJW+GRwAlAbTSXdg==}
+  string-width@8.2.1:
+    resolution: {integrity: sha512-IIaP0g3iy9Cyy18w3M9YcaDudujEAVHKt3a3QJg1+sr/oX96TbaGUubG0hJyCjCBThFH+tFpcIyoUHUn1ogaLA==}
     engines: {node: '>=20'}
 
   string.prototype.trim@1.2.10:
@@ -3909,6 +3917,10 @@ snapshots:
     dependencies:
       argparse: 2.0.1
 
+  js-yaml@5.2.0:
+    dependencies:
+      argparse: 2.0.1
+
   json-schema-traverse@1.0.0: {}
 
   json-schema-typed@8.0.2: {}
@@ -3954,7 +3966,7 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  linkify-it@5.0.0:
+  linkify-it@5.0.2:
     dependencies:
       uc.micro: 2.1.0
 
@@ -3976,11 +3988,11 @@ snapshots:
 
   lru_map@0.4.1: {}
 
-  markdown-it@14.1.1:
+  markdown-it@14.2.0:
     dependencies:
       argparse: 2.0.1
       entities: 4.5.0
-      linkify-it: 5.0.0
+      linkify-it: 5.0.2
       mdurl: 2.0.0
       punycode.js: 2.3.1
       uc.micro: 2.1.0
@@ -3989,25 +4001,25 @@ snapshots:
     dependencies:
       repeat-string: 1.6.1
 
-  markdownlint-cli2-formatter-default@0.0.6(markdownlint-cli2@0.22.1):
+  markdownlint-cli2-formatter-default@0.0.6(markdownlint-cli2@0.23.0):
     dependencies:
-      markdownlint-cli2: 0.22.1
+      markdownlint-cli2: 0.23.0
 
-  markdownlint-cli2@0.22.1:
+  markdownlint-cli2@0.23.0:
     dependencies:
       globby: 16.2.0
-      js-yaml: 4.1.1
+      js-yaml: 5.2.0
       jsonc-parser: 3.3.1
       jsonpointer: 5.0.1
-      markdown-it: 14.1.1
-      markdownlint: 0.40.0
-      markdownlint-cli2-formatter-default: 0.0.6(markdownlint-cli2@0.22.1)
+      markdown-it: 14.2.0
+      markdownlint: 0.41.0
+      markdownlint-cli2-formatter-default: 0.0.6(markdownlint-cli2@0.23.0)
       micromatch: 4.0.8
-      smol-toml: 1.6.1
+      smol-toml: 1.7.0
     transitivePeerDependencies:
       - supports-color
 
-  markdownlint@0.40.0:
+  markdownlint@0.41.0:
     dependencies:
       micromark: 4.0.2
       micromark-core-commonmark: 2.0.3
@@ -4017,7 +4029,7 @@ snapshots:
       micromark-extension-gfm-table: 2.1.1
       micromark-extension-math: 3.1.0
       micromark-util-types: 2.0.2
-      string-width: 8.1.0
+      string-width: 8.2.1
     transitivePeerDependencies:
       - supports-color
 
@@ -4756,6 +4768,8 @@ snapshots:
 
   smol-toml@1.6.1: {}
 
+  smol-toml@1.7.0: {}
+
   space-separated-tokens@1.1.5: {}
 
   spdx-correct@3.2.0:
@@ -4787,7 +4801,7 @@ snapshots:
       is-fullwidth-code-point: 3.0.0
       strip-ansi: 6.0.1
 
-  string-width@8.1.0:
+  string-width@8.2.1:
     dependencies:
       get-east-asian-width: 1.6.0
       strip-ansi: 7.2.0
