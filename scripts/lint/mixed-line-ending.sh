@@ -20,8 +20,10 @@ for f in "${files[@]}"; do
   [[ -f "$f" ]] || continue
   grep -Iq . "$f" || continue
   if grep -q $'\r' "$f"; then
+    # cp -p でパーミッションを引き継いでから mv で atomic に置換する。
+    # truncate して書き戻すと parallel 実行中の linter が書き込み途中を読む。
+    cp -p "$f" "$f.tmp"
     tr -d '\r' <"$f" >"$f.tmp"
-    cat "$f.tmp" >"$f"
-    rm -f "$f.tmp"
+    mv -f "$f.tmp" "$f"
   fi
 done
