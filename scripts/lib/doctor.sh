@@ -269,9 +269,11 @@ doctor_check_mise_npm_tools() {
       cmd_name="${cmd_name%-cli}"
 
       # Check if the tool is installed via mise
-      local tool_version mise_status
-      tool_version=$(mise current "npm:${npm_package}" 2>/dev/null)
-      mise_status=$?
+      # NOTE: `|| mise_status=$?` is required. Under `set -e` a bare assignment
+      # from a failing command substitution aborts the whole script, so the
+      # `mise_status=$?` line below would never be reached on failure.
+      local tool_version mise_status=0
+      tool_version=$(mise current "npm:${npm_package}" 2>/dev/null) || mise_status=$?
       if [[ $mise_status -eq 0 && -n "${tool_version}" && "${tool_version}" != "missing" ]]; then
         doctor_check_ok "${cmd_name} (mise)" "${tool_version}"
       else
@@ -290,8 +292,10 @@ doctor_check_runtimes() {
     mise_version=$(mise --version 2>/dev/null | head -1)
     doctor_check_ok "mise" "$mise_version"
 
-    local node_version
-    node_version=$(mise current node 2>/dev/null)
+    # mise が untrusted な設定ファイルを見つけると非 0 で終了する。
+    # 裸の代入だと set -e で doctor 全体が落ちるため必ず握り潰す。
+    local node_version=""
+    node_version=$(mise current node 2>/dev/null) || node_version=""
     if [[ -n "$node_version" && "$node_version" != "missing" ]]; then
       doctor_check_ok "node (mise)" "$node_version"
     else
@@ -306,8 +310,8 @@ doctor_check_runtimes() {
 
   # Python via uv
   if command_exists uv; then
-    local uv_version
-    uv_version=$(uv --version 2>/dev/null)
+    local uv_version=""
+    uv_version=$(uv --version 2>/dev/null) || uv_version=""
     doctor_check_ok "uv" "$uv_version"
 
     local py_version
