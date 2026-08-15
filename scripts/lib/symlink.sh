@@ -67,7 +67,12 @@ create_symlink() {
   if [[ "$DRY_RUN" == "true" ]]; then
     log_info "[DRY-RUN] Would create symlink: $dest -> $src"
   else
-    ln -s "$src" "$dest"
+    # ln の失敗を検査せずに成功ログを出すと、実際には作られていない symlink を
+    # 「作成済み」と報告してしまう。呼び出し元は if で受けるため set -e は効かない。
+    if ! ln -s "$src" "$dest"; then
+      log_error "Failed to create symlink: $dest -> $src"
+      return 1
+    fi
     log_success "Created symlink: $dest -> $src"
   fi
 
