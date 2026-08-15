@@ -17,6 +17,15 @@ if ! declare -f log_info &>/dev/null; then
   source "${SCRIPT_DIR}/../lib/utils.sh"
 fi
 
+# Pass WORK_MODE through to the Brewfile.
+#
+# Homebrew は Brewfile を評価する前に HOMEBREW_ 接頭辞のない環境変数を除去する
+# ため、Brewfile 内の ENV['WORK_MODE'] は export していても常に nil になる。
+# 接頭辞付きの名前で改めて export することで Brewfile から参照できるようにする。
+export_brew_work_mode() {
+  export HOMEBREW_WORK_MODE="${WORK_MODE:-false}"
+}
+
 # Install Homebrew (idempotent)
 install_homebrew() {
   log_info "Checking Homebrew installation..."
@@ -70,6 +79,8 @@ install_homebrew_packages() {
   fi
 
   log_info "Installing packages from Brewfile..."
+
+  export_brew_work_mode
 
   if [[ "${DRY_RUN:-false}" == "true" ]]; then
     log_info "[DRY-RUN] Would run: brew bundle --file=$brewfile"
@@ -149,6 +160,10 @@ uninstall_homebrew_packages() {
   fi
 
   log_info "Uninstalling packages from Brewfile..."
+
+  # cleanup も Brewfile を評価するため、install 時と同じ判定になるよう渡す。
+  # 渡さないと work 用パッケージが「Brewfile 外」とみなされ削除対象になる。
+  export_brew_work_mode
 
   if [[ "${DRY_RUN:-false}" == "true" ]]; then
     log_info "[DRY-RUN] Would run: brew bundle cleanup --file=$brewfile --force"
