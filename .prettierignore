@@ -1,3 +1,6 @@
 **/.git/
 **/tmp/
 **/*.json
+
+# Lockfile はパッケージマネージャが生成・管理するため整形しない
+pnpm-lock.yaml
