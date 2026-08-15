@@ -10,8 +10,9 @@ if [[ -n "${_SYMLINK_SH_LOADED:-}" ]]; then
 fi
 readonly _SYMLINK_SH_LOADED=1
 
-# Backup directory (can be overridden)
-BACKUP_DIR="${BACKUP_DIR:-${HOME}/.dotfiles_backup/$(date +%Y%m%d_%H%M%S)}"
+# Backup root and per-run backup directory (can be overridden)
+BACKUP_ROOT="${BACKUP_ROOT:-${HOME}/.dotfiles_backup}"
+BACKUP_DIR="${BACKUP_DIR:-${BACKUP_ROOT}/$(date +%Y%m%d_%H%M%S)}"
 
 # Dry run mode (can be overridden)
 DRY_RUN="${DRY_RUN:-false}"
@@ -116,6 +117,27 @@ backup_file() {
   log_warn "Backed up: $file -> $backup_path"
 }
 
+# Find the most recent backup of a given destination path.
+# バックアップは実行ごとの timestamp ディレクトリ配下に絶対パスで積まれるため、
+# 復元時は「今回の BACKUP_DIR」ではなく全 timestamp を新しい順に探す必要がある。
+# Usage: find_latest_backup "/path/to/file" -> prints backup path, or returns 1
+find_latest_backup() {
+  local dest="$1"
+
+  [[ -d "$BACKUP_ROOT" ]] || return 1
+
+  local candidate
+  # ディレクトリ名が YYYYmmdd_HHMMSS なので辞書順の降順 = 新しい順
+  while IFS= read -r candidate; do
+    if [[ -e "${candidate}${dest}" ]]; then
+      echo "${candidate}${dest}"
+      return 0
+    fi
+  done < <(find "$BACKUP_ROOT" -mindepth 1 -maxdepth 1 -type d | sort -r)
+
+  return 1
+}
+
 # Remove a symlink and optionally restore from backup
 # Usage: remove_symlink "/path/to/symlink" [restore_backup]
 remove_symlink() {
@@ -137,10 +159,10 @@ remove_symlink() {
 
   # Restore from backup if requested and backup exists
   if [[ "$restore_backup" == "true" ]]; then
-    local backup_path="${BACKUP_DIR}${dest}"
-    if [[ -e "$backup_path" ]]; then
+    local backup_path
+    if backup_path=$(find_latest_backup "$dest"); then
       mv "$backup_path" "$dest"
-      log_info "Restored from backup: $dest"
+      log_info "Restored from backup: $backup_path -> $dest"
     fi
   fi
 }
