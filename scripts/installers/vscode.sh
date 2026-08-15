@@ -9,13 +9,14 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$(dirname "$SCRIPT_DIR")")"
 
-# Source library files if not already sourced
-if ! declare -f log_info &>/dev/null; then
-  # shellcheck source=/dev/null
-  source "${SCRIPT_DIR}/../lib/log.sh"
-  # shellcheck source=/dev/null
-  source "${SCRIPT_DIR}/../lib/utils.sh"
-fi
+# Source library files.
+# 各 lib は include guard を持つため多重 source しても安全。
+# `declare -f log_info` で判定すると、install.sh が同名の簡易版を先に定義して
+# いるケースで lib が読み込まれず、command_exists / log_debug が未定義になる。
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/../lib/log.sh"
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/../lib/utils.sh"
 
 # Get VS Code command
 get_vscode_cmd() {
