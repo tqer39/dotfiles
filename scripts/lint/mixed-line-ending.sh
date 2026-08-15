@@ -18,6 +18,9 @@ fi
 
 for f in "${files[@]}"; do
   [[ -f "$f" ]] || continue
+  # symlink は実体を別途 lint するのでスキップする。
+  # mv での置換は symlink 自体を通常ファイルに置き換えてしまうため。
+  [[ ! -L "$f" ]] || continue
   grep -Iq . "$f" || continue
   if grep -q $'\r' "$f"; then
     # cp -p でパーミッションを引き継いでから mv で atomic に置換する。
