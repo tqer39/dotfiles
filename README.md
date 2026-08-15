@@ -76,7 +76,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 | `--dry-run` | Show what would be done without executing |
 | `-v, --verbose` | Enable verbose output |
 | `--uninstall` | Remove dotfiles symlinks |
-| `--work` | Work/company mode (skip personal packages) |
+| `--work` | Work/company mode (skip personal packages, add work packages) |
 | `--ci` | CI mode (non-interactive) |
 | `--server` | Server mode (skip GUI applications) |
 | `--os <value>` | Override OS detection (macos, ubuntu, mint, linux, windows) |

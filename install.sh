@@ -143,7 +143,7 @@ Options:
   -v, --verbose       Enable verbose output
   --uninstall         Remove dotfiles symlinks
   --ci                CI mode (non-interactive, continue on errors)
-  --work              Work/company mode (skip personal packages)
+  --work              Work/company mode (skip personal packages, add work packages)
   --server            Server mode (skip GUI applications)
   --doctor            Run environment health check
   --os <value>        Override OS detection (macos, ubuntu, mint, linux, windows)

@@ -88,10 +88,24 @@ end
 # ------------------------------------------------------------------------------
 # Personal packages (skipped with --work flag)
 # ------------------------------------------------------------------------------
-if OS.mac? && ENV['WORK_MODE'] != 'true'
+# NOTE: Homebrew は Brewfile を評価する前に HOMEBREW_ 接頭辞のない環境変数を
+# 除去するため、ENV['WORK_MODE'] は常に nil になる。work/personal の判定には
+# 必ず HOMEBREW_WORK_MODE を使うこと (scripts/installers/homebrew.sh が
+# WORK_MODE から引き渡す)。
+if OS.mac? && ENV['HOMEBREW_WORK_MODE'] != 'true'
   cask "orbstack"  # Container management (Docker/Kubernetes)
   cask "spotify"
   cask "discord"
+end
+
+# ------------------------------------------------------------------------------
+# Work packages (installed only with --work flag)
+# ------------------------------------------------------------------------------
+# cursor-cli は Homebrew 上では macOS 限定の cask のため、Linuxbrew では
+# インストールできない (cask 自体が非対応)。
+if OS.mac? && ENV['HOMEBREW_WORK_MODE'] == 'true'
+  cask "cursor"      # AI code editor
+  cask "cursor-cli"  # Cursor CLI (cursor-agent)
 end
 
 # ------------------------------------------------------------------------------

@@ -74,7 +74,7 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1 -Full
 | `--dry-run` | 実行せずに変更内容を表示 |
 | `-v, --verbose` | 詳細なログを出力 |
 | `--uninstall` | dotfiles のシンボリックリンクを削除 |
-| `--work` | 会社モード（個人用パッケージをスキップ） |
+| `--work` | 会社モード（個人用パッケージをスキップし、業務用パッケージを追加） |
 | `--ci` | CI モード（非対話型） |
 | `--server` | サーバーモード（GUI アプリケーションをスキップ） |
 | `--os <value>` | OS 検出を上書き（macos, ubuntu, mint, linux, windows） |
