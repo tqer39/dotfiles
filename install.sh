@@ -303,17 +303,23 @@ install_herdr() {
     return 0
   fi
 
-  local os
-  os=$(detect_os)
+  # herdr は homebrew-core の formula (tap 不要)。brew が使えるなら
+  # パッケージ管理下に置きたいので brew を優先し、curl 版は brew が無い
+  # 環境や brew でのインストールに失敗した場合の fallback に留める。
+  if command -v brew &>/dev/null; then
+    if brew list herdr &>/dev/null; then
+      log_success "Herdr is already installed via Homebrew"
+      return 0
+    fi
 
-  case "$os" in
-    macos)
-      if command -v brew &>/dev/null && brew list herdr &>/dev/null; then
-        log_success "Herdr is already installed via Homebrew"
-        return 0
-      fi
-      ;;
-  esac
+    log_info "Installing Herdr via Homebrew..."
+    if brew install herdr; then
+      log_success "Herdr installed via Homebrew"
+      return 0
+    fi
+
+    log_warn "Homebrew install failed. Falling back to the install script."
+  fi
 
   log_info "Installing Herdr..."
   curl -fsSL https://herdr.dev/install.sh | sh
