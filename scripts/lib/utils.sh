@@ -122,7 +122,11 @@ get_vscode_user_dir() {
       echo "${HOME}/.config/Code/User"
       ;;
     windows)
-      echo "${APPDATA}/Code/User"
+      # APPDATA が未設定でも "/Code/User" のような HOME 外の絶対パスを返さない。
+      # 素の ${APPDATA} だと set -u で unbound variable になるが、コマンド置換の
+      # 中なのでエラーが握り潰され、呼び出し元には空文字が渡ってしまう。
+      # (macOS/Linux から --os windows で実行した場合に必ず該当する)
+      echo "${APPDATA:-${HOME}/AppData/Roaming}/Code/User"
       ;;
     *)
       echo "${HOME}/.config/Code/User"
