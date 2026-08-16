@@ -118,7 +118,7 @@ end
 
 # Cloud CLI
 brew "awscli"
-brew "vercel-cli"
+brew "vercel"
 # brew "azure-cli"
 # brew "google-cloud-sdk" if OS.mac?
 
