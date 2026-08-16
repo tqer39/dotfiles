@@ -27,6 +27,46 @@ export_brew_work_mode() {
   export HOMEBREW_WORK_MODE="${WORK_MODE:-false}"
 }
 
+extract_third_party_brew_formulae() {
+  local brewfile="$1"
+
+  sed -nE 's/^[[:space:]]*brew[[:space:]]+"([^"/]+\/[^"/]+\/[^"]+)".*/\1/p' "$brewfile"
+}
+
+trust_brewfile_formulae() {
+  local brewfile="$1"
+  local formula
+  local formulae=()
+
+  while IFS= read -r formula; do
+    [[ -n "$formula" ]] || continue
+    formulae+=("$formula")
+  done < <(extract_third_party_brew_formulae "$brewfile")
+
+  if [[ ${#formulae[@]} -eq 0 ]]; then
+    return 0
+  fi
+
+  if [[ "${DRY_RUN:-false}" == "true" ]]; then
+    for formula in "${formulae[@]}"; do
+      log_info "[DRY-RUN] Would run: brew trust --formula $formula"
+    done
+    return 0
+  fi
+
+  if ! brew help trust &>/dev/null; then
+    log_debug "brew trust is not available; skipping formula trust"
+    return 0
+  fi
+
+  for formula in "${formulae[@]}"; do
+    log_info "Trusting Homebrew formula: $formula"
+    if ! brew trust --formula "$formula"; then
+      log_warn "Failed to trust Homebrew formula: $formula"
+    fi
+  done
+}
+
 # Install Homebrew (idempotent)
 install_homebrew() {
   log_info "Checking Homebrew installation..."
@@ -97,6 +137,8 @@ install_homebrew_packages() {
   # Update Homebrew
   log_info "Updating Homebrew..."
   brew update
+
+  trust_brewfile_formulae "$brewfile"
 
   # Install from Brewfile
   # Capture output to detect critical errors (deprecated taps, etc.)
