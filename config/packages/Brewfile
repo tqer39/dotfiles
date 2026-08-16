@@ -123,8 +123,8 @@ brew "vercel-cli"
 # brew "google-cloud-sdk" if OS.mac?
 
 # Google Workspace
-tap "steipete/tap"
-brew "steipete/tap/gogcli"  # Google Workspace CLI
+tap "openclaw/tap"
+brew "openclaw/tap/gogcli"  # Google Workspace CLI
 
 # Container tools
 # brew "podman"
