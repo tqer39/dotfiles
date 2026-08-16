@@ -101,8 +101,8 @@ install_homebrew_packages() {
   # Install from Brewfile
   # Capture output to detect critical errors (deprecated taps, etc.)
   local bundle_output
-  bundle_output=$(brew bundle --file="$brewfile" 2>&1) || true
-  local bundle_exit=$?
+  local bundle_exit=0
+  bundle_output=$(brew bundle --file="$brewfile" 2>&1) || bundle_exit=$?
 
   # Always show output
   echo "$bundle_output"
