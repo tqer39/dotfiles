@@ -282,8 +282,12 @@ install_japanese_locale() {
   log_info "Setting locale to ja_JP.UTF-8..."
   sudo update-locale LANG=ja_JP.UTF-8
 
-  log_info "Installing CJK fonts..."
-  sudo apt install -y fonts-noto-cjk
+  if [[ "${SERVER_MODE:-false}" == "true" ]]; then
+    log_info "Server mode: Skipping CJK fonts"
+  else
+    log_info "Installing CJK fonts..."
+    sudo apt install -y fonts-noto-cjk
+  fi
 
   NEEDS_REBOOT=true
   log_success "Japanese locale configured"
