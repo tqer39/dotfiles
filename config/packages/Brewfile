@@ -101,11 +101,12 @@ end
 # ------------------------------------------------------------------------------
 # Work packages (installed only with --work flag)
 # ------------------------------------------------------------------------------
-# cursor-cli は Homebrew 上では macOS 限定の cask のため、Linuxbrew では
-# インストールできない (cask 自体が非対応)。
+# cursor-cli / devin-cli は Homebrew 上では macOS 限定の cask のため、Linuxbrew
+# ではインストールできない (cask 自体が非対応)。
 if OS.mac? && ENV['HOMEBREW_WORK_MODE'] == 'true'
   cask "cursor"      # AI code editor
   cask "cursor-cli"  # Cursor CLI (cursor-agent)
+  cask "devin-cli"   # Devin CLI (devin)
 end
 
 # ------------------------------------------------------------------------------
