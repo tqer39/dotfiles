@@ -18,8 +18,14 @@ if ! grep -qx 'main "\$@"' "$install_sh"; then
   echo "FAIL: install.sh no longer ends with 'main \"\$@\"'; update this test" >&2
   exit 1
 fi
+# Sourced from a real file rather than `source <(grep ...)`: bash 3.2, which is
+# what /bin/bash still is on macOS, can close the process substitution early and
+# read back only part of the script.
+functions_file="$(mktemp)"
+trap 'rm -f "$functions_file"' EXIT
+grep -vx 'main "\$@"' "$install_sh" >"$functions_file"
 # shellcheck disable=SC1090
-source <(grep -vx 'main "\$@"' "$install_sh")
+source "$functions_file"
 
 tests_run=0
 tests_failed=0
