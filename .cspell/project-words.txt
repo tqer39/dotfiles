@@ -1,5 +1,6 @@
 aahl
 afplay
+agmsg
 amazonhq
 anthropics
 anyenv
@@ -28,6 +29,7 @@ dearu
 debsig
 debugpy
 deskpad
+despawn
 desumasu
 difftool
 dircolors
@@ -120,6 +122,7 @@ O'oyama
 octocat
 oneline
 ooyama
+openclaw
 openpgp
 OPENROUTER
 orbstack
@@ -133,6 +136,7 @@ prek
 procs
 pydocstyle
 pyenv
+reflog
 remotehub
 reshim
 Rofi
@@ -157,6 +161,7 @@ SSIA
 stackdump
 statusline
 steipete
+subshell
 symref
 Takeru
 takeruooyama

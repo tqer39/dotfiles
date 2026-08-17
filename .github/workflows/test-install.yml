@@ -9,6 +9,7 @@ on:
       - 'scripts/**'
       - 'config/**'
       - 'src/**'
+      - 'tests/**'
       - '.github/workflows/test-install.yml'
   pull_request:
   workflow_dispatch:
@@ -34,7 +35,32 @@ jobs:
               - 'scripts/**'
               - 'config/**'
               - 'src/**'
+              - 'tests/**'
               - '.github/workflows/test-install.yml'
+
+  # ------------------------------------------------------------------------------
+  # Repository update tests (stash / pull path)
+  # Every install test below passes --ci, which skips the pull entirely, so the
+  # update path needs its own coverage. That path stashes and restores local
+  # changes, and a regression there strands the user's work in the stash stack.
+  # ------------------------------------------------------------------------------
+  test-update-repository:
+    name: Update path - ${{ matrix.os }}
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Run update_repository tests
+        run: bash tests/test-update-repository.sh
 
   # ------------------------------------------------------------------------------
   # Minimal Install Tests (symlinks only, fast)
