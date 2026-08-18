@@ -6,6 +6,71 @@
 # Shell-specific settings should remain in their respective files
 
 # ------------------------------------------------------------------------------
+# Shell detection
+# ------------------------------------------------------------------------------
+if [ -n "${ZSH_VERSION:-}" ]; then
+  _dotfiles_shell=zsh
+elif [ -n "${BASH_VERSION:-}" ]; then
+  _dotfiles_shell=bash
+else
+  _dotfiles_shell=""
+fi
+
+# ------------------------------------------------------------------------------
+# Mode detection (personal / work)
+# ------------------------------------------------------------------------------
+if [ -z "${DOTFILES_MODE:-}" ]; then
+  DOTFILES_MODE="personal"
+fi
+
+for _dotfiles_arg in "$@"; do
+  if [ "$_dotfiles_arg" = "--work" ]; then
+    DOTFILES_MODE="work"
+    break
+  fi
+done
+unset _dotfiles_arg
+export DOTFILES_MODE
+
+# ------------------------------------------------------------------------------
+# Git and mise config selection
+# ------------------------------------------------------------------------------
+if [ "$DOTFILES_MODE" = "work" ]; then
+  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig.work"
+  export MISE_CONFIG_FILE="$HOME/.config/mise/config.work.toml"
+else
+  export GIT_CONFIG_GLOBAL="$HOME/.gitconfig"
+  export MISE_CONFIG_FILE="$HOME/.config/mise/config.personal.toml"
+fi
+
+# ------------------------------------------------------------------------------
+# Homebrew
+# ------------------------------------------------------------------------------
+if [ "$(uname)" = "Linux" ] && [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+elif [ "$(uname)" = "Darwin" ] && [ -x /opt/homebrew/bin/brew ]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+# ------------------------------------------------------------------------------
+# PATH additions
+# ------------------------------------------------------------------------------
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="$HOME/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+# Added by Antigravity
+if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
+  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+fi
+
+# Cargo/Rust
+# shellcheck source=/dev/null
+if [ -f "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi
+
+# ------------------------------------------------------------------------------
 # Aliases
 # ------------------------------------------------------------------------------
 
@@ -177,15 +242,48 @@ fi
 # Common tool initialization
 # ------------------------------------------------------------------------------
 
-# Homebrew
-if [[ "$(uname)" = "Linux" ]]; then
-  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-elif [[ "$(uname)" = "Darwin" ]]; then
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+# direnv
+if [ -n "$_dotfiles_shell" ] && command -v direnv &> /dev/null; then
+  if direnv_init="$(direnv hook "$_dotfiles_shell" 2>/dev/null)"; then
+    eval "$direnv_init"
+  fi
+  unset direnv_init
 fi
 
-# Cargo/Rust
-# shellcheck source=/dev/null
-if [ -f "$HOME/.cargo/env" ]; then
-  . "$HOME/.cargo/env"
+# fzf
+if [ -n "$_dotfiles_shell" ] && command -v fzf &> /dev/null; then
+  if fzf_init="$(fzf "--$_dotfiles_shell" 2>/dev/null)" && [ -n "$fzf_init" ]; then
+    eval "$fzf_init" 2>/dev/null
+  else
+    # shellcheck source=/dev/null
+    [ -f "$HOME/.fzf.$_dotfiles_shell" ] && . "$HOME/.fzf.$_dotfiles_shell"
+  fi
+  unset fzf_init
 fi
+
+# mise
+if [ -n "$_dotfiles_shell" ] && command -v mise &> /dev/null; then
+  if mise hook-env -s "$_dotfiles_shell" >/dev/null 2>&1 &&
+    mise_init="$(mise activate "$_dotfiles_shell" 2>/dev/null)"; then
+    eval "$mise_init"
+  fi
+  unset mise_init
+fi
+
+# zoxide (smarter cd)
+if [ -n "$_dotfiles_shell" ] && command -v zoxide &> /dev/null; then
+  if zoxide_init="$(zoxide init "$_dotfiles_shell" 2>/dev/null)"; then
+    eval "$zoxide_init"
+  fi
+  unset zoxide_init
+fi
+
+# Starship (must be at the end)
+if [ -n "$_dotfiles_shell" ] && command -v starship &> /dev/null; then
+  if starship_init="$(starship init "$_dotfiles_shell" 2>/dev/null)"; then
+    eval "$starship_init"
+  fi
+  unset starship_init
+fi
+
+unset _dotfiles_shell
