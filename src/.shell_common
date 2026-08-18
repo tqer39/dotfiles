@@ -265,9 +265,8 @@ fi
 
 # mise
 if [ -n "$_dotfiles_shell" ] && command -v mise &> /dev/null; then
-  if mise hook-env -s "$_dotfiles_shell" >/dev/null 2>&1 &&
-    mise_init="$(mise activate "$_dotfiles_shell" 2>/dev/null)"; then
-    eval "$mise_init"
+  if mise_init="$(mise activate "$_dotfiles_shell" 2>/dev/null)"; then
+    eval "$mise_init" 2>/dev/null
   fi
   unset mise_init
 fi
