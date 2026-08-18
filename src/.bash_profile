@@ -67,3 +67,9 @@ export PATH="$HOME/.rd/bin:$PATH"
 
 # Added by Antigravity
 export PATH="/Users/takeruooyama/.antigravity/antigravity/bin:$PATH"
+
+# Load .bashrc for interactive shells
+if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
+  # shellcheck source=/dev/null
+  . "$HOME/.bashrc"
+fi
