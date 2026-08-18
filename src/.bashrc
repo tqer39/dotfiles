@@ -119,4 +119,6 @@ export PATH="$HOME/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
 # Added by Antigravity
-export PATH="/Users/takeruooyama/.antigravity/antigravity/bin:$PATH"
+if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
+  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+fi
