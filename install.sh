@@ -333,6 +333,82 @@ install_herdr() {
 # ------------------------------------------------------------------------------
 # Install Herdr integrations (idempotent)
 # ------------------------------------------------------------------------------
+remove_herdr_absolute_claude_hook() {
+  local settings_file="${HERDR_CLAUDE_SETTINGS_FILE:-$HOME/.claude/settings.json}"
+
+  if [[ ! -f "$settings_file" ]]; then
+    return 0
+  fi
+
+  if ! command -v python3 &>/dev/null; then
+    log_warn "python3 is not available. Skipping Herdr Claude settings cleanup."
+    return 0
+  fi
+
+  python3 - "$settings_file" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+settings_path = Path(sys.argv[1])
+
+with settings_path.open(encoding="utf-8") as f:
+    data = json.load(f)
+
+hooks = data.get("hooks")
+if not isinstance(hooks, dict):
+    sys.exit(0)
+
+session_start = hooks.get("SessionStart")
+if not isinstance(session_start, list):
+    sys.exit(0)
+
+changed = False
+cleaned_session_start = []
+
+for entry in session_start:
+    if not isinstance(entry, dict):
+        cleaned_session_start.append(entry)
+        continue
+
+    entry_hooks = entry.get("hooks")
+    if not isinstance(entry_hooks, list):
+        cleaned_session_start.append(entry)
+        continue
+
+    cleaned_hooks = []
+    for hook in entry_hooks:
+        command = hook.get("command") if isinstance(hook, dict) else None
+        remove_hook = (
+            isinstance(command, str)
+            and "herdr-agent-state.sh" in command
+            and "$HOME" not in command
+        )
+        if remove_hook:
+            changed = True
+            continue
+        cleaned_hooks.append(hook)
+
+    if cleaned_hooks:
+        if len(cleaned_hooks) != len(entry_hooks):
+            entry = dict(entry)
+            entry["hooks"] = cleaned_hooks
+        cleaned_session_start.append(entry)
+    else:
+        changed = True
+
+if changed:
+    if cleaned_session_start:
+        hooks["SessionStart"] = cleaned_session_start
+    else:
+        hooks.pop("SessionStart", None)
+    settings_path.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+PY
+}
+
 install_herdr_integrations() {
   if ! command -v herdr &>/dev/null; then
     log_warn "Herdr is not installed. Skipping integration setup."
@@ -346,6 +422,7 @@ install_herdr_integrations() {
 
   log_info "Installing Herdr Claude Code integration..."
   herdr integration install claude 2>/dev/null || log_warn "Failed to install Herdr Claude integration (may already exist)"
+  remove_herdr_absolute_claude_hook
   log_success "Herdr integrations configured"
 }
 
