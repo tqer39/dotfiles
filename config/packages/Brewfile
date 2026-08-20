@@ -55,6 +55,13 @@ brew "gnupg"
 brew "xsel" if OS.linux?  # clipboard support for Linux
 
 # ------------------------------------------------------------------------------
+# Cross-platform casks (macOS / Linux 両対応)
+# ------------------------------------------------------------------------------
+# claude-code は depends_on が無い binary-only cask のため Linuxbrew でも入る。
+# mise の npm 経由だと Linux で postinstall が走らずバイナリが壊れるため cask を使う。
+cask "claude-code"  # Claude Code CLI
+
+# ------------------------------------------------------------------------------
 # macOS Only - Casks
 # ------------------------------------------------------------------------------
 if OS.mac?
