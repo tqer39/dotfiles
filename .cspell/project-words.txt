@@ -80,6 +80,7 @@ hkps
 idempotently
 ignoredups
 ignorespace
+isinstance
 iterm
 jacobbednarz
 Jekudy
@@ -126,6 +127,7 @@ openclaw
 openpgp
 OPENROUTER
 orbstack
+pathlib
 pcra
 pipefail
 PIPESTATUS
