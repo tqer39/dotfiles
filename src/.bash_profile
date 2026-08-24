@@ -67,15 +67,6 @@ if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi
 
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="$HOME/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
-# Added by Antigravity
-if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
-  export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-fi
-
 # Load .bashrc for interactive shells
 if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
   # shellcheck source=/dev/null
