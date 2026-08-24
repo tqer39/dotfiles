@@ -54,20 +54,54 @@ just tf -chdir=prod/bootstrap apply
 # 1. dotfiles 専用の team に join (既存の family-tasks / media-server は使わない)
 ~/.agents/skills/agmsg/scripts/join.sh dotfiles <agent名> claude-code "$(pwd)"
 
-# 2. Codex CLI を新規ターミナルウィンドウで起動
-~/.agents/skills/agmsg/scripts/spawn.sh codex <名前> --project "$(pwd)" --terminal
+# 2. Codex CLI を起動する
+#    --terminal は値(テンプレート文字列)が必須。省略すると設定の既定値が使われるが、
+#    既定値はエージェント名が agmsg-codex でハードコードされており、他プロジェクトの
+#    Codex が動いていると agent_name_taken で失敗する。名前を明示して回避する。
+~/.agents/skills/agmsg/scripts/spawn.sh codex <名前> --project "$(pwd)" \
+  --terminal "herdr agent start agmsg-codex-dotfiles --split right --focus -- {cmd}"
 
 # 3. タスクを送る
 ~/.agents/skills/agmsg/scripts/send.sh dotfiles <agent名> <名前> "<タスク>"
+
+# 4. Codex は inbox を自動で見ないので促す。/agmsg は認識しないため自然言語で送る
+herdr pane run <pane_id> "agmsg の inbox を確認して、届いているタスクを実行してください。"
 ```
 
 注意点:
 
+- **Codex は inbox を自動で見ない。** 送信のたびに手順4で促す必要がある。
+  `/agmsg` は Claude Code の記法で Codex は認識しない
+- **Codex は起動時に対話的な更新プロンプトを出すことがある。**
+  `1. Update now / 2. Skip / 3. Skip until next version` が表示された状態です。
+  この状態で次の指示を送ると、その Enter が既定の「1. Update now」を確定させ、
+  更新後に `Please restart Codex.` を出して終了する。
+  起動直後は `herdr agent read <pane_id> --source visible` でプロンプトの
+  有無を確認してから指示を送ること。
+- **`herdr pane run` はテキストと Enter を送る。** TUI のメニュー選択には使えない。
+  `2` を送っても既定の選択が確定してしまう。
+  送信前に `herdr pane list` で `agent=codex` を確認し、
+  ペインがシェルに戻っていたら `herdr pane run <pane_id> codex` で起動し直す
+- **`herdr agent read` は既定の `--source recent` が空を返すことがある。**
+  起動直後は特に。状態が読めないときは `--source visible` を使う
+- **agmsg のメッセージ本文はシェル展開される。** `$` やバッククォートを含む
+  報告は壊れる。実際に `$PATH` が展開されて数千文字の PATH が報告に混入した
 - **Codex は Monitor を持たない**ため `spawn.sh` の ready 待ちがスキップされる。
-  送信直後に受信済みとは限らないので `history.sh` で確認する
-- 同じ理由で `despawn.sh` の graceful 停止はタイムアウトしやすい。`--force` を使う
-- tmux の外から実行すると新規ターミナルウィンドウが開く。herdr / tmux の中から
-  実行した場合はペイン分割になる
+  受信確認は `history.sh` / `inbox.sh` で行う
+- カスタム `--terminal` で spawn した場合 `despawn.sh --force` は placement record が
+  無く使えない。ペインを再利用するか `herdr pane run <pane_id> codex` で起動し直す
+- 委譲には上記の手間がかかる。小さな変更では直接実装したほうが速い場合もある
+
+検証時の注意:
+
+- **Codex の報告を鵜呑みにしない。** 差分を読むだけでなく実際に実行して確認する
+- **cspell の検証で `--files` と `--gitignore` を併用しない。** 0 ファイルしか
+  検査されず exit 0 になる。`pnpm exec cspell lint --no-progress <file>` を使い
+  出力の `Files checked:` が期待どおりかを必ず確認する。
+  この見落としで CI を 1 日壊した
+- `just lint` の結果は成功マーク(✔️)か失敗マーク(🥊)かまで見る
+- 検証用のサンドボックスを作るときは毎回 `git fetch` してから構築する。
+  古い版を検証して誤った結論を出した事例がある
 
 ## Context Optimization
 
