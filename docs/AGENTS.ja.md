@@ -67,7 +67,7 @@ just tf -chdir=prod/bootstrap apply
 # 4. 送信前に Codex の状態を確認する
 #    更新プロンプトが出ている状態で指示を送ると Enter が既定の「Update now」を
 #    確定させてしまうため、先に検出する(出ていなければ exit 1 で抜ける)
-if herdr wait output <pane_id> --match "Update now" --timeout 2000 >/dev/null 2>&1; then
+if herdr wait output <pane_id> --match "Update now" --source visible --timeout 2000 >/dev/null 2>&1; then
   echo "更新プロンプトが出ている。手動で対処すること"
 fi
 
@@ -75,7 +75,7 @@ fi
 herdr pane run <pane_id> "agmsg の inbox を確認して、届いているタスクを実行してください。"
 
 # 6. 完了までブロックする(ポーリング不要)
-herdr wait agent-status <pane_id> --status idle --timeout 600000
+herdr wait agent-status <pane_id> --status done --timeout 600000
 ```
 
 注意点:
@@ -83,10 +83,14 @@ herdr wait agent-status <pane_id> --status idle --timeout 600000
 - **Codex は inbox を自動で見ない。** 送信のたびに手順4で促す必要がある。
   `/agmsg` は Claude Code の記法で Codex は認識しない
 - **待機には `herdr wait` を使う。** `agent read` のポーリングは不要。
-  `herdr wait agent-status <pane_id> --status idle --timeout <ms>` で完了までブロックできる。
-  条件を満たしていれば即座に返り、タイムアウト時は exit 1 になる
-- **`herdr wait output <pane_id> --match <text>` で特定の出力を待てる。**
-  更新プロンプトの検出に使う。`--regex` で正規表現も可
+  `herdr wait agent-status <pane_id> --status done --timeout <ms>` で完了までブロックできる。
+  **完了後の status は `done` であって `idle` ではない。**
+  `idle` は何も作業していない待機状態を指すため、完了検知には使えない。
+  現在値が条件を満たしていれば即座に exit 0、タイムアウト時は exit 1 になる
+- **`herdr wait output <pane_id> --match <text> --source visible` で特定の出力を待てる。**
+  更新プロンプトの検出に使う。**`--source visible` は必須。**
+  既定の `recent` はスクロールバックを検索する。
+  そのため、過去に流れた同じ文字列を拾い、誤検知する。`--regex` で正規表現も可
 - **Codex は起動時に対話的な更新プロンプトを出すことがある。**
   `1. Update now / 2. Skip / 3. Skip until next version` が表示された状態です。
   この状態で次の指示を送ると、その Enter が既定の「1. Update now」を確定させ、
