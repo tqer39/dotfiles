@@ -19,6 +19,33 @@ if command -v sheldon &> /dev/null; then
 fi
 
 # ------------------------------------------------------------------------------
+# Completion
+# ------------------------------------------------------------------------------
+# herdr の補完はファイルに生成して fpath 経由で読む(毎回 eval すると起動が遅い)。
+# herdr 本体より古ければ再生成し、あわせて compinit のキャッシュを捨てる。
+if command -v herdr &> /dev/null; then
+  _comp_dir="$HOME/.zsh/completions"
+  _herdr_comp="$_comp_dir/_herdr"
+  if [[ ! -f "$_herdr_comp" ]] || [[ "$(command -v herdr)" -nt "$_herdr_comp" ]]; then
+    mkdir -p "$_comp_dir"
+    if herdr completion zsh > "$_herdr_comp" 2>/dev/null; then
+      rm -f "${ZDOTDIR:-$HOME}/.zcompdump"
+    fi
+  fi
+  fpath=("$_comp_dir" $fpath)
+  unset _comp_dir _herdr_comp
+fi
+
+# compinit は fpath への追加をすべて終えてから呼ぶ。
+# 毎回フルチェックすると遅いので、キャッシュが 24 時間以上古い場合のみ再構築する。
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+
+# ------------------------------------------------------------------------------
 # History
 # ------------------------------------------------------------------------------
 export HISTFILE="$HOME/.zsh_history"
