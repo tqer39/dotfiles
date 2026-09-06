@@ -1,0 +1,6 @@
+# Quality defaults for Codex CLI 0.153.4 and a model with Max support.
+# Usage: codex --profile quality
+model = "gpt-6-astra"
+model_reasoning_effort = "max"
+plan_mode_reasoning_effort = "max"
+web_search = "live"
