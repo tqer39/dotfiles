@@ -2,12 +2,14 @@
 
 [🇯🇵 日本語版](docs/AGENTS.ja.md)
 
-Claude Code 向けのガイダンス。
+Shared repository guidance for Codex and Claude Code. `CLAUDE.md` is a symlink
+to this file. All sections apply to both tools except
+**Implementation Delegation (Claude Code Only)**.
 
 ## Repository Purpose
 
-dotfiles リポジトリ。symlink でファイルをインストール。
-macOS, Linux (Ubuntu, Linux Mint), Windows をサポート。
+This repository installs dotfiles through symlinks.
+It supports macOS, Linux (Ubuntu, Linux Mint), and Windows.
 
 ## Commands
 
@@ -21,6 +23,10 @@ just lint
 ./scripts/dotfiles.sh uninstall
 ./scripts/dotfiles.sh doctor
 
+# Independent concurrent work (creates a new branch and worktree)
+just wt-new <name>
+just wt-list
+
 # Terraform
 just tf plan
 just tf -chdir=prod/bootstrap apply
@@ -30,7 +36,7 @@ just tf -chdir=prod/bootstrap apply
 
 - **Idempotency**: Re-running is always safe
 - **Backup**: Existing files are moved to `~/.dotfiles_backup/`
-- **Platform filtering**: `config/platform-files.conf` で制御
+- **Platform filtering**: Controlled by `config/platform-files.conf`
 - **Server mode**: `--server` skips desktop/GUI application installation
 
 ## Coding Guidelines
@@ -43,12 +49,53 @@ just tf -chdir=prod/bootstrap apply
 
 - **Do NOT create** `.vscode/settings.json` - VS Code settings are not managed in this repository
 
-## Implementation Delegation
+## Shared Workflow
 
-実装は agmsg 経由で Codex CLI に担当させる。Claude Code 側は指示出し・レビュー・
-検証・PR 作成を担当する。
+- Establish the goal, target files or behavior, constraints, and completion
+  criteria before editing. Include concrete expected behavior or examples for
+  complex changes. Read the applicable instructions and relevant code first.
+- Resolve questions that affect the specification before implementing the
+  dependent changes. For large, ambiguous Codex tasks, use Plan mode to agree on
+  the approach first. Carry an agreed plan through implementation and verification
+  without asking for the same approval again.
+- Preserve unrelated user changes. Keep separate objectives in separate threads;
+  use `just wt-new <name>` for concurrent editing. Assign file ownership to avoid
+  overlapping changes. Coordinate file ownership when integrating worktrees.
+- Reuse applicable existing skills for routine work. When a failure repeats, address its cause.
+  Use a regression test, a script, or a short instruction in the relevant scope.
 
-手順:
+See [the Codex workflow guide](docs/codex.md#daily-workflow) for the request
+template and a record for assessing rework.
+
+## Completion and Verification (Both Tools)
+
+- Confirm the requested behavior and constraints. For bug fixes, reproduce the
+  original failure where feasible and verify that it no longer occurs. Add
+  regression coverage for meaningful behavior changes.
+- Run `just lint` and checks appropriate to the change. Review the final diff for
+  regressions, missed requirements, and unrelated changes. Include automatic lint fixes.
+- Report the changes, commands or checks actually run, their results, and anything
+  unverified with its reason. Do not report checks as passed unless they were run.
+  Required checks must pass before completion.
+- **Check the files cspell actually scans.** Do not combine `--files` and
+  `--gitignore` for targeted verification; this has returned success with zero
+  files checked. Use `pnpm exec cspell lint --no-progress <file>` and confirm that
+  `Files checked:` matches the expected count.
+- Check the final `just lint` summary (✔️ or 🥊), not only individual hook output.
+- Run `git fetch` before building a verification sandbox, and confirm that it
+  contains the intended revision and changes. Stale checkouts have led to
+  incorrect conclusions.
+
+## Implementation Delegation (Claude Code Only)
+
+This section applies only when Claude Code coordinates implementation through
+agmsg. Codex implements its assigned work directly.
+This procedure does not instruct Codex to launch or delegate to another Codex instance.
+
+Claude Code delegates implementation to Codex CLI through agmsg.
+It handles task instructions, review, verification, and PR creation.
+
+Procedure:
 
 ```bash
 # 1. dotfiles 専用の team に join (既存の family-tasks / media-server は使わない)
@@ -78,45 +125,38 @@ herdr pane run <pane_id> "agmsg の inbox を確認して、届いているタ�
 herdr wait agent-status <pane_id> --status idle --timeout 600000
 ```
 
-注意点:
+Notes:
 
-- **Codex は inbox を自動で見ない。** 送信のたびに手順4で促す必要がある。
-  `/agmsg` は Claude Code の記法で Codex は認識しない
-- **待機には `herdr wait` を使う。** `agent read` のポーリングは不要。
-  `herdr wait agent-status <pane_id> --status idle --timeout <ms>` で完了までブロックできる。
-  条件を満たしていれば即座に返り、タイムアウト時は exit 1 になる
-- **`herdr wait output <pane_id> --match <text>` で特定の出力を待てる。**
-  更新プロンプトの検出に使う。`--regex` で正規表現も可
-- **Codex は起動時に対話的な更新プロンプトを出すことがある。**
-  `1. Update now / 2. Skip / 3. Skip until next version` が表示された状態です。
-  この状態で次の指示を送ると、その Enter が既定の「1. Update now」を確定させ、
-  更新後に `Please restart Codex.` を出して終了する。
-  起動直後は `herdr agent read <pane_id> --source visible` でプロンプトの
-  有無を確認してから指示を送ること。
-- **`herdr pane run` はテキストと Enter を送る。** TUI のメニュー選択には使えない。
-  `2` を送っても既定の選択が確定してしまう。
-  送信前に `herdr pane list` で `agent=codex` を確認し、
-  ペインがシェルに戻っていたら `herdr pane run <pane_id> codex` で起動し直す
-- **`herdr agent read` は既定の `--source recent` が空を返すことがある。**
-  起動直後は特に。状態が読めないときは `--source visible` を使う
-- **agmsg のメッセージ本文はシェル展開される。** `$` やバッククォートを含む
-  報告は壊れる。実際に `$PATH` が展開されて数千文字の PATH が報告に混入した
-- **Codex は Monitor を持たない**ため `spawn.sh` の ready 待ちがスキップされる。
-  受信確認は `history.sh` / `inbox.sh` で行う
-- カスタム `--terminal` で spawn した場合 `despawn.sh --force` は placement record が
-  無く使えない。ペインを再利用するか `herdr pane run <pane_id> codex` で起動し直す
-- 委譲には上記の手間がかかる。小さな変更では直接実装したほうが速い場合もある
-
-検証時の注意:
-
-- **Codex の報告を鵜呑みにしない。** 差分を読むだけでなく実際に実行して確認する
-- **cspell の検証で `--files` と `--gitignore` を併用しない。** 0 ファイルしか
-  検査されず exit 0 になる。`pnpm exec cspell lint --no-progress <file>` を使い
-  出力の `Files checked:` が期待どおりかを必ず確認する。
-  この見落としで CI を 1 日壊した
-- `just lint` の結果は成功マーク(✔️)か失敗マーク(🥊)かまで見る
-- 検証用のサンドボックスを作るときは毎回 `git fetch` してから構築する。
-  古い版を検証して誤った結論を出した事例がある
+- **Codex does not check the inbox automatically.** Check its state in step 4 and prompt it in step 5 after every task.
+- `/agmsg` is Claude Code syntax and is not recognized by Codex.
+- **Use `herdr wait` to wait.** There is no need to poll `agent read`.
+  Run `herdr wait agent-status <pane_id> --status idle --timeout <ms>` to wait for completion.
+  It returns immediately if already idle and exits with 1 on timeout.
+- Use `herdr wait output <pane_id> --match <text>` to detect specific output,
+  including the update prompt. `--regex` supports regular expressions.
+- **Codex can show an interactive update prompt at startup:**
+  `1. Update now / 2. Skip / 3. Skip until next version`.
+  Sending instructions then can select the default update, after which Codex
+  prints `Please restart Codex.` and exits. Check for the prompt with
+  `herdr agent read <pane_id> --source visible` before sending instructions.
+- **`herdr pane run` sends text and Enter.** It cannot select TUI menu options;
+  sending `2` can still confirm the default. Before sending, check `agent=codex`
+  with `herdr pane list`. If the pane has returned to a shell, restart Codex with
+  `herdr pane run <pane_id> codex`.
+- `herdr agent read` can return empty output with the default `--source recent`,
+  especially just after startup. Use `--source visible` in that case.
+- Quote literal agmsg message bodies safely in shell commands. Expanding `$` or
+  backticks can corrupt reports. A previous `$PATH` expansion inserted thousands
+  of characters into a report.
+- Codex has no Monitor, so `spawn.sh` skips the ready wait. Confirm receipt with
+  `history.sh` / `inbox.sh`.
+- Spawning with a custom `--terminal` leaves no placement record for
+  `despawn.sh --force`. Reuse the pane or restart with
+  `herdr pane run <pane_id> codex`.
+- For small changes, direct implementation can be faster than this delegation
+  procedure.
+- **Verify Codex's report independently.** Read the diff and execute the relevant checks yourself.
+  Follow the shared completion and verification requirements.
 
 ## Context Optimization
 
@@ -133,5 +173,6 @@ herdr wait agent-status <pane_id> --status idle --timeout 600000
 
 ## Documentation
 
-- [docs/local-dev.md](docs/local-dev.md) - 開発環境セットアップ
-- [docs/architecture.md](docs/architecture.md) - アーキテクチャ詳細
+- [docs/local-dev.md](docs/local-dev.md) - Local development setup
+- [docs/architecture.md](docs/architecture.md) - Architecture details
+- [docs/codex.md](docs/codex.md) - Codex setup, workflow, and request template

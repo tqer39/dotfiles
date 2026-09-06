@@ -2,7 +2,9 @@
 
 [🇺🇸 English](../AGENTS.md)
 
-Claude Code 向けのガイダンス。
+Codex と Claude Code に共通するリポジトリのガイダンスです。
+`CLAUDE.md` はこの英語版 `AGENTS.md` への symlink です。
+**「実装の委譲（Claude Code 専用）」を除くすべての節を、両方のツールに適用します。**
 
 ## リポジトリの目的
 
@@ -20,6 +22,10 @@ just lint
 ./scripts/dotfiles.sh install
 ./scripts/dotfiles.sh uninstall
 ./scripts/dotfiles.sh doctor
+
+# Independent concurrent work (creates a new branch and worktree)
+just wt-new <name>
+just wt-list
 
 # Terraform
 just tf plan
@@ -43,7 +49,44 @@ just tf -chdir=prod/bootstrap apply
 
 - `.vscode/settings.json` を**作成しない** - VS Code の設定はこのリポジトリで管理しない
 
-## 実装の委譲
+## 共通の作業手順
+
+- 編集前に、目的・対象のファイルや動作・制約・完了条件を整理します。
+  複雑な変更では、期待する具体的な動作や例も明確にします。
+  適用される指示と関連コードを先に読みます。
+- 仕様を左右する不明点は、依存する変更の実装前に確認します。
+  Codex で大きく曖昧な変更を扱う場合は、Plan モードで方針を合わせます。
+  合意済みの計画は同じ承認を求め直さず、実装から検証まで進めます。
+- 無関係なユーザーの変更を保持します。別目的の作業は別スレッドに分け、
+  同時に編集するときは `just wt-new <name>` を使います。
+  worktree 間の変更を統合する際も含め、ファイルの担当範囲を決めて重複を避けます。
+- 定型作業には適用可能な既存スキルを使います。失敗が繰り返されたら、原因に応じて
+  回帰テスト・スクリプト・適用範囲を絞った短い指示に反映します。
+
+依頼テンプレートと手戻りの記録方法は、[Codex の運用ガイド](codex.ja.md#日常の運用)を参照してください。
+
+## 完了条件と検証（両ツール共通）
+
+- 依頼された動作と制約を満たすことを確認します。不具合修正では、可能な範囲で
+  元の問題を再現し、修正後に解消したことを確かめます。
+  意味のある動作変更には回帰テストを追加します。
+- `just lint` を実行し、変更内容に合う検証をします。最終差分をレビューし、
+  回帰・要件漏れ・無関係な変更がないか、自動修正された差分も含めて確認します。
+- 変更点、実際に実行したコマンドや確認、結果、未確認事項とその理由を報告します。
+  未実行の検証を成功扱いにせず、必須の検証が失敗した状態を完了としません。
+- **cspell の検査対象を確認します。** 個別の検証で `--files` と `--gitignore` を
+  併用すると、0 ファイルの検査で成功した事例があります。
+  `pnpm exec cspell lint --no-progress <file>` を使い、
+  `Files checked:` が期待する件数か確認します。
+- `just lint` は各フックの出力だけでなく、最後の結果（✔️ または 🥊）まで確認します。
+- 検証用のサンドボックスを作る前に `git fetch` し、意図したリビジョンと変更内容が
+  含まれることを確認します。古い版を検証して誤った結論を出した事例があります。
+
+## 実装の委譲（Claude Code 専用）
+
+この節は Claude Code が agmsg 経由で実装を委譲する場合だけに適用します。
+Codex は割り当てられた実装を直接行います。この手順は、Codex に対して
+別の Codex の起動や再委譲を指示するものではありません。
 
 実装は agmsg 経由で Codex CLI に担当させる。Claude Code 側は指示出し・レビュー・
 検証・PR 作成を担当する。
@@ -80,8 +123,8 @@ herdr wait agent-status <pane_id> --status idle --timeout 600000
 
 注意点:
 
-- **Codex は inbox を自動で見ない。** 送信のたびに手順4で促す必要がある。
-  `/agmsg` は Claude Code の記法で Codex は認識しない
+- **Codex は inbox を自動で見ない。** タスクの送信ごとに手順4で状態を確認し、手順5で促す。
+- `/agmsg` は Claude Code の記法で Codex は認識しない
 - **待機には `herdr wait` を使う。** `agent read` のポーリングは不要。
   `herdr wait agent-status <pane_id> --status idle --timeout <ms>` で完了までブロックできる。
   条件を満たしていれば即座に返り、タイムアウト時は exit 1 になる
@@ -99,24 +142,16 @@ herdr wait agent-status <pane_id> --status idle --timeout 600000
   ペインがシェルに戻っていたら `herdr pane run <pane_id> codex` で起動し直す
 - **`herdr agent read` は既定の `--source recent` が空を返すことがある。**
   起動直後は特に。状態が読めないときは `--source visible` を使う
-- **agmsg のメッセージ本文はシェル展開される。** `$` やバッククォートを含む
-  報告は壊れる。実際に `$PATH` が展開されて数千文字の PATH が報告に混入した
+- シェルコマンド内の agmsg のメッセージ本文は、文字列を安全に引用する。
+  `$` やバッククォートが展開されると報告が壊れる。
+  実際に `$PATH` が展開されて数千文字の PATH が報告に混入した
 - **Codex は Monitor を持たない**ため `spawn.sh` の ready 待ちがスキップされる。
   受信確認は `history.sh` / `inbox.sh` で行う
 - カスタム `--terminal` で spawn した場合 `despawn.sh --force` は placement record が
   無く使えない。ペインを再利用するか `herdr pane run <pane_id> codex` で起動し直す
 - 委譲には上記の手間がかかる。小さな変更では直接実装したほうが速い場合もある
-
-検証時の注意:
-
-- **Codex の報告を鵜呑みにしない。** 差分を読むだけでなく実際に実行して確認する
-- **cspell の検証で `--files` と `--gitignore` を併用しない。** 0 ファイルしか
-  検査されず exit 0 になる。`pnpm exec cspell lint --no-progress <file>` を使い
-  出力の `Files checked:` が期待どおりかを必ず確認する。
-  この見落としで CI を 1 日壊した
-- `just lint` の結果は成功マーク(✔️)か失敗マーク(🥊)かまで見る
-- 検証用のサンドボックスを作るときは毎回 `git fetch` してから構築する。
-  古い版を検証して誤った結論を出した事例がある
+- **Codex の報告を鵜呑みにしない。** 差分を読み、共通の完了条件と検証に従って
+  必要な確認を自分でも実行する。
 
 ## コンテキスト最適化
 
@@ -135,3 +170,4 @@ herdr wait agent-status <pane_id> --status idle --timeout 600000
 
 - [docs/local-dev.ja.md](local-dev.ja.md) - 開発環境セットアップ
 - [docs/architecture.ja.md](architecture.ja.md) - アーキテクチャ詳細
+- [docs/codex.ja.md](codex.ja.md) - Codex の設定・運用・依頼テンプレート
