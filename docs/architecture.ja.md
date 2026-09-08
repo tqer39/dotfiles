@@ -50,7 +50,7 @@ flowchart TD
 `--full` インストール時に呼び出されるモジュラーインストーラー:
 
 - `homebrew.sh` - Homebrew と Brewfile パッケージ
-- `apt.sh` - APT パッケージ (Ubuntu/Mint、Mint では snap 依存アプリに flatpak フォールバック)
+- `apt.sh` - APT パッケージと GUI アプリ (Ubuntu/Mint、Ghostty は snap がなければ .deb、Spotify は flatpak にフォールバック)
 - `anyenv.sh` - 言語ランタイムマネージャー
 - `vscode.sh` - `src/.vscode/extensions.json` の VS Code 拡張機能
 
