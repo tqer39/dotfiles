@@ -19,7 +19,7 @@ Unix のリンク対象は [platform-files.conf](../config/platform-files.conf)�
 | bat | Brew | Brew | Scoop | モダンな cat 代替 |
 | fzf | Brew | Brew | Scoop | ファジーファインダー |
 | ripgrep | Brew | Brew | Scoop | モダンな grep 代替 |
-| jq | Brew | Brew/apt | Scoop | JSON プロセッサ |
+| jq | Brew | Brew | Scoop | JSON プロセッサ |
 | direnv | Brew | Brew | N/A | 環境変数切り替え |
 | mise | Brew | Brew | Scoop | ツールバージョン管理 |
 | awscli | Brew | Brew | winget | AWS CLI |
@@ -59,7 +59,7 @@ Unix のリンク対象は [platform-files.conf](../config/platform-files.conf)�
 | プラットフォーム | メイン | サブ | 備考 |
 | ---------------- | ------ | ---- | ---- |
 | macOS | Homebrew | - | |
-| Ubuntu | Homebrew | apt | GUI アプリは snap |
+| Ubuntu | Homebrew | apt | アプリごとに apt / snap / .deb などを使用 |
 | Mint | Homebrew | apt | アプリごとに .deb / flatpak などを使用 |
 | Windows | Scoop | winget | |
 
