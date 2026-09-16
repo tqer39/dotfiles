@@ -112,6 +112,10 @@ Aliases:
   Zellij:
     zj        attach/create zellij session (default layout)
     zj <name> attach/create named session; inside zellij → switch-session
+
+  Codex:
+    codexwt new <name>  create a worktree and launch codex in it
+    codexwt [list]      pick an existing worktree (fzf) and launch codex in it
 EOF
 }
 
@@ -232,6 +236,54 @@ if command -v zellij &> /dev/null; then
       *) PROMPT_COMMAND="_zj_set_title${PROMPT_COMMAND:+; $PROMPT_COMMAND}" ;;
     esac
   fi
+fi
+
+# Codex CLI: launch inside a git worktree
+# Usage:
+#   codexwt new <name> [codex args...]   Create a new worktree and launch codex in it
+#   codexwt [list] [codex args...]       Pick an existing worktree via fzf and launch codex in it
+if command -v codex &> /dev/null; then
+  codexwt() {
+    local repo_root
+    repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+      echo "codexwt: not inside a git repository" >&2
+      return 1
+    }
+
+    local target
+    if [ "${1:-}" = "new" ]; then
+      shift
+      local name="${1:-}"
+      if [ -z "$name" ]; then
+        echo "Usage: codexwt new <name> [codex args...]" >&2
+        return 1
+      fi
+      shift
+
+      local repo_name suffix branch wt_root
+      repo_name="$(basename "$repo_root")"
+      suffix="$(date +%y%m%d)-$(openssl rand -hex 3)"
+      branch="${name}-${suffix}"
+      wt_root="$(dirname "$repo_root")/${repo_name}-worktrees"
+      mkdir -p "$wt_root"
+      target="${wt_root}/${branch}"
+      git -C "$repo_root" worktree add "$target" -b "$branch" || return 1
+      echo "✅ Worktree ready: $target"
+    else
+      [ "${1:-}" = "list" ] && shift
+      if ! command -v fzf &> /dev/null; then
+        echo "codexwt: fzf is required to select a worktree (or use: codexwt new <name>)" >&2
+        return 1
+      fi
+      target="$(git -C "$repo_root" worktree list | grep -v '(bare)' | fzf --header 'Select a worktree for codex' | awk '{print $1}')"
+      if [ -z "$target" ]; then
+        echo "codexwt: no worktree selected" >&2
+        return 1
+      fi
+    fi
+
+    (cd "$target" && codex "$@")
+  }
 fi
 
 # pbcopy/pbpaste (Linux)
