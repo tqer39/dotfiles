@@ -1,5 +1,4 @@
 {
-  "effortLevel": "high",
   "env": {
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
@@ -37,16 +36,6 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "afplay /System/Library/Sounds/Glass.aiff"
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "matcher": "*",
@@ -58,13 +47,35 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$HOME/.claude/hooks/context-warn.py\"",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   },
+  "disabledMcpjsonServers": ["slack"],
   "enabledPlugins": {
+    "context7@claude-plugins-official": true,
     "example-skills@anthropic-agent-skills": true,
-    "code-simplifier@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "context7@claude-plugins-official": true
+    "claude-code-cost-analysis@kkhs-plugin-marketplace": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
@@ -80,5 +91,9 @@
       }
     }
   },
-  "language": "日本語"
+  "language": "日本語",
+  "effortLevel": "high",
+  "tui": "fullscreen",
+  "theme": "dark",
+  "model": "claude-fable-5-1[1M]"
 }

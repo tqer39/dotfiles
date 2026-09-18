@@ -72,3 +72,7 @@ if [ -n "$BASH_VERSION" ] && [ -f "$HOME/.bashrc" ]; then
   # shellcheck source=/dev/null
   . "$HOME/.bashrc"
 fi
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/takeru_ooyama/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

@@ -62,3 +62,7 @@ if [ -n "${ZELLIJ:-}" ]; then
   add-zsh-hook precmd _zj_set_title
   add-zsh-hook chpwd _zj_set_title
 fi
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/takeru_ooyama/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

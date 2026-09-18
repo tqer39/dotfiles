@@ -1,3 +1,4 @@
+onboarding = false
 # Herdr configuration
 # https://herdr.dev/docs/configuration
 
@@ -27,6 +28,7 @@ confirm_close = true
 pane_borders = true
 pane_gaps = true
 
+agent_panel_sort = "spaces"
 [ui.toast]
 delivery = "system"
 delay_seconds = 1
@@ -36,4 +38,3 @@ enabled = true
 
 [experimental]
 pane_history = true
-resume_agents_on_restore = true
