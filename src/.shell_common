@@ -66,6 +66,13 @@ if [ -d "$HOME/.antigravity/antigravity/bin" ]; then
   export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 fi
 
+# jira-cli (work mode only)
+_jira_bin="$HOME/workspace/kkhs/ax-toolkit/tools/jira-cli/bin"
+if [ "$DOTFILES_MODE" = "work" ] && [ -d "$_jira_bin" ]; then
+  export PATH="$_jira_bin:$PATH"
+fi
+unset _jira_bin
+
 # Cargo/Rust
 # shellcheck source=/dev/null
 if [ -f "$HOME/.cargo/env" ]; then
@@ -108,6 +115,11 @@ Aliases:
   Container:
     docker    podman (if installed)
     docker-compose  podman compose (if installed)
+
+  CLI:
+      ca        cursor-agent
+      cl        claude
+      dv        devin
 
   Zellij:
     zj        attach/create zellij session (default layout)
@@ -285,6 +297,11 @@ if command -v codex &> /dev/null; then
     (cd "$target" && codex "$@")
   }
 fi
+
+# AI coding CLIs
+command -v cursor-agent &> /dev/null && alias ca='cursor-agent'
+command -v claude &> /dev/null && alias cl='claude'
+command -v devin &> /dev/null && alias dv='devin'
 
 # pbcopy/pbpaste (Linux)
 if command -v xsel &> /dev/null; then

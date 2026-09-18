@@ -78,3 +78,7 @@ fi
 if [ -f "$HOME/.shell_common" ]; then
   . "$HOME/.shell_common"
 fi
+
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/takeru_ooyama/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
