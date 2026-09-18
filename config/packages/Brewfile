@@ -114,6 +114,59 @@ if OS.mac? && ENV['HOMEBREW_WORK_MODE'] == 'true'
   cask "cursor"      # AI code editor
   cask "cursor-cli"  # Cursor CLI (cursor-agent)
   cask "devin-cli"   # Devin CLI (devin)
+
+  # CLI / lint / release tools
+  brew "actionlint"     # GitHub Actions workflow linter
+  brew "biome"          # JS/TS formatter & linter
+  brew "golangci-lint"  # Go linters aggregator
+  brew "goreleaser"     # Go release automation
+  brew "osv-scanner"    # vulnerability scanner
+  brew "pinact"         # pin GitHub Actions versions
+  brew "prek"           # pre-commit compatible runner
+  brew "yamllint"
+  brew "shfmt"          # shell formatter
+  brew "ruff"           # Python linter & formatter
+  brew "yazi"           # terminal file manager
+  brew "yq"             # YAML processor
+  brew "fd"             # find replacement
+  brew "autossh"        # auto-reconnecting ssh
+  brew "docker-compose"
+  brew "mas"            # Mac App Store CLI
+
+  # Browsers / communication
+  cask "google-chrome"
+  cask "brave-browser"
+  cask "slack"
+  cask "deepl"
+
+  # Design / docs
+  cask "figma"
+  cask "drawio"
+  cask "cleanshot"           # screenshot tool
+  cask "adobe-acrobat-pro"
+  cask "google-drive"
+  cask "google-japanese-ime"
+
+  # AI tools
+  cask "chatgpt"
+  cask "comet"        # Perplexity browser
+  cask "coderabbit"   # AI code review CLI
+
+  # Dev / infra clients
+  cask "postman"
+  cask "podman-desktop"
+  cask "rancher"                  # Rancher Desktop (container runtime)
+  cask "mysqlworkbench"
+  cask "nosql-workbench"          # DynamoDB NoSQL Workbench
+  cask "session-manager-plugin"   # AWS SSM Session Manager plugin
+  cask "zed"
+  cask "warp"
+  cask "alt-tab"      # Windows-style window switcher
+
+  # Mac App Store
+  mas "Kindle", id: 302584613
+  mas "Okta Verify", id: 490179405
+  mas "RunCat", id: 1429033973
 end
 
 # ------------------------------------------------------------------------------

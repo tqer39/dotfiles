@@ -195,3 +195,12 @@ yazi
 ZDHARMA
 zinit
 Zinit's
+golangci
+goreleaser
+pinact
+shfmt
+autossh
+deepl
+cleanshot
+coderabbit
+mysqlworkbench
