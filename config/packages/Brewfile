@@ -183,10 +183,6 @@ brew "vercel"
 # brew "azure-cli"
 # brew "google-cloud-sdk" if OS.mac?
 
-# Google Workspace
-tap "openclaw/tap"
-brew "openclaw/tap/gogcli"  # Google Workspace CLI
-
 # Container tools
 # brew "podman"
 # brew "kubectl"
