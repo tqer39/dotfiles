@@ -62,7 +62,6 @@ gclean
 ghostty
 githubnext
 gnewb
-gogcli
 googlecode
 GOPATH
 gpgsign
