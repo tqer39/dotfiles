@@ -32,5 +32,16 @@ window-padding-balance = true
 macos-titlebar-style = tabs
 
 # Keybindings
+# 元 Caps Lock が Control として届く場合も、CLI に渡さず貼り付ける
+keybind = ctrl+v=paste_from_clipboard
+# 選択範囲があればコピーし、なければ Control+C を CLI に渡す
+keybind = performable:ctrl+c=copy_to_clipboard
+# Ghostty を終了 / 現在のタブを閉じる
+keybind = ctrl+q=quit
+keybind = ctrl+w=close_tab:this
+# タブを開く / 右のタブへ移動 / 左のタブへ移動
+keybind = ctrl+t=new_tab
+keybind = ctrl+tab=next_tab
+keybind = ctrl+shift+tab=previous_tab
 # fzf 履歴検索 (cmd+r → ctrl+r)
 keybind = super+r=text:\x12

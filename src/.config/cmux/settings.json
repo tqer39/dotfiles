@@ -106,7 +106,7 @@
   //       "127.0.0.1",
   //       "::1",
   //       "0.0.0.0",
-  //       "*.localtest.me"
+  //       "*.localtest.me" // cspell:ignore localtest
   //     ],
   //     "interceptTerminalOpenCommandInCmuxBrowser" : true,
   //     "openTerminalLinksInCmuxBrowser" : true,
@@ -156,6 +156,11 @@
       //       "prevSurface" : "cmd+shift+[",
       //       "quit" : "cmd+q",
       //       "reloadConfiguration" : "cmd+shift+,",
+      "closeTab": "ctrl+w",
+      "newSurface": "ctrl+t",
+      "nextSurface": "ctrl+tab",
+      "prevSurface": "ctrl+shift+tab",
+      "quit": "ctrl+q",
       "renameTab": "cmd+shift+r"
       //       "renameWorkspace" : "cmd+shift+r",
       //       "reopenClosedBrowserPanel" : "cmd+shift+t",
