@@ -1,43 +1,9 @@
 name: Test Install Scripts
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'install.sh'
-      - 'install.ps1'
-      - 'scripts/**'
-      - 'config/**'
-      - 'src/**'
-      - 'tests/**'
-      - '.github/workflows/test-install.yml'
-  pull_request:
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  # ------------------------------------------------------------------------------
-  # Path change detection — gate minimal jobs so unrelated PRs skip them cheaply
-  # ------------------------------------------------------------------------------
-  changes:
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    outputs:
-      relevant: ${{ steps.filter.outputs.relevant }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - id: filter
-        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
-        with:
-          filters: |
-            relevant:
-              - 'install.sh'
-              - 'install.ps1'
-              - 'scripts/**'
-              - 'config/**'
-              - 'src/**'
-              - 'tests/**'
-              - '.github/workflows/test-install.yml'
-
   # ------------------------------------------------------------------------------
   # Repository update tests (stash / pull path)
   # Every install test below passes --ci, which skips the pull entirely, so the
@@ -46,8 +12,6 @@ jobs:
   # ------------------------------------------------------------------------------
   test-update-repository:
     name: Update path - ${{ matrix.os }}
-    needs: changes
-    if: needs.changes.outputs.relevant == 'true'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
@@ -67,8 +31,6 @@ jobs:
   # ------------------------------------------------------------------------------
   test-unix-minimal:
     name: Minimal - ${{ matrix.os }}
-    needs: changes
-    if: needs.changes.outputs.relevant == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -268,8 +230,6 @@ jobs:
   # ------------------------------------------------------------------------------
   test-windows-minimal:
     name: Minimal - Windows
-    needs: changes
-    if: needs.changes.outputs.relevant == 'true'
     runs-on: windows-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
@@ -419,34 +379,3 @@ jobs:
           } else {
             Write-Host "gh not found"
           }
-
-  # ------------------------------------------------------------------------------
-  # Aggregator — single required status check for branch protection
-  # Treats skipped jobs as success; only fails if any gated job actually failed.
-  # ------------------------------------------------------------------------------
-  workflow-result:
-    name: workflow-result
-    needs: [changes, test-unix-minimal, test-windows-minimal]
-    if: always()
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    steps:
-      - name: Evaluate job results
-        run: |
-          set -eu
-          failed=0
-          for result in \
-            "${{ needs.changes.result }}" \
-            "${{ needs.test-unix-minimal.result }}" \
-            "${{ needs.test-windows-minimal.result }}"
-          do
-            case "$result" in
-              success|skipped) ;;
-              *) failed=1 ;;
-            esac
-          done
-          if [ "$failed" -eq 1 ]; then
-            echo "One or more required jobs failed"
-            exit 1
-          fi
-          echo "All required jobs passed or were skipped"

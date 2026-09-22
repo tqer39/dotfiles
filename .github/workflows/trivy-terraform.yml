@@ -2,20 +2,7 @@
 name: Trivy Terraform Security Scan
 
 on:
-  pull_request:
-    paths:
-      - 'infra/terraform/**'
-      - '.github/workflows/trivy-terraform.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra/terraform/**'
-      - '.github/workflows/trivy-terraform.yml'
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   trivy-terraform-scan:

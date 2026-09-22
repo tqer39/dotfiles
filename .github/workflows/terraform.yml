@@ -1,23 +1,7 @@
 name: Terraform
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra/terraform/**'
-      - '.github/workflows/terraform.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'infra/terraform/**'
-      - '.github/workflows/terraform.yml'
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 env:
   WORKING_DIRECTORY: infra/terraform/envs/prod/dns
