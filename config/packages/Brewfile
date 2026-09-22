@@ -82,6 +82,7 @@ if OS.mac?
   cask "1password"
   cask "linear-linear"  # Project management
   cask "raycast"
+  cask "superwhisper"  # AI voice dictation
 
   # Keyboard & Window Management
   cask "karabiner-elements"

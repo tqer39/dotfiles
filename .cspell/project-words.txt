@@ -163,6 +163,7 @@ stackdump
 statusline
 steipete
 subshell
+superwhisper
 symref
 Takeru
 takeruooyama
