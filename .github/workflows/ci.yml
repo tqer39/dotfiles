@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      install: ${{ steps.filter.outputs.install }}
+      terraform: ${{ steps.filter.outputs.terraform }}
+      security: ${{ steps.filter.outputs.security }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - id: filter
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
+        with:
+          filters: |
+            install:
+              - 'install.sh'
+              - 'install.ps1'
+              - 'scripts/**'
+              - 'config/**'
+              - 'src/**'
+              - 'tests/**'
+              - '.github/workflows/test-install.yml'
+              - '.github/workflows/ci.yml'
+            terraform:
+              - 'infra/terraform/**'
+              - '.github/workflows/terraform.yml'
+              - '.github/workflows/ci.yml'
+            security:
+              - 'infra/terraform/**'
+              - '.github/workflows/trivy-terraform.yml'
+              - '.github/workflows/ci.yml'
+
+  lint:
+    uses: ./.github/workflows/lint.yml
+
+  install:
+    needs: changes
+    if: needs.changes.outputs.install == 'true' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/test-install.yml
+
+  terraform:
+    needs: changes
+    if: >-
+      (needs.changes.outputs.terraform == 'true' || github.event_name == 'workflow_dispatch') &&
+      (github.event_name != 'pull_request' || github.base_ref == 'main')
+    permissions:
+      id-token: write
+      contents: read
+      deployments: write
+      pull-requests: write
+    uses: ./.github/workflows/terraform.yml
+    secrets: inherit
+
+  security:
+    needs: changes
+    if: needs.changes.outputs.security == 'true' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+    uses: ./.github/workflows/trivy-terraform.yml
+
+  workflow-result:
+    name: workflow-result
+    needs: [changes, lint, install, terraform, security]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions: {}
+    steps:
+      - name: Evaluate all CI results
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          echo "$NEEDS" | jq -e '
+            .changes.result == "success" and
+            .lint.result == "success" and
+            all(.[]; .result == "success" or .result == "skipped")
+          '

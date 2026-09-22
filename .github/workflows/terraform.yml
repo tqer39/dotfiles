@@ -1,23 +1,7 @@
 name: Terraform
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'infra/terraform/**'
-      - '.github/workflows/terraform.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'infra/terraform/**'
-      - '.github/workflows/terraform.yml'
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
 
 env:
   WORKING_DIRECTORY: infra/terraform/envs/prod/dns
@@ -165,21 +149,3 @@ jobs:
           status: ${{ job.status }}
           env: ${{ steps.deployment.outputs.env }}
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
-
-  workflow-result:
-    name: terraform-result
-    needs: terraform
-    if: always()
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    permissions: {}
-    steps:
-      - name: Evaluate job results
-        env:
-          RESULT: ${{ needs.terraform.result }}
-        run: |
-          if [ "$RESULT" != "success" ]; then
-            echo "Required job did not succeed: $RESULT"
-            exit 1
-          fi
-          echo "All required jobs passed"
