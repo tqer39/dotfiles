@@ -120,3 +120,21 @@ jobs:
                 body: body
               });
             }
+
+  workflow-result:
+    name: trivy-terraform-result
+    needs: trivy-terraform-scan
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions: {}
+    steps:
+      - name: Evaluate job results
+        env:
+          RESULT: ${{ needs.trivy-terraform-scan.result }}
+        run: |
+          if [ "$RESULT" != "success" ]; then
+            echo "Required job did not succeed: $RESULT"
+            exit 1
+          fi
+          echo "All required jobs passed"

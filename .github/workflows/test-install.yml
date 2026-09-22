@@ -422,11 +422,18 @@ jobs:
 
   # ------------------------------------------------------------------------------
   # Aggregator — single required status check for branch protection
-  # Treats skipped jobs as success; only fails if any gated job actually failed.
+  # Treats skipped jobs as success; fails on failure or cancellation.
   # ------------------------------------------------------------------------------
   workflow-result:
     name: workflow-result
-    needs: [changes, test-unix-minimal, test-windows-minimal]
+    needs:
+      - changes
+      - test-update-repository
+      - test-unix-minimal
+      - test-unix-full
+      - test-unix-server
+      - test-windows-minimal
+      - test-windows-full
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 3
@@ -437,8 +444,12 @@ jobs:
           failed=0
           for result in \
             "${{ needs.changes.result }}" \
+            "${{ needs.test-update-repository.result }}" \
             "${{ needs.test-unix-minimal.result }}" \
-            "${{ needs.test-windows-minimal.result }}"
+            "${{ needs.test-unix-full.result }}" \
+            "${{ needs.test-unix-server.result }}" \
+            "${{ needs.test-windows-minimal.result }}" \
+            "${{ needs.test-windows-full.result }}"
           do
             case "$result" in
               success|skipped) ;;
