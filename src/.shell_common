@@ -125,9 +125,13 @@ Aliases:
     zj        attach/create zellij session (default layout)
     zj <name> attach/create named session; inside zellij → switch-session
 
-  Codex:
+  AI worktrees:
     codexwt new <name>  create a worktree and launch codex in it
     codexwt [list]      pick an existing worktree (fzf) and launch codex in it
+    cursorwt new <name> create a worktree and launch cursor-agent in it
+    cursorwt [list]     pick an existing worktree (fzf) and launch cursor-agent in it
+    claudewt new <name> create a worktree and launch claude in it
+    claudewt [list]     pick an existing worktree (fzf) and launch claude in it
 EOF
 }
 
@@ -250,51 +254,67 @@ if command -v zellij &> /dev/null; then
   fi
 fi
 
-# Codex CLI: launch inside a git worktree
-# Usage:
-#   codexwt new <name> [codex args...]   Create a new worktree and launch codex in it
-#   codexwt [list] [codex args...]       Pick an existing worktree via fzf and launch codex in it
+# AI coding CLIs: launch inside a git worktree
+# Usage: <wrapper> new <name> [CLI args...] or <wrapper> [list] [CLI args...]
+_dotfiles_agent_worktree() {
+  local wrapper="$1" cli="$2"
+  shift 2
+  local repo_root
+  repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
+    echo "${wrapper}: not inside a git repository" >&2
+    return 1
+  }
+
+  local target
+  if [ "${1:-}" = "new" ]; then
+    shift
+    local name="${1:-}"
+    if [ -z "$name" ]; then
+      echo "Usage: ${wrapper} new <name> [${cli} args...]" >&2
+      return 1
+    fi
+    shift
+
+    local repo_name suffix branch wt_root
+    repo_name="$(basename "$repo_root")"
+    suffix="$(date +%y%m%d)-$(openssl rand -hex 3)"
+    branch="${name}-${suffix}"
+    wt_root="$(dirname "$repo_root")/${repo_name}-worktrees"
+    mkdir -p "$wt_root"
+    target="${wt_root}/${branch}"
+    git -C "$repo_root" worktree add "$target" -b "$branch" || return 1
+    echo "✅ Worktree ready: $target"
+  else
+    [ "${1:-}" = "list" ] && shift
+    if ! command -v fzf &> /dev/null; then
+      echo "${wrapper}: fzf is required to select a worktree (or use: ${wrapper} new <name>)" >&2
+      return 1
+    fi
+    target="$(git -C "$repo_root" worktree list | grep -v '(bare)' | fzf --header "Select a worktree for ${cli}" | awk '{print $1}')"
+    if [ -z "$target" ]; then
+      echo "${wrapper}: no worktree selected" >&2
+      return 1
+    fi
+  fi
+
+  (cd "$target" && "$cli" "$@")
+}
+
 if command -v codex &> /dev/null; then
   codexwt() {
-    local repo_root
-    repo_root="$(git rev-parse --show-toplevel 2>/dev/null)" || {
-      echo "codexwt: not inside a git repository" >&2
-      return 1
-    }
+    _dotfiles_agent_worktree codexwt codex "$@"
+  }
+fi
 
-    local target
-    if [ "${1:-}" = "new" ]; then
-      shift
-      local name="${1:-}"
-      if [ -z "$name" ]; then
-        echo "Usage: codexwt new <name> [codex args...]" >&2
-        return 1
-      fi
-      shift
+if command -v cursor-agent &> /dev/null; then
+  cursorwt() {
+    _dotfiles_agent_worktree cursorwt cursor-agent "$@"
+  }
+fi
 
-      local repo_name suffix branch wt_root
-      repo_name="$(basename "$repo_root")"
-      suffix="$(date +%y%m%d)-$(openssl rand -hex 3)"
-      branch="${name}-${suffix}"
-      wt_root="$(dirname "$repo_root")/${repo_name}-worktrees"
-      mkdir -p "$wt_root"
-      target="${wt_root}/${branch}"
-      git -C "$repo_root" worktree add "$target" -b "$branch" || return 1
-      echo "✅ Worktree ready: $target"
-    else
-      [ "${1:-}" = "list" ] && shift
-      if ! command -v fzf &> /dev/null; then
-        echo "codexwt: fzf is required to select a worktree (or use: codexwt new <name>)" >&2
-        return 1
-      fi
-      target="$(git -C "$repo_root" worktree list | grep -v '(bare)' | fzf --header 'Select a worktree for codex' | awk '{print $1}')"
-      if [ -z "$target" ]; then
-        echo "codexwt: no worktree selected" >&2
-        return 1
-      fi
-    fi
-
-    (cd "$target" && codex "$@")
+if command -v claude &> /dev/null; then
+  claudewt() {
+    _dotfiles_agent_worktree claudewt claude "$@"
   }
 fi
 
