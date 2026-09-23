@@ -15,7 +15,7 @@ It supports macOS, Linux (Ubuntu, Linux Mint), and Windows.
 
 ```bash
 # Lint
-just lint
+mise run lint
 
 # Dotfiles
 ./scripts/dotfiles.sh status
@@ -24,12 +24,12 @@ just lint
 ./scripts/dotfiles.sh doctor
 
 # Independent concurrent work (creates a new branch and worktree)
-just wt-new <name>
-just wt-list
+mise run wt-new <name>
+mise run wt-list
 
 # Terraform
-just tf plan
-just tf -chdir=prod/bootstrap apply
+mise run tf plan
+mise run tf -chdir=prod/bootstrap apply
 ```
 
 ## Key Design Decisions
@@ -59,7 +59,7 @@ just tf -chdir=prod/bootstrap apply
   the approach first. Carry an agreed plan through implementation and verification
   without asking for the same approval again.
 - Preserve unrelated user changes. Keep separate objectives in separate threads;
-  use `just wt-new <name>` for concurrent editing. Assign file ownership to avoid
+  use `mise run wt-new <name>` for concurrent editing. Assign file ownership to avoid
   overlapping changes. Coordinate file ownership when integrating worktrees.
 - Reuse applicable existing skills for routine work. When a failure repeats, address its cause.
   Use a regression test, a script, or a short instruction in the relevant scope.
@@ -72,7 +72,7 @@ template and a record for assessing rework.
 - Confirm the requested behavior and constraints. For bug fixes, reproduce the
   original failure where feasible and verify that it no longer occurs. Add
   regression coverage for meaningful behavior changes.
-- Run `just lint` and checks appropriate to the change. Review the final diff for
+- Run `mise run lint` and checks appropriate to the change. Review the final diff for
   regressions, missed requirements, and unrelated changes. Include automatic lint fixes.
 - Report the changes, commands or checks actually run, their results, and anything
   unverified with its reason. Do not report checks as passed unless they were run.
@@ -81,7 +81,7 @@ template and a record for assessing rework.
   `--gitignore` for targeted verification; this has returned success with zero
   files checked. Use `pnpm exec cspell lint --no-progress <file>` and confirm that
   `Files checked:` matches the expected count.
-- Check the final `just lint` summary (✔️ or 🥊), not only individual hook output.
+- Check the final `mise run lint` summary (✔️ or 🥊), not only individual hook output.
 - Run `git fetch` before building a verification sandbox, and confirm that it
   contains the intended revision and changes. Stale checkouts have led to
   incorrect conclusions.

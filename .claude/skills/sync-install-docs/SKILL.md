@@ -52,13 +52,13 @@ description: install.sh / install.ps1 を編集した後、関連ドキュメン
 3. `README.md` の Command Line Options セクションと比較
 4. `docs/README.ja.md` の対応セクションと比較
 5. 差分があればドキュメントを更新
-6. `just lint` を実行してリントエラーがないか確認
-7. エラーがあれば修正し、再度 `just lint` で確認
+6. `mise run lint` を実行してリントエラーがないか確認
+7. エラーがあれば修正し、再度 `mise run lint` で確認
 
 ## 検証
 
 ```bash
-just lint
+mise run lint
 ```
 
 すべてのチェックが Passed になるまで修正を繰り返す。

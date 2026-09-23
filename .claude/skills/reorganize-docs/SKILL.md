@@ -72,7 +72,7 @@ Japanese files link to English with `[🇺🇸 English](path/to/file.md)`.
 ## Workflow
 
 1. Read existing documentation files
-2. Read `justfile` to extract command documentation
+2. Read the `[tasks]` definitions in `mise.toml` to extract command documentation
 3. Read `.github/workflows/` to extract required GitHub Secrets
 4. Generate English `AGENTS.md` with all required sections
 5. Generate English `README.md`

@@ -14,7 +14,7 @@ Markdown ファイルを作成・編集した後に lint を実行するスキ�
 ## 実行コマンド
 
 ```bash
-just lint
+mise run lint
 ```
 
 ## 対象ファイル
@@ -27,9 +27,9 @@ just lint
 ## 手順
 
 1. Markdown ファイルを作成・編集
-2. `just lint` を実行してエラーを確認
+2. `mise run lint` を実行してエラーを確認
 3. エラーがあれば修正
-4. 再度 `just lint` で確認（すべて Passed になるまで繰り返す）
+4. 再度 `mise run lint` で確認（すべて Passed になるまで繰り返す）
 
 ## よくあるエラーと修正方法
 

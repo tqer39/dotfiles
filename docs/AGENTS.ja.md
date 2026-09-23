@@ -15,7 +15,7 @@ macOS, Linux (Ubuntu, Linux Mint), Windows をサポート。
 
 ```bash
 # Lint
-just lint
+mise run lint
 
 # Dotfiles
 ./scripts/dotfiles.sh status
@@ -24,12 +24,12 @@ just lint
 ./scripts/dotfiles.sh doctor
 
 # Independent concurrent work (creates a new branch and worktree)
-just wt-new <name>
-just wt-list
+mise run wt-new <name>
+mise run wt-list
 
 # Terraform
-just tf plan
-just tf -chdir=prod/bootstrap apply
+mise run tf plan
+mise run tf -chdir=prod/bootstrap apply
 ```
 
 ## 主要な設計方針
@@ -58,7 +58,7 @@ just tf -chdir=prod/bootstrap apply
   Codex で大きく曖昧な変更を扱う場合は、Plan モードで方針を合わせます。
   合意済みの計画は同じ承認を求め直さず、実装から検証まで進めます。
 - 無関係なユーザーの変更を保持します。別目的の作業は別スレッドに分け、
-  同時に編集するときは `just wt-new <name>` を使います。
+  同時に編集するときは `mise run wt-new <name>` を使います。
   worktree 間の変更を統合する際も含め、ファイルの担当範囲を決めて重複を避けます。
 - 定型作業には適用可能な既存スキルを使います。失敗が繰り返されたら、原因に応じて
   回帰テスト・スクリプト・適用範囲を絞った短い指示に反映します。
@@ -70,7 +70,7 @@ just tf -chdir=prod/bootstrap apply
 - 依頼された動作と制約を満たすことを確認します。不具合修正では、可能な範囲で
   元の問題を再現し、修正後に解消したことを確かめます。
   意味のある動作変更には回帰テストを追加します。
-- `just lint` を実行し、変更内容に合う検証をします。最終差分をレビューし、
+- `mise run lint` を実行し、変更内容に合う検証をします。最終差分をレビューし、
   回帰・要件漏れ・無関係な変更がないか、自動修正された差分も含めて確認します。
 - 変更点、実際に実行したコマンドや確認、結果、未確認事項とその理由を報告します。
   未実行の検証を成功扱いにせず、必須の検証が失敗した状態を完了としません。
@@ -78,7 +78,7 @@ just tf -chdir=prod/bootstrap apply
   併用すると、0 ファイルの検査で成功した事例があります。
   `pnpm exec cspell lint --no-progress <file>` を使い、
   `Files checked:` が期待する件数か確認します。
-- `just lint` は各フックの出力だけでなく、最後の結果（✔️ または 🥊）まで確認します。
+- `mise run lint` は各フックの出力だけでなく、最後の結果（✔️ または 🥊）まで確認します。
 - 検証用のサンドボックスを作る前に `git fetch` し、意図したリビジョンと変更内容が
   含まれることを確認します。古い版を検証して誤った結論を出した事例があります。
 

@@ -24,10 +24,9 @@ Homebrew を導入し、ルートの [Brewfile](../Brewfile) のパッケージ�
 主な開発ツール:
 
 - Homebrew
-- mise (バージョン管理)
+- mise (バージョン管理・タスクランナー)
 - Git
 - Herdr
-- just (タスクランナー)
 - direnv (環境変数管理)
 - lefthook (git フック)
 - aws-vault
@@ -35,38 +34,42 @@ Homebrew を導入し、ルートの [Brewfile](../Brewfile) のパッケージ�
 
 ### 2. 開発環境の設定
 
-シェルを再起動後:
+シェルを再起動後、リポジトリの設定を信頼してセットアップします:
 
 ```bash
-just setup
+mise trust
+mise run setup
 ```
 
-`just setup` は [mise.toml](../mise.toml) のツール導入、
+`mise run setup` は [mise.toml](../mise.toml) のツール導入、
 `pnpm install --frozen-lockfile`、`lefthook install` の順に実行します。
+
+タスクの定義は [mise.toml](../mise.toml) の `[tasks]` に集約しています。
+`mise run <task>` を使用してください（`mise install` などの組み込みコマンドと区別します）。
 
 ## 日常の開発操作
 
 ```bash
 # コミット前の全ファイル検証（自動修正を含む）
-just lint
+mise run lint
 
 # Markdown のフックのみ実行
-just lint-hook markdownlint
+mise run lint-hook markdownlint
 
 # 対象ファイルのスペルチェック
 pnpm exec cspell lint --no-progress docs/README.ja.md
 
 # 独立した作業用のブランチと worktree を作成
-just wt-new docs-fix
-just wt-list
+mise run wt-new docs-fix
+mise run wt-list
 ```
 
-`just lint` の最終サマリーを確認し、自動修正も `git diff` と
+`mise run lint` の最終サマリーを確認し、自動修正も `git diff` と
 `git diff --cached` でレビューします。cspell の対象指定では `--gitignore` を併用せず、
 `Files checked:` が対象数と一致することを確認してください。
-`just wt-new` は `../dotfiles-worktrees/` に日付・乱数付きの worktree を作成します。
+`mise run wt-new` は `../dotfiles-worktrees/` に日付・乱数付きの worktree を作成します。
 
-`just status` / `just install` / `just update` はそれぞれ
+`mise run status` / `mise run install` / `mise run update` はそれぞれ
 `mise status` / `mise install` / `mise upgrade` を実行します。
 dotfiles のリンク管理には [日常操作](README.ja.md#-日常操作macos--linux)の
 `./scripts/dotfiles.sh` を使用してください。
@@ -91,14 +94,14 @@ cf-vault add dotfiles
 
 ```bash
 # 本番 DNS 構成の plan
-just tf -chdir=prod/dns plan
+mise run tf -chdir=prod/dns plan
 
 # 特定の環境を指定
-just tf -chdir=prod/bootstrap init
-just tf -chdir=prod/dns plan
+mise run tf -chdir=prod/bootstrap init
+mise run tf -chdir=prod/dns plan
 ```
 
-`just tf` は `cf-vault exec dotfiles -- aws-vault exec portfolio -- terraform` を呼び出します。
+`mise run tf` は `cf-vault exec dotfiles -- aws-vault exec portfolio -- terraform` を呼び出します。
 `-chdir=prod/dns` は `infra/terraform/envs/prod/dns` に展開されます。
 `-chdir` を省略すると現在のディレクトリで実行されるため、対象環境を明示してください。
 
@@ -107,15 +110,15 @@ just tf -chdir=prod/dns plan
 GitHub Actions の OIDC 認証用 IAM Role は初回のみローカルから作成が必要です:
 
 ```bash
-just tf -chdir=prod/bootstrap init
-just tf -chdir=prod/bootstrap apply
+mise run tf -chdir=prod/bootstrap init
+mise run tf -chdir=prod/bootstrap apply
 ```
 
 ## よく使うコマンド
 
-| コマンド     | 説明                     |
-| ------------ | ------------------------ |
-| `just help`  | 利用可能なコマンド一覧   |
-| `just setup` | 開発環境のセットアップ   |
-| `just lint`  | Linter の実行            |
-| `just tf`    | Terraform の実行         |
+| コマンド         | 説明                   |
+| ---------------- | ---------------------- |
+| `mise run help`  | 利用可能なコマンド一覧 |
+| `mise run setup` | 開発環境のセットアップ |
+| `mise run lint`  | Linter の実行          |
+| `mise run tf`    | Terraform の実行       |

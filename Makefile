@@ -93,12 +93,12 @@ else ifeq ($(UNAME_S),Linux)
 else
 	@echo "1. Reload your shell or restart terminal"
 endif
-	@echo "2. Run: just setup (to setup development environment)"
+	@echo "2. Run: mise run setup (to setup development environment)"
 	@echo ""
 	@echo "Available commands after setup:"
-	@echo "  just help    - Show available tasks"
-	@echo "  just setup   - Setup development environment"
-	@echo "  just lint    - Run code quality checks"
+	@echo "  mise run help    - Show available tasks"
+	@echo "  mise run setup   - Setup development environment"
+	@echo "  mise run lint    - Run code quality checks"
 
 .PHONY: terraform-cf
 terraform-cf: ## Run terraform via cf-vault and aws-vault (ARGS="-chdir=... plan")
