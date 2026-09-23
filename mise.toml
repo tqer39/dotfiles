@@ -11,3 +11,146 @@ pnpm = "12.3.4"
 # cpython-3.13.0+20241016 ビルドに GitHub artifact attestation がなく
 # CI で mise install が失敗するため検証を無効化する
 python.github_attestations = false
+
+# Use `mise run <task>` to avoid collisions with built-in mise commands.
+[tasks.help]
+description = "List available tasks"
+alias = "default"
+run = "mise tasks --local"
+
+[tasks.setup]
+description = "Set up the development environment in order"
+run = [
+  { task = "setup-mise" },
+  { task = "setup-node" },
+  { task = "setup-hooks" },
+  "echo 'Setup completed'",
+]
+
+[tasks.setup-mise]
+description = "Install development tools"
+run = "mise install"
+
+[tasks.setup-node]
+description = "Install Node dependencies"
+run = "pnpm install --frozen-lockfile"
+
+[tasks.setup-hooks]
+description = "Install Git hooks"
+run = "lefthook install"
+
+[tasks.lint]
+description = "Run all linters"
+run = "lefthook run pre-commit --all-files"
+
+[tasks.lint-clean]
+description = "Clean lefthook cache"
+run = "rm -rf .lefthook"
+
+[tasks.status]
+description = "Show mise tool status"
+run = "mise status"
+
+[tasks.install]
+description = "Install mise tools"
+run = "mise install"
+
+[tasks.update]
+description = "Upgrade mise tools"
+run = "mise upgrade"
+
+[tasks.wt-list]
+description = "List worktrees"
+run = "git worktree list"
+
+[tasks.wt-prune]
+description = "Prune stale worktree references"
+run = "git worktree prune"
+
+[tasks.lint-hook]
+description = "Run a single lint hook"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+hook="${1:?Usage: mise run lint-hook <hook>}"
+exec lefthook run pre-commit --commands "$hook" --all-files
+'''
+
+[tasks.tf]
+description = "Run Terraform with Cloudflare and AWS credentials"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+exec make terraform-cf ARGS="$*"
+'''
+
+[tasks.wt-new]
+description = "Create a worktree with a new branch"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+name="${1:?Usage: mise run wt-new <name>}"
+suffix="$(date +%y%m%d)-$(openssl rand -hex 3)"
+branch="${name}-${suffix}"
+mkdir -p ../dotfiles-worktrees
+git worktree add "../dotfiles-worktrees/${branch}" -b "$branch"
+echo "✅ Worktree ready: ../dotfiles-worktrees/${branch}"
+'''
+
+[tasks.wt-add]
+description = "Create a worktree from an existing branch"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+branch="${1:?Usage: mise run wt-add <branch>}"
+mkdir -p ../dotfiles-worktrees
+git worktree add "../dotfiles-worktrees/${branch}" "$branch"
+'''
+
+[tasks.wt-code]
+description = "Open a worktree in VS Code"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+name="${1:?Usage: mise run wt-code <name>}"
+exec code "../dotfiles-worktrees/${name}"
+'''
+
+[tasks.wt-rm]
+description = "Remove a worktree"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+name="${1:-}"
+if [ -z "$name" ]; then
+    echo "Usage: mise run wt-rm <name>"
+    echo "Available worktrees:"
+    git worktree list
+    exit 1
+fi
+git worktree remove "../dotfiles-worktrees/${name}"
+echo "✅ Worktree removed"
+'''
+
+[tasks.wt-rm-force]
+description = "Remove a worktree (force)"
+raw_args = true
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+name="${1:-}"
+if [ -z "$name" ]; then
+    echo "Usage: mise run wt-rm-force <name>"
+    echo "Available worktrees:"
+    git worktree list
+    exit 1
+fi
+git worktree remove --force "../dotfiles-worktrees/${name}"
+echo "✅ Worktree removed"
+'''

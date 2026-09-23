@@ -20,8 +20,7 @@ make bootstrap
 This installs the following:
 
 - Homebrew
-- mise (version management)
-- just (task runner)
+- mise (version management and task runner)
 - direnv (environment variable management)
 - lefthook (git hooks)
 - aws-vault
@@ -32,7 +31,8 @@ This installs the following:
 After restarting your shell:
 
 ```bash
-just setup
+mise trust
+mise run setup
 ```
 
 ## Running Terraform
@@ -53,11 +53,11 @@ cf-vault add dotfiles
 
 ```bash
 # Terraform plan
-just tf plan
+mise run tf plan
 
 # Specify a specific environment
-just tf -chdir=prod/bootstrap init
-just tf -chdir=prod/dns plan
+mise run tf -chdir=prod/bootstrap init
+mise run tf -chdir=prod/dns plan
 ```
 
 ### Bootstrap (First Time Only)
@@ -65,15 +65,15 @@ just tf -chdir=prod/dns plan
 The IAM Role for GitHub Actions OIDC authentication must be created locally the first time:
 
 ```bash
-just tf -chdir=prod/bootstrap init
-just tf -chdir=prod/bootstrap apply
+mise run tf -chdir=prod/bootstrap init
+mise run tf -chdir=prod/bootstrap apply
 ```
 
 ## Common Commands
 
-| Command      | Description                      |
-| ------------ | -------------------------------- |
-| `just help`  | List available commands          |
-| `just setup` | Set up development environment   |
-| `just lint`  | Run linters                      |
-| `just tf`    | Run Terraform commands           |
+| Command          | Description                    |
+| ---------------- | ------------------------------ |
+| `mise run help`  | List available commands        |
+| `mise run setup` | Set up development environment |
+| `mise run lint`  | Run linters                    |
+| `mise run tf`    | Run Terraform commands         |

@@ -1,5 +1,4 @@
 brew "mise"
-brew "just"
 brew "git"
 brew "direnv"
 brew "lefthook"

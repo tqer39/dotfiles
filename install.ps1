@@ -484,7 +484,6 @@ function Install-ScoopPackages {
         "fzf",
         "Hack-NF",
         "aws-vault",
-        "just",
         "lefthook",
         "ripgrep",
         "mobaxterm",

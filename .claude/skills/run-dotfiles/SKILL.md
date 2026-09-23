@@ -18,7 +18,7 @@ symlink を張るインストーラ。**素で実行すると開発機の dotfil
 ## Prerequisites
 
 macOS では追加インストール不要（bash / git / find のみ使用）。
-lint を回す場合のみ `just` と `pnpm install` が必要。
+lint を回す場合のみ `mise` と `pnpm install` が必要。
 
 ## Run (agent path)
 
@@ -99,7 +99,7 @@ DOTFILES_MODE=work .claude/skills/run-dotfiles/driver.sh install
 このリポジトリにユニットテストは無い。実質のテストは `smoke` / `matrix` と lint:
 
 ```bash
-just lint          # lefthook 経由で shellcheck / markdownlint / textlint / cspell 等
+mise run lint          # lefthook 経由で shellcheck / markdownlint / textlint / cspell 等
 shellcheck .claude/skills/run-dotfiles/driver.sh
 ```
 

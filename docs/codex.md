@@ -94,8 +94,7 @@ These are observable completion criteria.
 
 ### Completion checks
 
-For this repository, include `just lint`, checks suited to the change, and a final
-diff review in the completion criteria. A bug fix also needs confirmation that
+Completion requires `mise run lint`, checks suited to the change, and a final diff review. A bug fix also needs confirmation that
 the original reproduction no longer fails. Add regression coverage when the
 behavior change warrants it. Documentation changes need checks of links,
 documented commands, and English/Japanese consistency.
@@ -112,8 +111,8 @@ Keep separate objectives in separate threads. For concurrent editing, create a
 worktree from the repository root:
 
 ```bash
-just wt-new codex-workflow
-just wt-list
+mise run wt-new codex-workflow
+mise run wt-list
 ```
 
 The recipe creates a new branch and directory under `../dotfiles-worktrees/`
