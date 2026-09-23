@@ -441,7 +441,8 @@ function Install-Scoop {
 
     try {
         Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-        Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
+        # Keep bootstrap diagnostics visible when the caller discards the Boolean result.
+        Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression | Out-Host
         Write-Success "Scoop installed"
         return $true
     } catch {

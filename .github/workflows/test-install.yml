@@ -278,6 +278,10 @@ jobs:
           Write-Host "=== Testing dry-run mode ==="
           .\install.ps1 -DryRun -Verbose -CI
 
+      - name: Test Scoop bootstrap output
+        shell: pwsh
+        run: ./tests/test-install-scoop.ps1
+
       - name: Test minimal install
         shell: pwsh
         run: |
@@ -332,6 +336,8 @@ jobs:
     runs-on: windows-latest
     env:
       DOTFILES_DIR: ${{ github.workspace }}
+      # Keep restored downloads outside Scoop's initially empty install directory.
+      SCOOP_CACHE: ${{ runner.temp }}/scoop-cache
       # mise が GitHub API へ認証付きでアクセスし rate limit を回避する
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -342,10 +348,10 @@ jobs:
       - name: Cache Scoop
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: ~/scoop/cache
-          key: windows-scoop-${{ hashFiles('install.ps1') }}
+          path: ${{ env.SCOOP_CACHE }}
+          key: windows-scoop-external-v1-${{ hashFiles('install.ps1') }}
           restore-keys: |
-            windows-scoop-
+            windows-scoop-external-v1-
 
       - name: Import Node.js release signing keys
         shell: bash
