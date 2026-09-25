@@ -136,6 +136,21 @@ class TextShortcutsTest(unittest.TestCase):
             for key in ("left_arrow", "right_arrow"):
                 self.assertEqual(chord("left_option", key, app), (key, {"left_option"}))
 
+    def test_browser_mission_control(self):
+        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
+            for modifier in ("caps_lock", "left_control"):
+                for key in ("up_arrow", "left_arrow", "right_arrow"):
+                    for option in ("left_option", "right_option"):
+                        for extra in (set(), {"left_shift"}):
+                            self.assertEqual(chord(modifier, key, app, {option, *extra}),
+                                             (key, {"left_control", "left_option", *extra}))
+            for key in ("up_arrow", "left_arrow", "right_arrow"):
+                self.assertEqual(chord("right_control", key, app, {"left_option"}),
+                                 (key, {"right_control", "left_option"}))
+        for app in ("com.microsoft.VSCode", "com.tinyspeck.slackmacgap", "com.apple.Terminal"):
+            self.assertEqual(chord("left_command", "left_arrow", app, {"left_option"}),
+                             ("left_arrow", {"left_command", "left_option"}))
+
     def test_unrelated_shortcuts(self):
         app = "com.tinyspeck.slackmacgap"
         self.assertEqual(chord("left_control", "tab", app), ("tab", {"left_control"}))

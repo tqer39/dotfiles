@@ -531,6 +531,87 @@
             "description": "Google Chrome / Brave / Safari: 左 Command と左 Control を交換",
             "manipulators": [
               {
+                "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
+                "type": "basic",
+                "from": {
+                  "key_code": "up_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_command", "option"],
+                    "optional": ["shift", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "up_arrow",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
+                "type": "basic",
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_command", "option"],
+                    "optional": ["shift", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
+                "type": "basic",
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_command", "option"],
+                    "optional": ["shift", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
                 "description": "交換後の左 Command+Space を Control+Space に戻す（入力ソース切り替え）",
                 "type": "basic",
                 "from": {
