@@ -208,3 +208,6 @@ deepl
 cleanshot
 coderabbit
 mysqlworkbench
+cmuxterm
+slackmacgap
+tinyspeck

@@ -531,6 +531,87 @@
             "description": "Google Chrome / Brave / Safari: 左 Command と左 Control を交換",
             "manipulators": [
               {
+                "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
+                "type": "basic",
+                "from": {
+                  "key_code": "up_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_command", "option"],
+                    "optional": ["shift", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "up_arrow",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
+                "type": "basic",
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_command", "option"],
+                    "optional": ["shift", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
+                "type": "basic",
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_command", "option"],
+                    "optional": ["shift", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
                 "description": "交換後の左 Command+Space を Control+Space に戻す（入力ソース切り替え）",
                 "type": "basic",
                 "from": {
@@ -605,6 +686,1077 @@
                   {
                     "type": "frontmost_application_if",
                     "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "VS Code: 元 Caps Lock を Control として使い、Control+Tab / Shift+Tab で次・前のタブへ移動",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {
+                    "optional": ["any"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_control"
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["control", "shift"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "Slack: Control+Enter でメッセージ送信",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "return_or_enter",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "return_or_enter",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.tinyspeck\\.slackmacgap$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "OS: Control で編集・保存・検索・書式・タブ操作（ターミナルを除く）",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {
+                    "optional": ["any"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_command"
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "a",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "a",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "c",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "c",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "c",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "c",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "x",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "x",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "x",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "x",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "v",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "v",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "v",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "v",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "z",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "z",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "z",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "z",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "s",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "s",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "s",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "f",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "f",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "f",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "f",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "b",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "b",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "b",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "b",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "i",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "i",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "i",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "u",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "u",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "u",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "u",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "n",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "n",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "o",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "o",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "o",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "o",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "p",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "p",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "p",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "p",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "t",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "t",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "t",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "t",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "w",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "w",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "r",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "r",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "r",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "r",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
                       "^com\\.google\\.Chrome$",
                       "^com\\.brave\\.Browser$",
                       "^com\\.apple\\.Safari$"
@@ -752,47 +1904,61 @@
             ]
           },
           {
-            "description": "OS: 前のページに戻る(opt+←)",
-            "enabled": false,
+            "description": "Google Chrome / Brave / Safari: 前のページに戻る(opt+←)",
             "manipulators": [
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com.apple.finder"],
-                    "type": "frontmost_application_unless"
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
                   }
                 ],
                 "from": {
                   "key_code": "left_arrow",
-                  "modifiers": { "mandatory": ["option"] }
+                  "modifiers": {
+                    "mandatory": ["option"]
+                  }
                 },
-                "to": {
-                  "key_code": "left_arrow",
-                  "modifiers": ["command"]
-                },
+                "to": [
+                  {
+                    "key_code": "open_bracket",
+                    "modifiers": ["left_command"]
+                  }
+                ],
                 "type": "basic"
               }
             ]
           },
           {
-            "description": "OS: 次のページに進む(opt+→)",
-            "enabled": false,
+            "description": "Google Chrome / Brave / Safari: 次のページに進む(opt+→)",
             "manipulators": [
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com.apple.finder"],
-                    "type": "frontmost_application_unless"
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
                   }
                 ],
                 "from": {
                   "key_code": "right_arrow",
-                  "modifiers": { "mandatory": ["option"] }
+                  "modifiers": {
+                    "mandatory": ["option"]
+                  }
                 },
-                "to": {
-                  "key_code": "right_arrow",
-                  "modifiers": ["command"]
-                },
+                "to": [
+                  {
+                    "key_code": "close_bracket",
+                    "modifiers": ["left_command"]
+                  }
+                ],
                 "type": "basic"
               }
             ]
@@ -1179,39 +2345,121 @@
           },
           {
             "description": "OS: 行の先頭へ移動(home)",
-            "enabled": false,
             "manipulators": [
               {
                 "from": {
                   "key_code": "home",
-                  "modifiers": { "optional": ["shift"] }
+                  "modifiers": {
+                    "optional": ["shift"]
+                  }
                 },
                 "to": [
                   {
                     "key_code": "left_arrow",
-                    "modifiers": "command"
+                    "modifiers": ["left_command"]
                   }
                 ],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": {
+                    "mandatory": ["fn"],
+                    "optional": ["shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "type": "basic",
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
               }
             ]
           },
           {
             "description": "OS: 行の末尾へ移動(end)",
-            "enabled": false,
             "manipulators": [
               {
                 "from": {
                   "key_code": "end",
-                  "modifiers": { "optional": ["shift"] }
+                  "modifiers": {
+                    "optional": ["shift"]
+                  }
                 },
                 "to": [
                   {
                     "key_code": "right_arrow",
-                    "modifiers": "command"
+                    "modifiers": ["left_command"]
                   }
                 ],
-                "type": "basic"
+                "type": "basic",
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": {
+                    "mandatory": ["fn"],
+                    "optional": ["shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "type": "basic",
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
               }
             ]
           },
