@@ -278,6 +278,10 @@ jobs:
           Write-Host "=== Testing dry-run mode ==="
           .\install.ps1 -DryRun -Verbose -CI
 
+      - name: Test Scoop bootstrap output
+        shell: pwsh
+        run: ./tests/test-install-scoop.ps1
+
       - name: Test minimal install
         shell: pwsh
         run: |
@@ -342,10 +346,11 @@ jobs:
       - name: Cache Scoop
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
         with:
-          path: ~/scoop/cache
-          key: windows-scoop-${{ hashFiles('install.ps1') }}
+          # Keep restored downloads outside Scoop's initially empty install directory.
+          path: ${{ runner.temp }}/scoop-cache
+          key: windows-scoop-external-v1-${{ hashFiles('install.ps1') }}
           restore-keys: |
-            windows-scoop-
+            windows-scoop-external-v1-
 
       - name: Import Node.js release signing keys
         shell: bash
@@ -353,6 +358,8 @@ jobs:
 
       - name: Test full install
         shell: pwsh
+        env:
+          SCOOP_CACHE: ${{ runner.temp }}/scoop-cache
         run: |
           Write-Host "=== Testing full install ==="
           .\install.ps1 -Full -CI
