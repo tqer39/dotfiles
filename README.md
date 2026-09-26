@@ -182,9 +182,9 @@ When using `--full`, the following will also be installed:
 This repository uses tools that require macOS or Linux:
 
 - `make bootstrap` - Install development dependencies
-- `just setup` - Configure development environment
-- `just lint` - Run linters
-- `just tf` - Run Terraform commands
+- `mise run setup` - Configure development environment
+- `mise run lint` - Run linters
+- `mise run tf` - Run Terraform commands
 
 Windows is supported for **using** dotfiles, but **developing** this repository requires macOS or Linux.
 

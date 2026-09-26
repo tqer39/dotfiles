@@ -116,7 +116,7 @@ Zellij タブを追加で作る:
 例:
 
 - Tab 1 (`main`): Claude Code + shell
-- Tab 2 (`test`): `just test --watch` 常駐
+- Tab 2 (`test`): `mise run test --watch` 常駐
 - Tab 3 (`git`): `lazygit` 常駐
 
 ## キーバインドチートシート
@@ -222,7 +222,7 @@ claude --continue         # 昨日の会話継続
 ### R3. 長時間タスクをバックグラウンドで走らせる
 
 1. `Ctrl+t` → `n` で新規 Zellij タブ
-2. `just test --watch` 起動
+2. `mise run test --watch` 起動
 3. `Ctrl+o` → `d` でデタッチ
 4. ターミナル閉じても OK
 5. 翌日 `zj dotfiles` で戻ると結果が見られる

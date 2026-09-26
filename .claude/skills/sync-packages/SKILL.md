@@ -277,7 +277,7 @@ GUI アプリを追加する場合は、`install.sh` の `SERVER_MODE` チェッ
 ## 検証
 
 ```bash
-just lint
+mise run lint
 ```
 
 すべてのチェックが Passed になるまで修正を繰り返す。
