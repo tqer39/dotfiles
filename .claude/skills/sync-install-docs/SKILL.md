@@ -30,8 +30,9 @@ description: install.sh / install.ps1 を編集した後、関連ドキュメン
 
 ### 1. コマンドラインオプションの整合性
 
-- オプションの追加・削除・変更が README の Options テーブルに反映されているか
-- `show_help()` / `Show-Help` 内のヘルプテキストと README の記述が一致しているか
+- `install.sh` のオプションの追加・削除・変更が `docs/README.ja.md` の Unix 用オプション表に反映され、`show_help()` と一致しているか
+- `install.ps1` の `Show-Help` が同 README の Windows 向け案内・使用例と整合しているか
+- Windows のオプション確認先は `./install.ps1 -Help` とし、Unix 用オプション表に Windows の項目を追加しない
 - `install.sh` と `install.ps1` で同名オプションの説明が一致しているか
 
 ### 2. Quick Start セクション
@@ -48,10 +49,11 @@ description: install.sh / install.ps1 を編集した後、関連ドキュメン
 
 1. `install.sh` / `install.ps1` の変更内容を確認（`git diff` で差分を確認）
 2. `show_help()` / `Show-Help` 関数のヘルプテキストを読み取る
-3. `docs/README.ja.md` のコマンドラインオプションと比較
-4. 差分があれば日本語のドキュメントを更新
-5. `mise run lint` を実行してリントエラーがないか確認
-6. エラーがあれば修正し、再度 `mise run lint` で確認
+3. `show_help()` を `docs/README.ja.md` の Unix 用オプション表と比較
+4. `Show-Help` を同 README の Windows 向け案内・使用例と照合し、`./install.ps1 -Help` への案内を確認
+5. 差分があれば対象 OS の日本語ドキュメントを更新
+6. `mise run lint` を実行してリントエラーがないか確認
+7. エラーがあれば修正し、再度 `mise run lint` で確認
 
 ## 検証
 
