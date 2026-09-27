@@ -8,7 +8,7 @@ new_cwd = "follow"
 
 [theme]
 name = "tokyo-night"
-auto_switch = true
+auto_switch = false
 light_name = "tokyo-night-day"
 dark_name = "tokyo-night"
 
@@ -35,6 +35,9 @@ delay_seconds = 1
 
 [ui.sound]
 enabled = true
+
+[session]
+resume_agents_on_restore = true
 
 [experimental]
 pane_history = true
