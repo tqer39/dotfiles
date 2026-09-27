@@ -53,6 +53,15 @@ def chord(modifier, key, app, extra=frozenset()):
 
 
 class TextShortcutsTest(unittest.TestCase):
+    def test_finder_delete_moves_to_trash(self):
+        for key in ("delete_or_backspace", "delete_forward"):
+            self.assertEqual(transform(key, set(), "com.apple.finder"),
+                             ("delete_or_backspace", {"left_command"}))
+            for modifiers in ({"left_shift"}, {"left_option"}, {"left_command"}, {"left_control"}):
+                self.assertEqual(transform(key, modifiers, "com.apple.finder"), (key, modifiers))
+            for app in ("com.apple.TextEdit", "com.apple.Terminal", "com.google.Chrome", "com.apple.finder.other"):
+                self.assertEqual(transform(key, set(), app), (key, set()))
+
     def test_general_apps(self):
         for app in ("com.tinyspeck.slackmacgap", "com.1password.1password", "com.apple.TextEdit"):
             for modifier in ("caps_lock", "left_control", "right_control"):
