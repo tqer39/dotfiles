@@ -765,6 +765,33 @@
             ]
           },
           {
+            "description": "Slack: Control+左クリックを Command+左クリックに変換（別ウィンドウで開く）",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "pointing_button": "button1",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "pointing_button": "button1",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.tinyspeck\\.slackmacgap$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "Slack: Control+Enter でメッセージ送信",
             "manipulators": [
               {
@@ -2810,6 +2837,16 @@
         {
           "from": { "key_code": "f12" },
           "to": [{ "key_code": "f12" }]
+        }
+      ],
+      "devices": [
+        {
+          "identifiers": {
+            "vendor_id": 1133,
+            "product_id": 50475,
+            "is_pointing_device": true
+          },
+          "ignore": false
         }
       ],
       "name": "Takeru O'oyama",

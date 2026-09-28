@@ -7,3 +7,4 @@
 
 [tools]
 node = "lts"
+"npm:@openai/codex" = "0.155.1"
