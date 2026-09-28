@@ -130,8 +130,9 @@ Aliases:
     codexwt [list]      pick an existing worktree (fzf) and launch codex in it
     cursorwt new <name> create a worktree and launch cursor-agent in it
     cursorwt [list]     pick an existing worktree (fzf) and launch cursor-agent in it
-    claudewt new <name> create a worktree and launch claude in it
-    claudewt [list]     pick an existing worktree (fzf) and launch claude in it
+    claudewt new <name> launch claude --worktree <name> with a matching session name
+    claudewt [list]     pick an existing worktree (fzf) and launch named claude
+                       defaults to auto mode; CLI options override defaults
 EOF
 }
 
@@ -254,6 +255,28 @@ if command -v zellij &> /dev/null; then
   fi
 fi
 
+# Launch Claude with defaults that explicit CLI options can override.
+_dotfiles_claude_worktree() {
+  local name="$1" arg has_mode=false has_name=false
+  shift
+  for arg in "$@"; do
+    case "$arg" in
+      --) break ;;
+      --permission-mode|--permission-mode=*) has_mode=true ;;
+      -n|--name|--name=*|-n?*|-r|--resume|--resume=*|-r?*|-c|--continue) has_name=true ;;
+    esac
+  done
+  local -a defaults
+  defaults=()
+  if [ "$has_mode" = false ]; then
+    defaults+=(--permission-mode auto)
+  fi
+  if [ "$has_name" = false ]; then
+    defaults+=(--name "$name")
+  fi
+  claude "${defaults[@]}" "$@"
+}
+
 # AI coding CLIs: launch inside a git worktree
 # Usage: <wrapper> new <name> [CLI args...] or <wrapper> [list] [CLI args...]
 _dotfiles_agent_worktree() {
@@ -275,6 +298,11 @@ _dotfiles_agent_worktree() {
     fi
     shift
 
+    if [ "$cli" = claude ]; then
+      (cd "$repo_root" && _dotfiles_claude_worktree "$name" --worktree "$name" "$@")
+      return $?
+    fi
+
     local repo_name suffix branch wt_root
     repo_name="$(basename "$repo_root")"
     suffix="$(date +%y%m%d)-$(openssl rand -hex 3)"
@@ -290,14 +318,18 @@ _dotfiles_agent_worktree() {
       echo "${wrapper}: fzf is required to select a worktree (or use: ${wrapper} new <name>)" >&2
       return 1
     fi
-    target="$(git -C "$repo_root" worktree list | grep -v '(bare)' | fzf --header "Select a worktree for ${cli}" | awk '{print $1}')"
+    target="$(git -C "$repo_root" worktree list --porcelain | sed -n 's/^worktree //p' | fzf --header "Select a worktree for ${cli}")"
     if [ -z "$target" ]; then
       echo "${wrapper}: no worktree selected" >&2
       return 1
     fi
   fi
 
-  (cd "$target" && "$cli" "$@")
+  if [ "$cli" = claude ]; then
+    (cd "$target" && _dotfiles_claude_worktree "$(basename "$target")" "$@")
+  else
+    (cd "$target" && "$cli" "$@")
+  fi
 }
 
 if command -v codex &> /dev/null; then

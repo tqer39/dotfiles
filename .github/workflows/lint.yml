@@ -33,3 +33,6 @@ jobs:
 
       - name: Run lint tasks
         run: mise run lint
+
+      - name: Verify agent worktree wrappers
+        run: python3 tests/test-agent-worktree.py
