@@ -15,6 +15,13 @@ dark_name = "tokyo-night"
 [keys]
 prefix = "ctrl+b"
 
+# Send the input Undo shortcut instead of suspending the foreground process.
+[[keys.command]]
+key = "ctrl+z"
+type = "shell"
+command = '"${HERDR_BIN_PATH:-herdr}" pane send-keys "${HERDR_ACTIVE_PANE_ID:?}" ctrl+_'
+description = "Undo input (Control+_)"
+
 [[keys.command]]
 key = "prefix+alt+g"
 type = "pane"

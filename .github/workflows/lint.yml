@@ -36,3 +36,8 @@ jobs:
 
       - name: Verify agent worktree wrappers
         run: python3 tests/test-agent-worktree.py
+
+      - name: Verify keyboard shortcuts
+        run: |
+          python3 tests/test-karabiner.py
+          python3 tests/test-herdr-config.py
