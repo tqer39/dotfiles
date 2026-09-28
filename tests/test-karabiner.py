@@ -134,6 +134,19 @@ class TextShortcutsTest(unittest.TestCase):
                 self.assertEqual(chord(modifier, "return_or_enter", other),
                                  ("return_or_enter", {modifier}))
 
+    def test_nani_submit_shortcut(self):
+        app = "jp.kiok.nani"
+        for modifier in ("caps_lock", "left_control", "right_control", "left_command"):
+            self.assertEqual(chord(modifier, "return_or_enter", app),
+                             ("return_or_enter", {"left_command"}))
+        for modifiers in (set(), {"left_shift"}, {"left_option"}, {"left_control", "left_shift"}):
+            self.assertEqual(transform("return_or_enter", modifiers, app),
+                             ("return_or_enter", modifiers))
+        for other in ("jp.kiok.nani.other", "com.apple.Terminal", "com.mitchellh.ghostty"):
+            for modifier in ("left_control", "right_control"):
+                self.assertEqual(transform("return_or_enter", {modifier}, other),
+                                 ("return_or_enter", {modifier}))
+
     def test_browser_history(self):
         for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
             for key, output in (("left_arrow", "open_bracket"), ("right_arrow", "close_bracket")):

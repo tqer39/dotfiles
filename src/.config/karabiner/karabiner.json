@@ -792,7 +792,7 @@
             ]
           },
           {
-            "description": "Slack: Control+Enter でメッセージ送信",
+            "description": "Slack / Nani: Control+Enter で送信・実行",
             "manipulators": [
               {
                 "type": "basic",
@@ -812,7 +812,10 @@
                 "conditions": [
                   {
                     "type": "frontmost_application_if",
-                    "bundle_identifiers": ["^com\\.tinyspeck\\.slackmacgap$"]
+                    "bundle_identifiers": [
+                      "^com\\.tinyspeck\\.slackmacgap$",
+                      "^jp\\.kiok\\.nani$"
+                    ]
                   }
                 ]
               }

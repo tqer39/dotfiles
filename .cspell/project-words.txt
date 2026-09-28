@@ -211,3 +211,5 @@ mysqlworkbench
 cmuxterm
 slackmacgap
 tinyspeck
+kiok
+nani
