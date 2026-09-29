@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "src/.config/karabiner/karabiner.json"
 
 
-def transform(key, modifiers, app):
+def transform(key, modifiers, app, event_type="key_code"):
     """Evaluate the basic rules used here, stopping at the first match."""
     profile = next(p for p in json.loads(CONFIG.read_text())["profiles"] if p.get("selected"))
     groups = {
@@ -22,7 +22,7 @@ def transform(key, modifiers, app):
         if not rule.get("enabled", True):
             continue
         for item in rule["manipulators"]:
-            if item["from"].get("key_code") != key:
+            if item["from"].get(event_type) != key:
                 continue
             applicable = True
             for condition in item.get("conditions", []):
@@ -42,7 +42,7 @@ def transform(key, modifiers, app):
             if "any" not in optional and remaining - allowed:
                 continue
             output = item["to"][0]
-            return output["key_code"], remaining | set(output.get("modifiers", []))
+            return output[event_type], remaining | set(output.get("modifiers", []))
     return key, modifiers
 
 
@@ -172,6 +172,26 @@ class TextShortcutsTest(unittest.TestCase):
         for app in ("com.microsoft.VSCode", "com.tinyspeck.slackmacgap", "com.apple.Terminal"):
             self.assertEqual(chord("left_command", "left_arrow", app, {"left_option"}),
                              ("left_arrow", {"left_command", "left_option"}))
+
+    def test_slack_control_click(self):
+        app = "com.tinyspeck.slackmacgap"
+        for modifier in ("caps_lock", "left_control", "right_control", "left_command"):
+            mapped, _ = transform(modifier, set(), app)
+            self.assertEqual(transform("button1", {mapped}, app, "pointing_button"),
+                             ("button1", {"left_command"}))
+        for button, modifiers in (("button1", set()), ("button2", {"left_control"}),
+                                  ("button1", {"left_option"}), ("button1", {"left_control", "left_shift"})):
+            self.assertEqual(transform(button, modifiers, app, "pointing_button"), (button, modifiers))
+        for other in ("com.apple.finder", "com.google.Chrome", "com.microsoft.VSCode", "com.apple.Terminal"):
+            self.assertEqual(transform("button1", {"left_control"}, other, "pointing_button"),
+                             ("button1", {"left_control"}))
+
+    def test_mouse_events_enabled(self):
+        profile = next(p for p in json.loads(CONFIG.read_text())["profiles"] if p.get("selected"))
+        mouse = next((d for d in profile.get("devices", []) if d["identifiers"] ==
+                      {"vendor_id": 1133, "product_id": 50475, "is_pointing_device": True}), None)
+        self.assertIsNotNone(mouse, "The connected mouse must deliver button events to the rule")
+        self.assertFalse(mouse["ignore"])
 
     def test_unrelated_shortcuts(self):
         app = "com.tinyspeck.slackmacgap"
