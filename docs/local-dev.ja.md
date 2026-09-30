@@ -30,7 +30,9 @@ Homebrew を導入し、ルートの [Brewfile](../Brewfile) のパッケージ�
 - direnv (環境変数管理)
 - lefthook (git フック)
 - aws-vault
-- cf-vault
+
+macOS の `cf-vault` は次の `mise run setup` で公式バイナリを取得します。
+Go のソースビルドは行いません。Linux では Homebrew から導入します。
 
 ### 2. 開発環境の設定
 

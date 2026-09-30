@@ -124,7 +124,7 @@ install_homebrew_packages() {
   export_brew_work_mode
 
   if [[ "${DRY_RUN:-false}" == "true" ]]; then
-    log_info "[DRY-RUN] Would run: brew bundle --file=$brewfile"
+    log_info "[DRY-RUN] Would install Brewfile entries with live output and per-package timing: $brewfile"
     return 0
   fi
 
@@ -134,23 +134,28 @@ install_homebrew_packages() {
     return 1
   fi
 
+  local log_dir="${DOTFILES_INSTALL_LOG_DIR:-${HOME}/.dotfiles_logs}"
+  mkdir -p "$log_dir"
+  local bundle_log
+  bundle_log=$(mktemp "${log_dir}/homebrew-$(date '+%Y%m%d-%H%M%S').XXXXXX")
+  log_info "Homebrew installation log: $bundle_log"
+
   # Update Homebrew
   log_info "Updating Homebrew..."
-  brew update
+  brew update 2>&1 | tee -a "$bundle_log"
 
-  trust_brewfile_formulae "$brewfile"
+  trust_brewfile_formulae "$brewfile" 2>&1 | tee -a "$bundle_log"
 
-  # Install from Brewfile
-  # Capture output to detect critical errors (deprecated taps, etc.)
-  local bundle_output
+  # Use Homebrew's own installer one entry at a time to measure actual package
+  # operations, rather than inferring durations from batched console messages.
   local bundle_exit=0
-  bundle_output=$(brew bundle --file="$brewfile" 2>&1) || bundle_exit=$?
-
-  # Always show output
-  echo "$bundle_output"
+  HOMEBREW_DEVELOPER=0 brew ruby "${SCRIPT_DIR}/timed-bundle.rb" "$brewfile" 2>&1 |
+    while IFS= read -r line || [[ -n "$line" ]]; do
+      printf '[%s] %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$line"
+    done | tee -a "$bundle_log" || bundle_exit=$?
 
   # Check for deprecated tap errors (configuration issues that must be fixed)
-  if echo "$bundle_output" | grep -q "was deprecated"; then
+  if grep -q "was deprecated" "$bundle_log"; then
     log_error "Deprecated tap found in Brewfile. Please remove it."
     return 1
   fi
@@ -160,8 +165,10 @@ install_homebrew_packages() {
     if [[ "${CI_MODE:-false}" == "true" ]]; then
       # In CI mode, allow package install failures (e.g., GUI apps that can't install in CI)
       log_warn "Some packages failed to install (CI mode, continuing)"
+      return 0
     else
-      return 1
+      log_error "Package installation failed. See: $bundle_log"
+      return "$bundle_exit"
     fi
   fi
 

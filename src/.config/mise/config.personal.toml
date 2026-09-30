@@ -13,3 +13,12 @@ node = "24"
 "npm:@openai/codex" = "latest"
 "npm:@github/copilot" = "latest"
 "npm:ctx7" = "latest"
+
+# Official macOS binaries; keep the version and publisher checksums together.
+[tools."github:jacobbednarz/cf-vault"]
+version = "0.0.26"
+os = ["macos"]
+
+[tools."github:jacobbednarz/cf-vault".platforms]
+macos-arm64 = { asset_pattern = "cf-vault_0.0.26_darwin_arm64.tar.gz", checksum = "sha256:9eed22f23188d66c41af774ac4ed0ece670f48af02f4f3cd2183fd096e77e41f" }
+macos-x64 = { asset_pattern = "cf-vault_0.0.26_darwin_amd64.tar.gz", checksum = "sha256:960274305d7a33e40e8559eb539917d8acf713afd65eb7396a367d47394054ce" }

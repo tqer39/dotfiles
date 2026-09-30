@@ -6,5 +6,8 @@ brew "aws-vault"
 brew "herdr"
 
 # Cloudflare tools
-tap "jacobbednarz/tap"              # cf-vault 公式リポジトリ
-brew "jacobbednarz/tap/cf-vault"    # Cloudflare API Secrets 用
+# macOS: mise installs the official binary without compiling Go sources.
+if OS.linux?
+  tap "jacobbednarz/tap"
+  brew "jacobbednarz/tap/cf-vault"
+end
