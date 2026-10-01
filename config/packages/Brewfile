@@ -37,8 +37,11 @@ brew "rtk"           # CLI proxy for LLM token optimization
 
 # Cloud credentials
 brew "aws-vault"
-tap "jacobbednarz/tap"
-brew "jacobbednarz/tap/cf-vault"
+# macOS uses the official release binary via mise, avoiding a Go build.
+if OS.linux?
+  tap "jacobbednarz/tap"
+  brew "jacobbednarz/tap/cf-vault"
+end
 
 # Runtime managers
 brew "mise"       # Node.js, etc.
@@ -79,7 +82,7 @@ if OS.mac?
 
   # Productivity
   cask "1password"
-  cask "linear-linear"  # Project management
+  cask "linear"  # Project management
   cask "raycast"
   cask "superwhisper"  # AI voice dictation
 
@@ -166,7 +169,6 @@ if OS.mac? && ENV['HOMEBREW_WORK_MODE'] == 'true'
   # Mac App Store
   mas "Kindle", id: 302584613
   mas "Okta Verify", id: 490179405
-  mas "RunCat", id: 1429033973
 end
 
 # ------------------------------------------------------------------------------
