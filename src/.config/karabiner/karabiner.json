@@ -822,6 +822,176 @@
             ]
           },
           {
+            "description": "OS: Control+Q でアプリを終了（Command+Q、ターミナルを含む）",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "q",
+                  "modifiers": {
+                    "mandatory": ["right_control"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "q",
+                    "modifiers": ["left_command"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "q",
+                  "modifiers": {
+                    "mandatory": ["left_control"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "q",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "OS: Control+Shift+左右矢印で行頭・行末まで選択（ターミナルを除く）",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": {
+                    "mandatory": ["right_control", "shift"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": {
+                    "mandatory": ["right_control", "shift"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_control", "shift"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": {
+                    "mandatory": ["left_control", "shift"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "OS: Control で編集・保存・検索・書式・タブ操作（ターミナルを除く）",
             "manipulators": [
               {
