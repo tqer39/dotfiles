@@ -32,6 +32,9 @@ window-padding-balance = true
 macos-titlebar-style = tabs
 
 # Keybindings
+# Home / End は Command+左右矢印と同じ制御文字を送る
+keybind = home=text:\x01
+keybind = end=text:\x05
 # 元 Caps Lock が Control として届く場合も、CLI に渡さず貼り付ける
 keybind = ctrl+v=paste_from_clipboard
 # 選択範囲があればコピーし、なければ Control+C を CLI に渡す
