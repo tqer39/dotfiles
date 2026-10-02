@@ -1,4 +1,5 @@
 """Check text shortcuts and terminal/browser exceptions in the selected profile."""
+# cspell:ignore todesktop
 
 import json
 from pathlib import Path
@@ -94,6 +95,62 @@ class TextShortcutsTest(unittest.TestCase):
                 for extra in (set(), {"left_shift"}, {"right_shift"}):
                     with self.subTest(app=app, key=key, extra=extra):
                         self.assertEqual(transform(key, extra, app), (arrow, {"left_command", *extra}))
+
+    def test_control_q_quits_all_apps(self):
+        apps = ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
+                "org.mozilla.firefox", "com.microsoft.VSCode", "md.obsidian",
+                "com.apple.TextEdit", "com.tinyspeck.slackmacgap", "com.apple.finder",
+                "com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
+                "com.googlecode.iterm2", "co.zeit.hyper", "org.example.app")
+        for app in apps:
+            for control in ("caps_lock", "left_control", "right_control"):
+                # These terminals keep the physical Caps Lock key unchanged.
+                if control == "caps_lock" and app in ("com.apple.Terminal", "com.cmuxterm.app",
+                                                      "com.googlecode.iterm2", "co.zeit.hyper"):
+                    self.assertEqual(chord(control, "q", app), ("q", {"caps_lock"}))
+                    continue
+                with self.subTest(app=app, control=control):
+                    self.assertEqual(chord(control, "q", app), ("q", {"left_command"}))
+            self.assertEqual(transform("q", set(), app), ("q", set()))
+        for app in ("com.apple.TextEdit", "com.microsoft.VSCode", "com.apple.Terminal"):
+            for control in ("left_control", "right_control"):
+                for extra in ({"left_shift"}, {"left_option"}, {"left_command"}):
+                    self.assertEqual(chord(control, "q", app, extra), ("q", {control, *extra}))
+        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
+            self.assertEqual(chord("left_command", "q", app), ("q", {"left_control"}))
+
+    def test_control_shift_arrows_select_to_line_boundary(self):
+        apps = ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
+                "org.mozilla.firefox", "com.microsoft.VSCode", "com.todesktop.230313mzl4w4u92",
+                "dev.zed.Zed", "md.obsidian", "com.apple.TextEdit", "com.tinyspeck.slackmacgap")
+        for app in apps:
+            for modifier in ("caps_lock", "left_control", "right_control"):
+                for shift in ("left_shift", "right_shift"):
+                    for key in ("left_arrow", "right_arrow"):
+                        with self.subTest(app=app, modifier=modifier, shift=shift, key=key):
+                            output_key, modifiers = chord(modifier, key, app, {shift})
+                            self.assertEqual(output_key, key)
+                            self.assertEqual(modifiers - {"left_shift", "right_shift"}, {"left_command"})
+                            self.assertTrue(modifiers & {"left_shift", "right_shift"})
+
+    def test_control_arrow_other_chords_unchanged(self):
+        for app in ("com.microsoft.VSCode", "com.apple.TextEdit"):
+            for control in ("left_control", "right_control"):
+                for key in ("left_arrow", "right_arrow"):
+                    for extra in (set(), {"left_shift", "left_option"}, {"left_shift", "left_command"}):
+                        self.assertEqual(chord(control, key, app, extra), (key, {control, *extra}))
+        for app in ("com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
+                    "com.googlecode.iterm2", "co.zeit.hyper"):
+            for control in ("left_control", "right_control"):
+                for shift in ("left_shift", "right_shift"):
+                    for key in ("left_arrow", "right_arrow"):
+                        modifiers = {control, shift}
+                        self.assertEqual(transform(key, modifiers, app), (key, modifiers))
+        # A physical left Command is already swapped to Control in these browsers.
+        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
+            for key in ("left_arrow", "right_arrow"):
+                self.assertEqual(chord("left_command", key, app, {"left_shift"}),
+                                 (key, {"left_control", "left_shift"}))
 
     def test_builtin_fn_arrows(self):
         for key in ("left_arrow", "right_arrow"):
