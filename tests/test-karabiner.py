@@ -1,5 +1,4 @@
-"""Check text shortcuts and terminal/browser exceptions in the selected profile."""
-# cspell:ignore todesktop
+"""Check the selected Karabiner profile's modifier-role policy."""
 
 import json
 from pathlib import Path
@@ -8,253 +7,95 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "src/.config/karabiner/karabiner.json"
+TERMINALS_AND_CODEX = (
+    "com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
+    "com.googlecode.iterm2", "co.zeit.hyper", "com.openai.codex",
+)
 
 
-def transform(key, modifiers, app, event_type="key_code"):
-    """Evaluate the basic rules used here, stopping at the first match."""
-    profile = next(p for p in json.loads(CONFIG.read_text())["profiles"] if p.get("selected"))
+def profile():
+    return next(item for item in json.loads(CONFIG.read_text())["profiles"] if item.get("selected"))
+
+
+def transform(key, modifiers, app):
+    """Evaluate the first matching basic key rule used by this configuration."""
     groups = {
         "control": {"left_control", "right_control"},
         "command": {"left_command", "right_command"},
         "shift": {"left_shift", "right_shift"},
         "option": {"left_option", "right_option"},
     }
-    for rule in profile["complex_modifications"]["rules"]:
+    for rule in profile()["complex_modifications"]["rules"]:
         if not rule.get("enabled", True):
             continue
         for item in rule["manipulators"]:
-            if item["from"].get(event_type) != key:
+            if item["from"].get("key_code") != key:
                 continue
-            applicable = True
+            valid = True
             for condition in item.get("conditions", []):
                 matches = any(re.search(pattern, app) for pattern in condition["bundle_identifiers"])
                 if matches != (condition["type"] == "frontmost_application_if"):
-                    applicable = False
-            if not applicable:
+                    valid = False
+            if not valid:
                 continue
             spec = item["from"].get("modifiers", {})
             mandatory = spec.get("mandatory", [])
-            if any(not (groups.get(m, {m}) & modifiers) for m in mandatory):
+            if any(not (groups.get(modifier, {modifier}) & modifiers) for modifier in mandatory):
                 continue
-            consumed = set().union(*(groups.get(m, {m}) for m in mandatory)) & modifiers
+            consumed = set().union(*(groups.get(modifier, {modifier}) for modifier in mandatory)) & modifiers
             remaining = modifiers - consumed
             optional = spec.get("optional", [])
-            allowed = set().union(*(groups.get(m, {m}) for m in optional))
+            allowed = set().union(*(groups.get(modifier, {modifier}) for modifier in optional))
             if "any" not in optional and remaining - allowed:
                 continue
             output = item["to"][0]
-            return output[event_type], remaining | set(output.get("modifiers", []))
+            return output["key_code"], remaining | set(output.get("modifiers", []))
     return key, modifiers
 
 
 def chord(modifier, key, app, extra=frozenset()):
-    # Modifier key-down is a separate event; its result is not remapped again.
+    """Modifier key-down is handled before the following key event."""
     mapped, _ = transform(modifier, set(), app)
     return transform(key, {mapped, *extra}, app)
 
 
-class TextShortcutsTest(unittest.TestCase):
-    def test_finder_delete_moves_to_trash(self):
-        for key in ("delete_or_backspace", "delete_forward"):
-            self.assertEqual(transform(key, set(), "com.apple.finder"),
-                             ("delete_or_backspace", {"left_command"}))
-            for modifiers in ({"left_shift"}, {"left_option"}, {"left_command"}, {"left_control"}):
-                self.assertEqual(transform(key, modifiers, "com.apple.finder"), (key, modifiers))
-            for app in ("com.apple.TextEdit", "com.apple.Terminal", "com.google.Chrome", "com.apple.finder.other"):
-                self.assertEqual(transform(key, set(), app), (key, set()))
-
-    def test_general_apps(self):
-        for app in ("com.tinyspeck.slackmacgap", "com.1password.1password", "com.apple.TextEdit"):
-            for modifier in ("caps_lock", "left_control", "right_control"):
-                for key in ("a", "c", "x", "v", "z", "s", "f", "b", "i", "u", "n", "o", "p", "t", "w", "r"):
-                    for extra in (set(), {"left_shift"}, {"left_shift", "left_option"}):
-                        with self.subTest(app=app, modifier=modifier, key=key, extra=extra):
-                            self.assertEqual(chord(modifier, key, app, extra), (key, {"left_command", *extra}))
-
-    def test_browser_swap_is_not_reversed(self):
-        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
-            for key in ("a", "c", "x", "v", "z", "s", "f", "b", "i", "u", "n", "o", "p", "t", "w", "r"):
-                for modifier in ("caps_lock", "left_control", "right_control"):
-                    self.assertEqual(chord(modifier, key, app), (key, {"left_command"}))
-                self.assertEqual(chord("left_command", key, app), (key, {"left_control"}))
-            self.assertEqual(chord("left_control", "tab", app), ("tab", {"left_control"}))
-            self.assertEqual(chord("left_control", "spacebar", app), ("spacebar", {"left_control"}))
-
-    def test_terminal_control_signals(self):
-        for app in ("com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app", "com.googlecode.iterm2", "co.zeit.hyper"):
-            for key in ("a", "c", "x", "z"):
-                self.assertEqual(chord("left_control", key, app), (key, {"left_control"}))
-            if app != "com.mitchellh.ghostty":
-                self.assertEqual(chord("right_control", "a", app), ("a", {"right_control"}))
-        self.assertEqual(chord("left_control", "v", "com.apple.Terminal"), ("v", {"left_command"}))
-        self.assertEqual(chord("right_control", "c", "com.mitchellh.ghostty"), ("c", {"left_command"}))
-
-    def test_home_end_editing(self):
-        for app in ("com.tinyspeck.slackmacgap", "com.1password.1password", "com.apple.TextEdit", "com.google.Chrome"):
-            for key, arrow in (("home", "left_arrow"), ("end", "right_arrow")):
-                for extra in (set(), {"left_shift"}, {"right_shift"}):
-                    with self.subTest(app=app, key=key, extra=extra):
-                        self.assertEqual(transform(key, extra, app), (arrow, {"left_command", *extra}))
-
-    def test_control_q_quits_all_apps(self):
-        apps = ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
-                "org.mozilla.firefox", "com.microsoft.VSCode", "md.obsidian",
-                "com.apple.TextEdit", "com.tinyspeck.slackmacgap", "com.apple.finder",
-                "com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
-                "com.googlecode.iterm2", "co.zeit.hyper", "org.example.app")
-        for app in apps:
-            for control in ("caps_lock", "left_control", "right_control"):
-                # These terminals keep the physical Caps Lock key unchanged.
-                if control == "caps_lock" and app in ("com.apple.Terminal", "com.cmuxterm.app",
-                                                      "com.googlecode.iterm2", "co.zeit.hyper"):
-                    self.assertEqual(chord(control, "q", app), ("q", {"caps_lock"}))
-                    continue
+class ModifierRoleTest(unittest.TestCase):
+    def test_control_is_command_in_regular_apps(self):
+        for app in ("com.apple.TextEdit", "com.google.Chrome", "com.microsoft.VSCode"):
+            for control in ("left_control", "right_control"):
                 with self.subTest(app=app, control=control):
-                    self.assertEqual(chord(control, "q", app), ("q", {"left_command"}))
-            self.assertEqual(transform("q", set(), app), ("q", set()))
-        for app in ("com.apple.TextEdit", "com.microsoft.VSCode", "com.apple.Terminal"):
+                    self.assertEqual(transform(control, set(), app), ("left_command", set()))
+                    self.assertEqual(chord(control, "w", app), ("w", {"left_command"}))
+                    self.assertEqual(chord(control, "tab", app, {"left_shift"}),
+                                     ("tab", {"left_command", "left_shift"}))
+
+    def test_control_stays_native_in_terminals_and_codex(self):
+        for app in TERMINALS_AND_CODEX:
             for control in ("left_control", "right_control"):
-                for extra in ({"left_shift"}, {"left_option"}, {"left_command"}):
-                    self.assertEqual(chord(control, "q", app, extra), ("q", {control, *extra}))
-        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
-            self.assertEqual(chord("left_command", "q", app), ("q", {"left_control"}))
+                with self.subTest(app=app, control=control):
+                    self.assertEqual(transform(control, set(), app), (control, set()))
+                    self.assertEqual(chord(control, "c", app), ("c", {control}))
+                    self.assertEqual(chord(control, "tab", app), ("tab", {control}))
 
-    def test_control_shift_arrows_select_to_line_boundary(self):
-        apps = ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
-                "org.mozilla.firefox", "com.microsoft.VSCode", "com.todesktop.230313mzl4w4u92",
-                "dev.zed.Zed", "md.obsidian", "com.apple.TextEdit", "com.tinyspeck.slackmacgap")
-        for app in apps:
-            for modifier in ("caps_lock", "left_control", "right_control"):
-                for shift in ("left_shift", "right_shift"):
-                    for key in ("left_arrow", "right_arrow"):
-                        with self.subTest(app=app, modifier=modifier, shift=shift, key=key):
-                            output_key, modifiers = chord(modifier, key, app, {shift})
-                            self.assertEqual(output_key, key)
-                            self.assertEqual(modifiers - {"left_shift", "right_shift"}, {"left_command"})
-                            self.assertTrue(modifiers & {"left_shift", "right_shift"})
+    def test_command_is_not_remapped(self):
+        for app in ("com.apple.TextEdit", "com.google.Chrome", *TERMINALS_AND_CODEX):
+            self.assertEqual(transform("left_command", set(), app), ("left_command", set()))
 
-    def test_control_arrow_other_chords_unchanged(self):
-        for app in ("com.microsoft.VSCode", "com.apple.TextEdit"):
-            for control in ("left_control", "right_control"):
-                for key in ("left_arrow", "right_arrow"):
-                    for extra in (set(), {"left_shift", "left_option"}, {"left_shift", "left_command"}):
-                        self.assertEqual(chord(control, key, app, extra), (key, {control, *extra}))
-        for app in ("com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
-                    "com.googlecode.iterm2", "co.zeit.hyper"):
-            for control in ("left_control", "right_control"):
-                for shift in ("left_shift", "right_shift"):
-                    for key in ("left_arrow", "right_arrow"):
-                        modifiers = {control, shift}
-                        self.assertEqual(transform(key, modifiers, app), (key, modifiers))
-        # A physical left Command is already swapped to Control in these browsers.
-        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
-            for key in ("left_arrow", "right_arrow"):
-                self.assertEqual(chord("left_command", key, app, {"left_shift"}),
-                                 (key, {"left_control", "left_shift"}))
-
-    def test_builtin_fn_arrows(self):
-        for key in ("left_arrow", "right_arrow"):
-            for extra in (set(), {"left_shift"}, {"right_shift"}):
-                self.assertEqual(transform(key, {"fn", *extra}, "com.tinyspeck.slackmacgap"),
-                                 (key, {"left_command", *extra}))
-            self.assertEqual(transform(key, {"fn"}, "com.mitchellh.ghostty"), (key, {"fn"}))
-
-    def test_terminal_home_end_unchanged(self):
-        for app in ("com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app", "com.googlecode.iterm2", "co.zeit.hyper"):
-            for key in ("home", "end"):
-                self.assertEqual(transform(key, set(), app), (key, set()))
-
-    def test_code_tab_navigation(self):
-        app = "com.microsoft.VSCode"
-        for modifier in ("caps_lock", "left_control", "right_control"):
-            self.assertEqual(chord(modifier, "tab", app), ("right_arrow", {"left_command", "left_option"}))
-            for shift in ("left_shift", "right_shift"):
-                self.assertEqual(chord(modifier, "tab", app, {shift}),
-                                 ("left_arrow", {"left_command", "left_option"}))
-            self.assertEqual(chord(modifier, "a", app), ("a", {"left_command"}))
-        self.assertEqual(chord("left_command", "tab", app), ("tab", {"left_command"}))
-        self.assertEqual(chord("left_command", "tab", app, {"left_shift"}),
-                         ("tab", {"left_command", "left_shift"}))
-        self.assertEqual(transform("tab", set(), app), ("tab", set()))
-        self.assertEqual(transform("tab", {"left_shift"}, app), ("tab", {"left_shift"}))
-
-    def test_slack_send_shortcut(self):
-        app = "com.tinyspeck.slackmacgap"
-        for modifier in ("caps_lock", "left_control", "right_control", "left_command"):
-            self.assertEqual(chord(modifier, "return_or_enter", app),
-                             ("return_or_enter", {"left_command"}))
-        self.assertEqual(transform("return_or_enter", set(), app), ("return_or_enter", set()))
-        self.assertEqual(transform("return_or_enter", {"left_shift"}, app),
-                         ("return_or_enter", {"left_shift"}))
-        for other in ("com.apple.Terminal", "com.microsoft.VSCode", "com.apple.TextEdit"):
-            for modifier in ("left_control", "right_control"):
-                self.assertEqual(chord(modifier, "return_or_enter", other),
-                                 ("return_or_enter", {modifier}))
-
-    def test_nani_submit_shortcut(self):
-        app = "jp.kiok.nani"
-        for modifier in ("caps_lock", "left_control", "right_control", "left_command"):
-            self.assertEqual(chord(modifier, "return_or_enter", app),
-                             ("return_or_enter", {"left_command"}))
-        for modifiers in (set(), {"left_shift"}, {"left_option"}, {"left_control", "left_shift"}):
-            self.assertEqual(transform("return_or_enter", modifiers, app),
-                             ("return_or_enter", modifiers))
-        for other in ("jp.kiok.nani.other", "com.apple.Terminal", "com.mitchellh.ghostty"):
-            for modifier in ("left_control", "right_control"):
-                self.assertEqual(transform("return_or_enter", {modifier}, other),
-                                 ("return_or_enter", {modifier}))
-
-    def test_browser_history(self):
-        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
-            for key, output in (("left_arrow", "open_bracket"), ("right_arrow", "close_bracket")):
-                for modifier in ("left_option", "right_option"):
-                    self.assertEqual(chord(modifier, key, app), (output, {"left_command"}))
-                    self.assertEqual(chord(modifier, key, app, {"left_shift"}),
-                                     (key, {modifier, "left_shift"}))
-        for app in ("com.microsoft.VSCode", "com.apple.Terminal", "com.mitchellh.ghostty", "com.tinyspeck.slackmacgap", "com.apple.finder"):
-            for key in ("left_arrow", "right_arrow"):
-                self.assertEqual(chord("left_option", key, app), (key, {"left_option"}))
-
-    def test_browser_mission_control(self):
-        for app in ("com.google.Chrome", "com.brave.Browser", "com.apple.Safari"):
-            for modifier in ("caps_lock", "left_control"):
-                for key in ("up_arrow", "left_arrow", "right_arrow"):
-                    for option in ("left_option", "right_option"):
-                        for extra in (set(), {"left_shift"}):
-                            self.assertEqual(chord(modifier, key, app, {option, *extra}),
-                                             (key, {"left_control", "left_option", *extra}))
-            for key in ("up_arrow", "left_arrow", "right_arrow"):
-                self.assertEqual(chord("right_control", key, app, {"left_option"}),
-                                 (key, {"right_control", "left_option"}))
-        for app in ("com.microsoft.VSCode", "com.tinyspeck.slackmacgap", "com.apple.Terminal"):
-            self.assertEqual(chord("left_command", "left_arrow", app, {"left_option"}),
-                             ("left_arrow", {"left_command", "left_option"}))
-
-    def test_slack_control_click(self):
-        app = "com.tinyspeck.slackmacgap"
-        for modifier in ("caps_lock", "left_control", "right_control", "left_command"):
-            mapped, _ = transform(modifier, set(), app)
-            self.assertEqual(transform("button1", {mapped}, app, "pointing_button"),
-                             ("button1", {"left_command"}))
-        for button, modifiers in (("button1", set()), ("button2", {"left_control"}),
-                                  ("button1", {"left_option"}), ("button1", {"left_control", "left_shift"})):
-            self.assertEqual(transform(button, modifiers, app, "pointing_button"), (button, modifiers))
-        for other in ("com.apple.finder", "com.google.Chrome", "com.microsoft.VSCode", "com.apple.Terminal"):
-            self.assertEqual(transform("button1", {"left_control"}, other, "pointing_button"),
-                             ("button1", {"left_control"}))
-
-    def test_mouse_events_enabled(self):
-        profile = next(p for p in json.loads(CONFIG.read_text())["profiles"] if p.get("selected"))
-        mouse = next((d for d in profile.get("devices", []) if d["identifiers"] ==
-                      {"vendor_id": 1133, "product_id": 50475, "is_pointing_device": True}), None)
-        self.assertIsNotNone(mouse, "The connected mouse must deliver button events to the rule")
-        self.assertFalse(mouse["ignore"])
-
-    def test_unrelated_shortcuts(self):
-        app = "com.tinyspeck.slackmacgap"
-        self.assertEqual(chord("left_control", "tab", app), ("tab", {"left_control"}))
-        self.assertEqual(chord("left_command", "a", app), ("a", {"left_command"}))
-        self.assertEqual(chord("left_control", "a", app, {"left_command"}), ("a", {"left_control", "left_command"}))
+    def test_legacy_per_shortcut_rules_are_disabled(self):
+        legacy_descriptions = {
+            "ChatGPT Codex: Control の入力操作を維持",
+            "OS: Control でアプリ共通の Command ショートカットを実行",
+            "Terminal: Control で貼り付け・新規タブ・タブ終了・アプリ終了",
+            "Ghostty: 元 Caps Lock（右 Control）を Command として使う（コピー・貼り付け）",
+            "Google Chrome / Brave / Safari: 左 Command と左 Control を交換",
+            "VS Code: 元 Caps Lock を Control として使い、Control+Tab / Shift+Tab で次・前のタブへ移動",
+            "Slack: Control+左クリックを Command+左クリックに変換（別ウィンドウで開く）",
+            "Slack / Nani: Control+Enter で送信・実行",
+            "OS: Control で編集・保存・検索・書式・タブ操作（ターミナルを除く）",
+        }
+        rules = {rule["description"]: rule for rule in profile()["complex_modifications"]["rules"]}
+        for description in legacy_descriptions:
+            self.assertFalse(rules[description].get("enabled", True), description)
 
 
 if __name__ == "__main__":
