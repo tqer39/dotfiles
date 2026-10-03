@@ -87,8 +87,10 @@ class ModifierRoleTest(unittest.TestCase):
             for extra in ({"left_shift"}, {"left_option"}):
                 self.assertEqual(chord(control, "spacebar", "com.mitchellh.ghostty", extra),
                                  ("spacebar", {control, *extra}))
-            for app in ("com.apple.Terminal", "com.openai.codex", "com.cmuxterm.app"):
+            for app in ("com.apple.Terminal", "com.cmuxterm.app"):
                 self.assertEqual(chord(control, "spacebar", app), ("spacebar", {control}))
+            self.assertEqual(chord(control, "spacebar", "com.openai.codex"),
+                             ("spacebar", {"left_command"}))
         self.assertEqual(chord("left_command", "spacebar", "com.mitchellh.ghostty"),
                          ("spacebar", {"left_command"}))
 
