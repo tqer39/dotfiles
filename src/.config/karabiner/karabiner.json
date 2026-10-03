@@ -421,7 +421,8 @@
             ]
           },
           {
-            "description": "OS: Control を Command として使う（ターミナルと Codex を除く）",
+            "description": "OS: Control を Command として使う（設定済みターミナルアプリを除く）",
+            "enabled": true,
             "manipulators": [
               {
                 "type": "basic",
@@ -438,8 +439,7 @@
                       "^com\\.mitchellh\\.ghostty$",
                       "^com\\.cmuxterm\\.app$",
                       "^com\\.googlecode\\.iterm2?$",
-                      "^co\\.zeit\\.hyper$",
-                      "^com\\.openai\\.codex$"
+                      "^co\\.zeit\\.hyper$"
                     ]
                   }
                 ]
@@ -459,8 +459,7 @@
                       "^com\\.mitchellh\\.ghostty$",
                       "^com\\.cmuxterm\\.app$",
                       "^com\\.googlecode\\.iterm2?$",
-                      "^co\\.zeit\\.hyper$",
-                      "^com\\.openai\\.codex$"
+                      "^co\\.zeit\\.hyper$"
                     ]
                   }
                 ]

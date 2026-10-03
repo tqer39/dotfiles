@@ -40,8 +40,8 @@ description = "Install Git hooks"
 run = "lefthook install"
 
 [tasks.lint]
-description = "Run all linters"
-run = "lefthook run pre-commit --all-files"
+description = "Run all linters and keyboard shortcut tests"
+run = "lefthook run pre-commit --all-files && python3 tests/test-karabiner.py"
 
 [tasks.lint-clean]
 description = "Clean lefthook cache"

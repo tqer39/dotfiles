@@ -7,9 +7,9 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "src/.config/karabiner/karabiner.json"
-TERMINALS_AND_CODEX = (
+TERMINALS = (
     "com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
-    "com.googlecode.iterm2", "co.zeit.hyper", "com.openai.codex",
+    "com.googlecode.iterm2", "co.zeit.hyper",
 )
 
 
@@ -60,8 +60,11 @@ def chord(modifier, key, app, extra=frozenset()):
 
 
 class ModifierRoleTest(unittest.TestCase):
-    def test_control_is_command_in_regular_apps(self):
-        for app in ("com.apple.TextEdit", "com.google.Chrome", "com.microsoft.VSCode"):
+    def test_control_is_command_in_regular_apps_and_codex(self):
+        for app in (
+            "com.apple.TextEdit", "com.google.Chrome", "com.microsoft.VSCode",
+            "com.openai.codex",
+        ):
             for control in ("left_control", "right_control"):
                 with self.subTest(app=app, control=control):
                     self.assertEqual(transform(control, set(), app), ("left_command", set()))
@@ -69,8 +72,8 @@ class ModifierRoleTest(unittest.TestCase):
                     self.assertEqual(chord(control, "tab", app, {"left_shift"}),
                                      ("tab", {"left_command", "left_shift"}))
 
-    def test_control_stays_native_in_terminals_and_codex(self):
-        for app in TERMINALS_AND_CODEX:
+    def test_control_stays_native_in_terminals(self):
+        for app in TERMINALS:
             for control in ("left_control", "right_control"):
                 with self.subTest(app=app, control=control):
                     self.assertEqual(transform(control, set(), app), (control, set()))
@@ -84,13 +87,15 @@ class ModifierRoleTest(unittest.TestCase):
             for extra in ({"left_shift"}, {"left_option"}):
                 self.assertEqual(chord(control, "spacebar", "com.mitchellh.ghostty", extra),
                                  ("spacebar", {control, *extra}))
-            for app in ("com.apple.Terminal", "com.openai.codex", "com.cmuxterm.app"):
+            for app in ("com.apple.Terminal", "com.cmuxterm.app"):
                 self.assertEqual(chord(control, "spacebar", app), ("spacebar", {control}))
+            self.assertEqual(chord(control, "spacebar", "com.openai.codex"),
+                             ("spacebar", {"left_command"}))
         self.assertEqual(chord("left_command", "spacebar", "com.mitchellh.ghostty"),
                          ("spacebar", {"left_command"}))
 
     def test_command_is_not_remapped(self):
-        for app in ("com.apple.TextEdit", "com.google.Chrome", *TERMINALS_AND_CODEX):
+        for app in ("com.apple.TextEdit", "com.google.Chrome", *TERMINALS, "com.openai.codex"):
             self.assertEqual(transform("left_command", set(), app), ("left_command", set()))
 
     def test_legacy_per_shortcut_rules_are_disabled(self):

@@ -4,7 +4,7 @@
 
 macOS では Caps Lock を Command に設定します。Karabiner は物理 Control を Command として扱います。
 Windows + HHKB では Caps Lock を Control に設定し、Windows 標準の Control ショートカットをそのまま使います。
-ターミナルと ChatGPT デスクトップアプリの Codex では、Control を本来のテキスト編集・チャット切替に使うため、Karabiner は変換しません。
+除外リストに登録したターミナルアプリでは Control を変換しません。Codex を含むそれ以外のアプリでは、HHKB の元 Caps Lock として届く Control を Command に変換します。
 
 | キー | 操作 |
 | --- | --- |
