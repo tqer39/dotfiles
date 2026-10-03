@@ -8,6 +8,7 @@ apdisk
 aquasecurity
 armhf
 automode
+autostash
 awscli
 awslabs
 betterleaks
@@ -121,6 +122,7 @@ MSYS
 mypy
 netrc
 nodenv
+NOSYSTEM
 noto
 O'oyama
 octocat
@@ -151,6 +153,7 @@ rxvt
 sarif
 SAVEHIST
 schelp
+scriptblock
 setaf
 setf
 setopt

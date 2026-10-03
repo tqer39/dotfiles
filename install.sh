@@ -458,112 +458,43 @@ check_prerequisites() {
 }
 
 # ------------------------------------------------------------------------------
-# Drop a stash entry identified by SHA
-#
-# `git stash drop` only accepts a stash@{n} reflog reference, never a raw SHA,
-# so the position has to be looked up. It is looked up here rather than
-# remembered from the push because the stash stack is shared with every git
-# worktree of this repository and another process may have pushed onto it in
-# the meantime.
-# ------------------------------------------------------------------------------
-drop_stash() {
-  local stash_sha="$1"
-  local index=0
-  local entry
-
-  while [[ "$index" -lt 100 ]]; do
-    entry="$(git -C "$DOTFILES_DIR" rev-parse --verify --quiet "stash@{${index}}" 2>/dev/null)" || return 1
-    if [[ "$entry" == "$stash_sha" ]]; then
-      git -C "$DOTFILES_DIR" stash drop --quiet "stash@{${index}}" >/dev/null 2>&1 || return 1
-      return 0
-    fi
-    index=$((index + 1))
-  done
-
-  return 1
-}
-
-# ------------------------------------------------------------------------------
-# Restore a stash entry created by update_repository
-#
-# The entry is applied by SHA rather than by stash@{n}: the stash stack is
-# shared with every git worktree of this repository, so a positional ref can
-# point at somebody else's entry by the time we get here.
-#
-# On conflict the entry is kept so no work is lost, and the working tree is
-# rolled back to the freshly pulled state - leaving conflict markers behind
-# would propagate them into every symlinked dotfile.
-# ------------------------------------------------------------------------------
-restore_stash() {
-  local stash_sha="$1"
-
-  if [[ -z "$stash_sha" ]]; then
-    return 0
-  fi
-
-  if git -C "$DOTFILES_DIR" stash apply --quiet "$stash_sha" 2>/dev/null; then
-    log_success "Restored your local changes"
-    if ! drop_stash "$stash_sha"; then
-      log_warn "Could not drop the now-redundant stash entry: $stash_sha"
-    fi
-    return 0
-  fi
-
-  git -C "$DOTFILES_DIR" reset --hard --quiet HEAD
-  log_warn "Your local changes conflict with the updated files"
-  log_warn "The working tree was reset to the updated state to avoid conflict markers"
-  log_warn "Your changes are safe in the stash: $stash_sha"
-  log_info "Inspect and resolve them with:"
-  log_info "  cd $DOTFILES_DIR && git stash show -p $stash_sha"
-  log_info "  cd $DOTFILES_DIR && git stash drop $stash_sha   # once resolved"
-}
-
-# ------------------------------------------------------------------------------
-# Update an existing dotfiles checkout
-#
-# Local changes are stashed before pulling and restored right afterwards. Not
-# restoring them is what used to pile up dozens of orphaned Auto-stash entries.
+# Update the checkout used to apply dotfiles. Development belongs in a worktree;
+# never replay local edits into live configuration files during an update.
 # ------------------------------------------------------------------------------
 update_repository() {
   if [[ "$DRY_RUN" == "true" ]]; then
-    log_info "[DRY-RUN] Would run: git -C $DOTFILES_DIR pull --ff-only"
+    log_info "[DRY-RUN] Would require a clean checkout and run: git -C $DOTFILES_DIR pull --ff-only --no-rebase --no-autostash"
     return 0
   fi
 
   if [[ "$CI_MODE" == "true" ]]; then
-    # Skip pull in CI mode - CI has already checked out the correct code
     log_info "Skipping git pull in CI mode (code already checked out)"
     return 0
   fi
 
-  local stash_sha=""
-  # --porcelain also reports untracked files, which `git diff` misses. Those
-  # make `git pull` abort when an incoming commit adds a file of the same name.
-  if [[ -n "$(git -C "$DOTFILES_DIR" status --porcelain 2>/dev/null)" ]]; then
-    log_warn "Local changes detected in $DOTFILES_DIR"
-    log_warn "Stashing local changes before pulling..."
-    if ! git -C "$DOTFILES_DIR" stash push -u -m "Auto-stash by install.sh $(date +%Y%m%d_%H%M%S)"; then
-      log_error "Failed to stash local changes in $DOTFILES_DIR"
-      log_info "Please resolve manually:"
-      log_info "  cd $DOTFILES_DIR && git status"
-      exit 1
-    fi
-    stash_sha="$(git -C "$DOTFILES_DIR" rev-parse refs/stash)"
+  local status
+  if ! status="$(git -C "$DOTFILES_DIR" status --porcelain --untracked-files=all)"; then
+    log_error "Failed to inspect dotfiles repository: $DOTFILES_DIR"
+    exit 1
+  fi
+  if [[ -n "$status" ]]; then
+    log_error "Local changes or unresolved conflicts found in $DOTFILES_DIR"
+    log_info "Preserve and resolve your changes in a development worktree before updating."
+    log_info "No files or stash entries were changed. Inspect with:"
+    log_info "  git -C \"$DOTFILES_DIR\" status"
+    exit 1
   fi
 
-  # --ff-only keeps a merge commit from being created behind the user's back;
-  # a diverged checkout is reported instead of silently conflicting.
-  if ! git -C "$DOTFILES_DIR" pull --ff-only --quiet; then
+  # Explicit flags override user settings, including rebase.autoStash=true.
+  # Stop on divergence instead of creating commits or replaying local changes.
+  if ! git -C "$DOTFILES_DIR" pull --ff-only --no-rebase --no-autostash --quiet; then
     log_error "Failed to update dotfiles repository"
-    restore_stash "$stash_sha"
-    log_info "The checkout may have local commits. Inspect it with:"
-    log_info "  cd $DOTFILES_DIR && git status"
-    log_info "  cd $DOTFILES_DIR && git log --oneline origin/main..HEAD"
+    log_info "Check the remote and branch history with:"
+    log_info "  git -C \"$DOTFILES_DIR\" status"
+    log_info "  git -C \"$DOTFILES_DIR\" log --oneline --left-right 'HEAD...@{upstream}'"
     exit 1
   fi
   log_success "Updated dotfiles repository"
-
-  restore_stash "$stash_sha"
 }
 
 # ------------------------------------------------------------------------------

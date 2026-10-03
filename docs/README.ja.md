@@ -135,11 +135,55 @@ DRY_RUN=true ./scripts/dotfiles.sh uninstall
 `DOTFILES_MODE=work ./scripts/dotfiles.sh install` のように指定します。
 `uninstall` はパッケージやクローン自体を削除しません。
 
+### ベースブランチの更新と設定の反映
+
+競合の原因、修正前後の違い、開発から反映までの図は、
+[PR #588 の原因と対策](dotfiles-update-safety.ja.md)を参照してください。
+
+`~/.dotfiles` の `main` は環境反映用とし、開発は専用ブランチの worktree で行います。
+ベースブランチに直接コミット・プッシュせず、変更は PR のマージ後に取り込みます。
+ホームの設定ファイルが `~/.dotfiles/src/` へのリンクの場合、
+ホーム側を編集してもベースブランチに差分が生じます。開発時は worktree 内の `src/` を編集してください。
+
+通常の `git pull` でも自動 stash の復元による競合を防ぐため、初回に次を設定します。
+この設定は dotfiles リポジトリと共有する worktree に適用されます。
+
+```bash
+git -C ~/.dotfiles config --local pull.ff only
+git -C ~/.dotfiles config --local pull.rebase false
+git -C ~/.dotfiles config --local pull.autoStash false
+git -C ~/.dotfiles config --local rebase.autoStash false
+git -C ~/.dotfiles config --local merge.autoStash false
+```
+
+日常の更新では、まず `git status --short` が空であることを確認します。
+
+```bash
+cd ~/.dotfiles
+git status --short
+git pull --ff-only --no-rebase --no-autostash &&
+  ./scripts/dotfiles.sh status &&
+  ./scripts/dotfiles.sh install
+```
+
+`pull` に失敗した場合は、設定を反映せず原因を確認してください。
+Karabiner などの設定が `EXISTS` になっている場合、通常ファイルに置き換わっているため、
+`pull` だけでは反映されません。`install` は既存ファイルをバックアップしてリンクを修復します。
+アプリによる設定の書き換えで、リンク切れや `src/` の差分が生じることもあります。更新時に状態を確認します。
+
 リポジトリの更新も含めて再セットアップする場合は、クイックスタートの
-`install.sh` を再実行します。既存クローンは `git pull --ff-only` で更新され、
-未コミット変更は未追跡ファイルも含めて一時退避・復元されます。
-復元が競合すると作業ツリーは更新後の状態になり、ローカル変更は stash に残ります。
-表示された SHA と `git stash list` を確認してから手動で復元してください。
+`install.sh` を再実行します。Windows の `install.ps1` も同じ更新方針です。
+未コミット変更・未追跡ファイル・未解決の競合がある場合は、ファイルと stash を変更せず停止します。
+作業ツリーがクリーンなら `git pull --ff-only --no-rebase --no-autostash` で更新します。
+`--dry-run` / `--ci`（Windows は `-DryRun` / `-CI`）では従来どおり更新をスキップします。
+
+既に競合している場合は、更新前に変更ファイル・未追跡ファイル・インデックスをバックアップし、
+別の worktree へ保全してからベースブランチをクリーンにします。
+退避済みの stash は `git stash list` で確認し、必要な変更を開発 worktree で復元・整理してください。
+環境反映用の `main` に自動で戻さないでください。
+
+[Git の公式説明](https://git-scm.com/docs/git-pull#Documentation/git-pull.txt---autostash)でも、
+更新成功後の自動 stash 復元による競合について説明されています。
 
 開発用のセットアップ・lint は [ローカル開発環境](local-dev.ja.md)、
 構成は [アーキテクチャ](architecture.ja.md)、

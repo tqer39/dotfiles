@@ -184,119 +184,45 @@ function New-SymbolicLinkSafe {
 # ------------------------------------------------------------------------------
 # Setup Functions
 # ------------------------------------------------------------------------------
-function Remove-StashEntry {
-    # Drop a stash entry identified by SHA.
-    #
-    # `git stash drop` only accepts a stash@{n} reflog reference, never a raw
-    # SHA, so the position has to be looked up. It is looked up here rather than
-    # remembered from the push because the stash stack is shared with every git
-    # worktree of this repository and another process may have pushed onto it in
-    # the meantime.
-    param([string]$StashSha)
-
-    for ($index = 0; $index -lt 100; $index++) {
-        $entry = "$(git rev-parse --verify --quiet "stash@{$index}" 2>$null)".Trim()
-        if ([string]::IsNullOrWhiteSpace($entry)) {
-            return $false
-        }
-        if ($entry -eq $StashSha) {
-            git stash drop --quiet "stash@{$index}" 2>$null
-            return ($LASTEXITCODE -eq 0)
-        }
-    }
-
-    return $false
-}
-
-function Restore-Stash {
-    # Restore a stash entry created by Update-Repository.
-    #
-    # The entry is applied by SHA rather than by stash@{n}: the stash stack is
-    # shared with every git worktree of this repository, so a positional ref can
-    # point at somebody else's entry by the time we get here.
-    #
-    # On conflict the entry is kept so no work is lost, and the working tree is
-    # rolled back to the freshly pulled state - leaving conflict markers behind
-    # would propagate them into every symlinked dotfile.
-    param([string]$StashSha)
-
-    if ([string]::IsNullOrWhiteSpace($StashSha)) {
-        return
-    }
-
-    git stash apply --quiet $StashSha 2>$null
-    if ($LASTEXITCODE -eq 0) {
-        Write-Success "Restored your local changes"
-        if (-not (Remove-StashEntry $StashSha)) {
-            Write-Warn "Could not drop the now-redundant stash entry: $StashSha"
-        }
-        return
-    }
-
-    git reset --hard --quiet HEAD 2>$null
-    Write-Warn "Your local changes conflict with the updated files"
-    Write-Warn "The working tree was reset to the updated state to avoid conflict markers"
-    Write-Warn "Your changes are safe in the stash: $StashSha"
-    Write-Info "Inspect and resolve them with:"
-    Write-Info "  cd $DotfilesDir; git stash show -p $StashSha"
-    Write-Info "  cd $DotfilesDir; git stash drop $StashSha   # once resolved"
-}
-
 function Update-Repository {
-    # Local changes are stashed before pulling and restored right afterwards.
-    # Failing to restore them is what used to pile up orphaned Auto-stash entries.
+    # Development belongs in a worktree; never replay edits into live dotfiles.
     if ($DryRun) {
-        Write-Info "[DRY-RUN] Would run: git -C $DotfilesDir pull --ff-only"
+        Write-Info "[DRY-RUN] Would require a clean checkout and run: git -C $DotfilesDir pull --ff-only --no-rebase --no-autostash"
         return
     }
 
     if ($CI) {
-        # Skip pull in CI mode - CI has already checked out the correct code
         Write-Info "Skipping git pull in CI mode (code already checked out)"
         return
     }
 
     Push-Location $DotfilesDir
     try {
-        $stashSha = ""
-        # --porcelain also reports untracked files, which `git diff` misses.
-        # Those make `git pull` abort when an incoming commit adds a file of the
-        # same name.
-        $dirty = git status --porcelain 2>$null
+        $dirty = git status --porcelain --untracked-files=all
+        if ($LASTEXITCODE -ne 0) {
+            throw "Failed to inspect dotfiles repository"
+        }
         if ($dirty) {
-            Write-Warn "Local changes detected in $DotfilesDir"
-            Write-Warn "Stashing local changes before pulling..."
-            $stashName = "Auto-stash by install.ps1 $(Get-Date -Format 'yyyyMMdd_HHmmss')"
-            git stash push -u -m $stashName 2>$null
-            if ($LASTEXITCODE -ne 0) {
-                throw "git stash failed with exit code $LASTEXITCODE"
-            }
-            $stashSha = "$(git rev-parse refs/stash 2>$null)".Trim()
+            Write-Info "Preserve and resolve your changes in a development worktree before updating."
+            Write-Info "No files or stash entries were changed."
+            throw "Local changes or unresolved conflicts found in $DotfilesDir"
         }
 
-        # --ff-only keeps a merge commit from being created behind the user's
-        # back; a diverged checkout is reported instead of silently conflicting.
-        git pull --ff-only --quiet 2>$null
+        # Override user settings and stop on divergence without creating commits.
+        git pull --ff-only --no-rebase --no-autostash --quiet
         if ($LASTEXITCODE -ne 0) {
-            Restore-Stash $stashSha
-            Write-Err "Failed to update dotfiles repository"
-            Write-Info "The checkout may have local commits. Inspect it with:"
-            Write-Info "  cd $DotfilesDir; git status"
-            Write-Info "  cd $DotfilesDir; git log --oneline origin/main..HEAD"
-            Pop-Location
-            exit 1
+            Write-Info "Check the remote and branch history with:"
+            Write-Info "  git log --oneline --left-right 'HEAD...@{upstream}'"
+            throw "git pull failed with exit code $LASTEXITCODE"
         }
         Write-Success "Updated dotfiles repository"
-
-        Restore-Stash $stashSha
     } catch {
         Write-Err "Failed to update dotfiles repository: $_"
-        Write-Info "Please resolve manually:"
-        Write-Info "  cd $DotfilesDir; git status"
-        Pop-Location
+        Write-Info "Inspect with: git -C `"$DotfilesDir`" status"
         exit 1
+    } finally {
+        Pop-Location
     }
-    Pop-Location
 }
 
 function Install-Repository {
