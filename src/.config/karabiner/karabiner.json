@@ -394,6 +394,33 @@
       "complex_modifications": {
         "rules": [
           {
+            "description": "Ghostty: 元 Caps Lock（Control）+Space で入力ソースを切り替える",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "spacebar",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "spacebar",
+                    "modifiers": ["left_command"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.mitchellh\\.ghostty$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "OS: Control を Command として使う（ターミナルと Codex を除く）",
             "manipulators": [
               {
