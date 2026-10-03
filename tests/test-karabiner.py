@@ -77,6 +77,18 @@ class ModifierRoleTest(unittest.TestCase):
                     self.assertEqual(chord(control, "c", app), ("c", {control}))
                     self.assertEqual(chord(control, "tab", app), ("tab", {control}))
 
+    def test_ghostty_control_space_switches_input_source(self):
+        for control in ("left_control", "right_control"):
+            self.assertEqual(chord(control, "spacebar", "com.mitchellh.ghostty"),
+                             ("spacebar", {"left_command"}))
+            for extra in ({"left_shift"}, {"left_option"}):
+                self.assertEqual(chord(control, "spacebar", "com.mitchellh.ghostty", extra),
+                                 ("spacebar", {control, *extra}))
+            for app in ("com.apple.Terminal", "com.openai.codex", "com.cmuxterm.app"):
+                self.assertEqual(chord(control, "spacebar", app), ("spacebar", {control}))
+        self.assertEqual(chord("left_command", "spacebar", "com.mitchellh.ghostty"),
+                         ("spacebar", {"left_command"}))
+
     def test_command_is_not_remapped(self):
         for app in ("com.apple.TextEdit", "com.google.Chrome", *TERMINALS_AND_CODEX):
             self.assertEqual(transform("left_command", set(), app), ("left_command", set()))
