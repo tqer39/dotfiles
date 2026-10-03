@@ -137,6 +137,9 @@ DRY_RUN=true ./scripts/dotfiles.sh uninstall
 
 ### ベースブランチの更新と設定の反映
 
+競合の原因、修正前後の違い、開発から反映までの図は、
+[PR #588 の原因と対策](dotfiles-update-safety.ja.md)を参照してください。
+
 `~/.dotfiles` の `main` は環境反映用とし、開発は専用ブランチの worktree で行います。
 ベースブランチに直接コミット・プッシュせず、変更は PR のマージ後に取り込みます。
 ホームの設定ファイルが `~/.dotfiles/src/` へのリンクの場合、
