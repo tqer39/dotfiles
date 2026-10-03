@@ -394,7 +394,268 @@
       "complex_modifications": {
         "rules": [
           {
+            "description": "OS: Control を Command として使う（ターミナルと Codex を除く）",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "left_control",
+                  "modifiers": { "optional": ["any"] }
+                },
+                "to": [{ "key_code": "left_command" }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.openai\\.codex$"
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "right_control",
+                  "modifiers": { "optional": ["any"] }
+                },
+                "to": [{ "key_code": "left_command" }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_unless",
+                    "bundle_identifiers": [
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$",
+                      "^com\\.openai\\.codex$"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "ChatGPT Codex: Control の入力操作を維持",
+            "enabled": false,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "a",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "a", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "c",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "c", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "v",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "v", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "w", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "q",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "q", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "n", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "tab", "modifiers": ["left_control"] }],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "pointing_button": "button1",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "pointing_button": "button1",
+                    "modifiers": ["left_control"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "OS: Control でアプリ共通の Command ショートカットを実行",
+            "enabled": false,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "w",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "w", "modifiers": ["left_command"] }]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "q",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "q", "modifiers": ["left_command"] }]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "tab", "modifiers": ["left_command"] }]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "n",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [{ "key_code": "n", "modifiers": ["left_command"] }]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "pointing_button": "button1",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": ["shift", "option", "caps_lock"]
+                  }
+                },
+                "to": [
+                  {
+                    "pointing_button": "button1",
+                    "modifiers": ["left_command"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "Terminal: Control で貼り付け・新規タブ・タブ終了・アプリ終了",
+            "enabled": false,
             "manipulators": [
               {
                 "type": "basic",
@@ -484,6 +745,7 @@
           },
           {
             "description": "Ghostty: 元 Caps Lock（右 Control）を Command として使う（コピー・貼り付け）",
+            "enabled": false,
             "manipulators": [
               {
                 "type": "basic",
@@ -529,6 +791,7 @@
           },
           {
             "description": "Google Chrome / Brave / Safari: 左 Command と左 Control を交換",
+            "enabled": false,
             "manipulators": [
               {
                 "description": "交換後の Command+Option+矢印を Control+Option+矢印に戻す（Mission Control）",
@@ -636,28 +899,6 @@
                 ]
               },
               {
-                "description": "交換後の左 Command+Tab を Control+Tab に戻す（Shift で前のタブ）",
-                "type": "basic",
-                "from": {
-                  "key_code": "tab",
-                  "modifiers": {
-                    "mandatory": ["left_command"],
-                    "optional": ["shift", "caps_lock"]
-                  }
-                },
-                "to": [{ "key_code": "tab", "modifiers": ["left_control"] }],
-                "conditions": [
-                  {
-                    "type": "frontmost_application_if",
-                    "bundle_identifiers": [
-                      "^com\\.google\\.Chrome$",
-                      "^com\\.brave\\.Browser$",
-                      "^com\\.apple\\.Safari$"
-                    ]
-                  }
-                ]
-              },
-              {
                 "type": "basic",
                 "from": {
                   "key_code": "left_command",
@@ -697,6 +938,7 @@
           },
           {
             "description": "VS Code: 元 Caps Lock を Control として使い、Control+Tab / Shift+Tab で次・前のタブへ移動",
+            "enabled": false,
             "manipulators": [
               {
                 "type": "basic",
@@ -717,55 +959,12 @@
                     "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"]
                   }
                 ]
-              },
-              {
-                "type": "basic",
-                "from": {
-                  "key_code": "tab",
-                  "modifiers": {
-                    "mandatory": ["control", "shift"],
-                    "optional": ["caps_lock"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "left_arrow",
-                    "modifiers": ["left_command", "left_option"]
-                  }
-                ],
-                "conditions": [
-                  {
-                    "type": "frontmost_application_if",
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"]
-                  }
-                ]
-              },
-              {
-                "type": "basic",
-                "from": {
-                  "key_code": "tab",
-                  "modifiers": {
-                    "mandatory": ["control"],
-                    "optional": ["caps_lock"]
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "right_arrow",
-                    "modifiers": ["left_command", "left_option"]
-                  }
-                ],
-                "conditions": [
-                  {
-                    "type": "frontmost_application_if",
-                    "bundle_identifiers": ["^com\\.microsoft\\.VSCode$"]
-                  }
-                ]
               }
             ]
           },
           {
             "description": "Slack: Control+左クリックを Command+左クリックに変換（別ウィンドウで開く）",
+            "enabled": false,
             "manipulators": [
               {
                 "type": "basic",
@@ -793,6 +992,7 @@
           },
           {
             "description": "Slack / Nani: Control+Enter で送信・実行",
+            "enabled": false,
             "manipulators": [
               {
                 "type": "basic",
@@ -993,6 +1193,7 @@
           },
           {
             "description": "OS: Control で編集・保存・検索・書式・タブ操作（ターミナルを除く）",
+            "enabled": false,
             "manipulators": [
               {
                 "type": "basic",

@@ -1,17 +1,32 @@
-# ターミナルの共通ショートカット
+<!-- cspell:ignore HHKB -->
 
-Ghostty、cmux、macOS 標準の「ターミナル」で Control を使う。
-元 Caps Lock が Control として届く場合も同じ操作になる。
+# macOS の共通ショートカット
+
+macOS では Caps Lock を Command に設定します。Karabiner は物理 Control を Command として扱います。
+Windows + HHKB では Caps Lock を Control に設定し、Windows 標準の Control ショートカットをそのまま使います。
+ターミナルと ChatGPT デスクトップアプリの Codex では、Control を本来のテキスト編集・チャット切替に使うため、Karabiner は変換しません。
 
 | キー | 操作 |
 | --- | --- |
-| Ctrl+C | 選択範囲のコピー |
+| Ctrl+W | 現在のウィンドウまたはタブを閉じる |
+| Ctrl+Q | アプリを終了する |
+| Ctrl+Tab | 次のアプリへ切り替える |
+| Ctrl+Shift+Tab | 前のアプリへ切り替える |
+| Ctrl+N | 新規ウィンドウまたはタブを開く |
+| Ctrl+Shift+N | 新規の別形態のウィンドウまたはタブを開く |
+| Ctrl+クリック | Command+クリック相当の操作 |
+
+各アプリが Command ショートカットを実装していれば、上記は同じアプリで同じ意味になる。Control+クリックは macOS 標準のコンテキストメニューではなく Command+クリックとして扱われる。
+
+ターミナルでは次の Control 操作も使う。
+
+| キー | 操作 |
+| --- | --- |
+| Ctrl+C | 選択範囲のコピー、または実行中コマンドの中断 |
 | Ctrl+V | 貼り付け |
 | Ctrl+T | 新規タブ |
 | Ctrl+W | 現在のタブを閉じる |
 | Ctrl+Q | アプリ全体を終了 |
-| Ctrl+Tab | 次のタブへ移動 |
-| Ctrl+Shift+Tab | 前のタブへ移動 |
 
 Ghostty は `src/.config/ghostty/config` で設定する。
 コピーは `performable` を使い、選択範囲がない場合は Ctrl+C を CLI に渡す。
