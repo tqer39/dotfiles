@@ -5,10 +5,10 @@ on:
 
 jobs:
   # ------------------------------------------------------------------------------
-  # Repository update tests (stash / pull path)
+  # Repository update tests (clean checkout / fast-forward only)
   # Every install test below passes --ci, which skips the pull entirely, so the
-  # update path needs its own coverage. That path stashes and restores local
-  # changes, and a regression there strands the user's work in the stash stack.
+  # update path needs its own coverage. Local changes must stop the update
+  # without modifying files, the index, or existing stash entries.
   # ------------------------------------------------------------------------------
   test-update-repository:
     name: Update path - ${{ matrix.os }}
@@ -25,6 +25,21 @@ jobs:
 
       - name: Run update_repository tests
         run: bash tests/test-update-repository.sh
+
+  test-update-repository-windows:
+    name: Update path - Windows ${{ matrix.shell }}
+    runs-on: windows-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        shell: [powershell, pwsh]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Run Update-Repository tests
+        run: python tests/test-update-repository.py --shell ${{ matrix.shell }}
 
   # ------------------------------------------------------------------------------
   # Minimal Install Tests (symlinks only, fast)
