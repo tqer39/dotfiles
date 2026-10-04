@@ -3,7 +3,7 @@
 ## 環境
 
 - OS: Darwin 25.3.0 arm64 (macOS)
-- rtk version: 0.37.1
+- rtk のバージョン: 0.37.1
 - active プロファイル: personal
 
 ## C. バイナリ検証

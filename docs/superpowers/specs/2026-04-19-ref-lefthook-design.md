@@ -5,7 +5,7 @@
 - ブランチ: `feature/ref-lefthook`
 - 参考リポ: `tqer39/terraform-github` (lefthook + pnpm + scripts/lint パターン)
 
-## Context
+## 背景
 
 現状の lint 基盤は `prek` (pre-commit 互換ランタイム) と `.pre-commit-config.yaml` で構成されている。`prek` は十分に高速だが、以下の課題がある。
 
@@ -15,7 +15,7 @@
 
 本 spec では `terraform-github` と同じ構成を採用し、`prek` 系を全面的に lefthook へ置換する。
 
-## Goals
+## 目的
 
 - `.pre-commit-config.yaml` の全 hook を `lefthook.yml` に同等再現する。
 - Node 系 lint 依存を `package.json` で pin し再現性を確保する。
@@ -24,7 +24,7 @@
 - CI (`prek.yml`) を `lint.yml` に置換する。
 - `prek` への brew / scoop 依存を削除し `mise` で一元管理する。
 
-## Non-Goals
+## 対象外
 
 - `betterleaks` 追加 (参照リポにはあるが現行 dotfiles に未導入。別 spec)
 - hook そのものの追加・削除 (`yamllint`, `actionlint`, `terraform fmt` 等)
@@ -33,7 +33,7 @@
 - `pre-commit` 本体パッケージ (`config/packages/Brewfile` の `brew "pre-commit"`) の扱いは現状維持の方針 — `prek` のみ削除する
 - バッジ画像の刷新以外の README リライト
 
-## Design Decisions
+## 設計方針
 
 | 決定 | 選択 |
 | --- | --- |
@@ -47,7 +47,7 @@
 | Windows lefthook 取得 | **mise** に統一 (scoop の `prek` は削除) |
 | ロールバック粒度 | **1 PR 単位の `git revert`** で原状復帰 |
 
-## Architecture
+## 構成
 
 ```text
 .
@@ -272,56 +272,56 @@ node_modules/
 
 ## 実装手順
 
-### Step 1: Node 環境準備
+### 手順 1: Node 環境準備
 
 - `package.json` を作成 (上記内容)
 - `pnpm install` で `pnpm-lock.yaml` 生成
 - `.gitignore` に `node_modules/`, `.lefthook/` 追加
-- Commit: `🔧 Node 開発依存を pnpm で固定`
+- コミット: `🔧 Node 開発依存を pnpm で固定`
 
-### Step 2: lefthook 設定
+### 手順 2: lefthook 設定
 
 - `lefthook.yml` を作成
 - `scripts/lint/*.sh` 6 本を `terraform-github` から流用 (権限 755 / shebang 確認)
 - `mise.toml` に `lefthook` / `pnpm` 追加 → `mise install`
-- Commit: `🔧 lefthook 設定とセーフティ系 hook を追加`
+- コミット: `🔧 lefthook 設定とセーフティ系 hook を追加`
 
-### Step 3: 動作 gate (元 prek と同等性検証)
+### 手順 3: 動作 gate (元 prek と同等性検証)
 
 - `lefthook install`
 - `lefthook run pre-commit --all-files` で 0 issues を確認
 - 不一致があれば glob / script を調整
 - 旧 `prek run --all-files` と diff が無いこと
 
-### Step 4: justfile 切替
+### 手順 4: justfile 切替
 
 - `setup-hooks` / `lint` / `lint-hook` / `lint-clean` を lefthook 化
 - `setup-node` を追加し `setup` に組込
 - `just lint` / `just lint-hook cspell` で 0 issues
-- Commit: `🔧 justfile を lefthook ベースに更新`
+- コミット: `🔧 justfile を lefthook ベースに更新`
 
-### Step 5: CI 切替
+### 手順 5: CI 切替
 
 - `.github/workflows/lint.yml` を新規作成
 - `.github/workflows/prek.yml` を削除
 - `README.md` / `docs/README.ja.md` のバッジ URL を `lint.yml` に差し替え
-- Commit: `🔧 CI を lefthook ワークフローに置換`
+- コミット: `🔧 CI を lefthook ワークフローに置換`
 
-### Step 6: インストーラ更新
+### 手順 6: インストーラ更新
 
 - `Brewfile`, `config/packages/Brewfile` から `prek` 削除
 - `install.ps1` の scoop 配列から `prek` 削除
 - `docs/local-dev.md` / `docs/local-dev.ja.md` の prek 記述を lefthook に差し替え
 - `.cspell/project-words.txt` に `lefthook` / `prettier` 等を追加 (cspell が必要と判定したもの)
-- Commit: `🧹 prek 関連の install/doc 記述を lefthook に置換`
+- コミット: `🧹 prek 関連の install/doc 記述を lefthook に置換`
 
-### Step 7: 旧 file 削除
+### 手順 7: 旧 file 削除
 
 - `.pre-commit-config.yaml` を削除
 - `just lint` 最終確認
-- Commit: `🔥 .pre-commit-config.yaml を削除`
+- コミット: `🔥 .pre-commit-config.yaml を削除`
 
-### Step 8: PR
+### 手順 8: PR
 
 - title: `🔧 lint 基盤を prek から lefthook に移行`
 - base: `main`, branch: `feature/ref-lefthook`
@@ -351,7 +351,7 @@ git restore --staged test.md && rm test.md
 act -W .github/workflows/lint.yml
 ```
 
-**Pass 条件**: 1〜4 がすべて exit 0、`prek run --all-files` と同じ違反数 (= 0)。
+**合格条件**: 1〜4 がすべて exit 0、`prek run --all-files` と同じ違反数 (= 0)。
 
 ## ロールバック
 
@@ -376,7 +376,7 @@ prek install     # 旧 hook 再導入 (brew/scoop で prek を再取得)
 | バッジ URL 差し替え漏れ | README 表示崩れ | `rg 'prek\.yml'` で全削除確認 |
 | `prek` ↔ `pre-commit` の混同 | `config/packages/Brewfile` の `brew "pre-commit"` を誤削除 | Non-Goal 明記、grep 時は単語境界 (`\bprek\b`) を使用 |
 
-## Critical Files
+## 主要ファイル
 
 新規:
 

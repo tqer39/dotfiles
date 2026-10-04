@@ -17,8 +17,8 @@ def profile():
     return next(item for item in json.loads(CONFIG.read_text())["profiles"] if item.get("selected"))
 
 
-def transform(key, modifiers, app, variables=None):
-    """Evaluate the first matching basic key rule used by this configuration."""
+def matching_rule(key, modifiers, app, variables=None):
+    """Find the first matching basic key rule and unconsumed modifiers."""
     variables = {} if variables is None else variables
     groups = {
         "control": {"left_control", "right_control"},
@@ -53,25 +53,103 @@ def transform(key, modifiers, app, variables=None):
             allowed = set().union(*(groups.get(modifier, {modifier}) for modifier in optional))
             if "any" not in optional and remaining - allowed:
                 continue
-            for output in item["to"]:
-                variable = output.get("set_variable")
-                if variable:
-                    variables[variable["name"]] = variable["value"]
-            output = next((output for output in item["to"] if "key_code" in output), None)
-            if output is None:
-                continue
-            return output["key_code"], remaining | set(output.get("modifiers", []))
+            return item, remaining
+    return None, modifiers
+
+
+def transform(key, modifiers, app, variables=None):
+    """Evaluate a following key using the currently held modifier state."""
+    item, remaining = matching_rule(key, modifiers, app, variables)
+    if item:
+        output = next(output for output in item["to"] if "key_code" in output)
+        return output["key_code"], remaining | set(output.get("modifiers", []))
     return key, modifiers
+
+
+class ModifierPress:
+    """Model key/variable lifetimes for a single modifier press, not all Karabiner features.
+
+    Karabiner 16.3.0 basic/event_sender.hpp releases non-final `to` events
+    immediately; event_queue/queue.hpp also applies their key_up_value then.
+    """
+
+    def __init__(self, item):
+        self.item = item
+        self.held = set()
+        self.variables = {}
+        self.deferred = []
+        for index, output in enumerate(item["to"]):
+            self.event(output, True)
+            if index < len(item["to"]) - 1 or not output.get("repeat", True):
+                self.event(output, False)
+            else:
+                self.deferred.append(output)
+
+    def event(self, output, down):
+        if "key_code" in output:
+            if down:
+                self.held.add(output["key_code"])
+            else:
+                self.held.discard(output["key_code"])
+        if "set_variable" in output:
+            variable = output["set_variable"]
+            value_key = "value" if down else "key_up_value"
+            if value_key in variable:
+                self.variables[variable["name"]] = variable[value_key]
+
+    def release(self):
+        for output in self.deferred:
+            self.event(output, False)
+        for output in self.item.get("to_after_key_up", []):
+            self.event(output, True)
+            self.event(output, False)
+
+
+def press_modifier(modifier, app):
+    item, _ = matching_rule(modifier, set(), app)
+    return ModifierPress(item or {"to": [{"key_code": modifier}]})
 
 
 def chord(modifier, key, app, extra=frozenset()):
     """Modifier key-down is handled before the following key event."""
-    variables = {}
-    mapped, _ = transform(modifier, set(), app, variables)
-    return transform(key, {mapped, *extra}, app, variables)
+    press = press_modifier(modifier, app)
+    return transform(key, press.held | set(extra), app, press.variables)
 
 
 class ModifierRoleTest(unittest.TestCase):
+    def test_output_model_detects_early_key_and_variable_release(self):
+        variable = {"set_variable": {
+            "name": "original_control_pressed", "value": True, "key_up_value": False,
+        }}
+        command = {"key_code": "left_command"}
+        broken_key = ModifierPress({"to": [command, variable]})
+        self.assertEqual(broken_key.held, set())
+        self.assertTrue(broken_key.variables["original_control_pressed"])
+        broken_variable = ModifierPress({"to": [variable, command]})
+        self.assertEqual(broken_variable.held, {"left_command"})
+        self.assertFalse(broken_variable.variables["original_control_pressed"])
+
+    def test_command_and_origin_state_last_until_control_release(self):
+        for app in ("com.openai.codex", "com.apple.TextEdit", "com.google.Chrome"):
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    press = press_modifier(control, app)
+                    self.assertEqual(press.held, {"left_command"})
+                    self.assertTrue(press.variables["original_control_pressed"])
+                    press.release()
+                    self.assertEqual(press.held, set())
+                    self.assertFalse(press.variables["original_control_pressed"])
+                    for key in ("j", "tab"):
+                        self.assertEqual(transform(key, {"left_command"}, app, press.variables),
+                                         (key, {"left_command"}))
+
+    def test_input_switch_copy_paste_and_select_all_with_held_control(self):
+        for app in ("com.openai.codex", "com.apple.TextEdit", "com.google.Chrome"):
+            for control in ("left_control", "right_control"):
+                for key in ("spacebar", "c", "v", "a"):
+                    with self.subTest(app=app, control=control, key=key):
+                        self.assertEqual(chord(control, key, app), (key, {"left_command"}))
+
     def test_control_is_command_in_regular_apps_and_codex(self):
         for app in (
             "com.apple.TextEdit", "com.google.Chrome", "com.microsoft.VSCode",
@@ -94,7 +172,7 @@ class ModifierRoleTest(unittest.TestCase):
         for control in ("left_control", "right_control"):
             with self.subTest(control=control):
                 self.assertEqual(chord(control, "j", "com.openai.codex"),
-                                 ("j", {"left_control", "left_option"}))
+                                 ("j", {"left_control"}))
 
     def test_codex_control_shift_j_opens_terminal(self):
         for control in ("left_control", "right_control"):
@@ -102,21 +180,16 @@ class ModifierRoleTest(unittest.TestCase):
                 self.assertEqual(chord(control, "j", "com.openai.codex", {"left_shift"}),
                                  ("j", {"left_command"}))
 
-    def test_control_j_keeps_command_in_other_apps(self):
-        for control in ("left_control", "right_control"):
-            with self.subTest(control=control):
-                self.assertEqual(chord(control, "j", "com.apple.TextEdit"),
-                                 ("j", {"left_command"}))
-
-    def test_control_j_runs_nani_quick_translate_in_browsers(self):
+    def test_control_j_runs_nani_quick_translate_in_regular_apps(self):
         for app in (
-            "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
-            "org.mozilla.firefox",
+            "com.apple.TextEdit", "com.google.Chrome", "com.brave.Browser",
+            "com.apple.Safari", "org.mozilla.firefox", "com.microsoft.VSCode",
+            "com.openai.codex",
         ):
             for control in ("left_control", "right_control"):
                 with self.subTest(app=app, control=control):
                     self.assertEqual(chord(control, "j", app),
-                                     ("j", {"left_control", "left_option"}))
+                                     ("j", {"left_control"}))
 
     def test_control_tab_moves_browser_and_vscode_tabs(self):
         for app in (
@@ -147,8 +220,9 @@ class ModifierRoleTest(unittest.TestCase):
 
     def test_physical_command_j_keeps_native_shortcuts(self):
         for app in (
-            "com.openai.codex", "com.google.Chrome", "com.brave.Browser",
-            "com.apple.Safari", "org.mozilla.firefox",
+            "com.apple.TextEdit", "com.openai.codex", "com.google.Chrome",
+            "com.brave.Browser", "com.apple.Safari", "org.mozilla.firefox",
+            "com.microsoft.VSCode", *TERMINALS,
         ):
             with self.subTest(app=app):
                 self.assertEqual(transform("j", {"left_command"}, app),
@@ -163,6 +237,8 @@ class ModifierRoleTest(unittest.TestCase):
                     self.assertEqual(transform(control, set(), app), (control, set()))
                     self.assertEqual(chord(control, "c", app), ("c", {control}))
                     self.assertEqual(chord(control, "tab", app), ("tab", {control}))
+                    self.assertEqual(chord(control, "j", app),
+                                     ("j", {"left_control"}))
 
     def test_ghostty_control_space_switches_input_source(self):
         for control in ("left_control", "right_control"):

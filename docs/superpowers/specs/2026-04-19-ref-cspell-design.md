@@ -6,19 +6,19 @@
 - Topic: ref-cspell
 - ブランチ: `feature/ref-cspell`
 
-## Context
+## 背景
 
 現状の `cspell.json` には `words[]` が単一配列で ~180 語並んでおり管理性が低い。重複 (`direnv` / `direnvrc` など)、タイポ疑い (`esktop`, `donotpresent`, `dearu`)、無秩序な並びが混在し、新語追加の diff も config ノイズと絡む。
 
 `tqer39/terraform-github` リポでは `.cspell/project-words.txt` へ辞書を切り出しており、レビュー性・保守性ともに優れる。本 spec では同パターンを採用しつつ、`cspell lint` の実行結果で実際に必要な語のみを残す実証的クリーンアップを行う設計を定める。
 
-## Goals
+## 目的
 
 - `cspell.json` の `words[]` を `.cspell/project-words.txt` に切り出して、`cspell.json` は設定のみ保持する
 - 外部辞書に対して `cspell lint` の出力で必要語を検証し、未使用語を削除する
 - 新語追加の diff を cspell 設定ノイズから分離してレビューしやすい状態にする
 
-## Non-Goals
+## 対象外
 
 - **lefthook への移行** (`ref-lefthook` として別 spec)
 - **`.python-version` と `mise.toml` の統合** (`ref-mise` として別 spec)
@@ -27,7 +27,7 @@
 - `cspell` / `cspell-cli` バージョン更新、VS Code 拡張側の設定
 - 既存になかった語 (`missing`) の自動追加
 
-## Design Decisions
+## 設計方針
 
 | 決定 | 選択 |
 | --- | --- |
@@ -39,7 +39,7 @@
 | 欠落語の扱い | **本 spec では追加しない** (精査は別タスク) |
 | ツール本体 | **prek 据え置き** (lefthook 移行は別 spec) |
 
-## Architecture
+## 構成
 
 ```text
 .
@@ -117,33 +117,33 @@ comm -13 /tmp/cspell-current.txt /tmp/cspell-needed.txt > /tmp/cspell-missing.tx
 
 ## 実装手順
 
-### Step 1: 辞書切り出し (現行同等を担保)
+### 手順 1: 辞書切り出し (現行同等を担保)
 
 - `.cspell/` 作成
 - `jq -r '.words[]' cspell.json | sort -uf > .cspell/project-words.txt`
 - `cspell.json` の `words[]` を削除し、`dictionaryDefinitions` と `dictionaries` を追加
 - `just lint-hook cspell` と `cspell lint --no-progress '**' '.*/**'` が 0 issues で pass すること
-- Commit: `🔧 cspell 辞書を .cspell/project-words.txt に外出し`
+- コミット: `🔧 cspell 辞書を .cspell/project-words.txt に外出し`
 
-### Step 2: 未使用語検出
+### 手順 2: 未使用語検出
 
 - 上記ワークフローを実行して `/tmp/cspell-unused.txt` を生成
 - 各語を `rg -iw '<word>'` で全 file 確認
 - 削除候補一覧をユーザーに提示して承認を得る
 
-### Step 3: 辞書クリーンアップ
+### 手順 3: 辞書クリーンアップ
 
 - `.cspell/project-words.txt` から承認済みエントリを削除
 - `sort -uf` で再整列、末尾 newline
 - `cspell lint` を再実行して 0 issues を確認
-- Commit: `🧹 未使用の cspell 辞書エントリを削除`
+- コミット: `🧹 未使用の cspell 辞書エントリを削除`
 
-### Step 4: ドキュメント
+### 手順 4: ドキュメント
 
 - 本 spec は既に commit 済み
 - writing-plans スキルで `docs/superpowers/plans/2026-04-19-ref-cspell.md` を生成
 
-### Step 5: PR
+### 手順 5: PR
 
 - title: `🧹 cspell 辞書を .cspell/ に外出しして未使用語を整理`
 - base: `main`, branch: `feature/ref-cspell`
@@ -177,7 +177,7 @@ echo "sampleword" >> .cspell/project-words.txt
 | 削除語がコメント・履歴・バイナリに残存 | 後日 unknown word 警告 | レビュー時に `rg -iw` で全 file 検索 |
 | VS Code cspell 拡張が辞書を読まない | エディタ上の false positive | cspell v6+ 標準サポートあり、検証 Step 4 で確認 |
 
-## Critical Files
+## 主要ファイル
 
 - `cspell.json` (変更)
 - `.cspell/project-words.txt` (新規)

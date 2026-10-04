@@ -7,7 +7,7 @@ description: >-
   CLI ツール、GUI アプリ、言語ランタイム、NPM パッケージ、VS Code 拡張の追加・削除すべてに適用。
 ---
 
-# Sync Packages
+# パッケージの同期
 
 パッケージを追加・削除する際に、全プラットフォーム（macOS, Linux, Windows）間の整合性を確保するスキル。
 

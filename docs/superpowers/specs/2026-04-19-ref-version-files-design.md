@@ -4,7 +4,7 @@
 - Topic: ref-version-files
 - ブランチ: `feature/ref-version-files`
 
-## Context
+## 背景
 
 リポジトリ ルートに tool version を宣言するファイルが 3 つ並存している。
 
@@ -18,14 +18,14 @@
 
 `ref-cspell` spec の Non-Goals で「`.python-version` と `mise.toml` の統合 (`ref-mise` として別 spec)」とした課題があった。これを terraform も含めた version file 全体の整合として本 spec で扱う。
 
-## Goals
+## 目的
 
 - `mise.toml` を tool version の **single source of truth** にする
 - `.python-version` / `.terraform-version` を削除し、二重管理 / drift を解消する
 - `.github/workflows/terraform.yml` を `jdx/mise-action` 経由に移行し、CI でも同じ SoT を使う
 - dead env (`TF_VERSION: '1.14.3'`) を削除する
 
-## Non-Goals
+## 対象外
 
 - **anyenv 自体の廃止**（`ref-anyenv-removal` として別 spec）
 - `src/.config/mise/config.{toml,personal,work}.toml`（user-level mise 設定）の再編
@@ -34,7 +34,7 @@
 - `infra/terraform/**/versions.tf` の `required_version` 改修
 - `setup-terraform` 以外の GH Actions 改修（`setup-tflint` 等は据え置き）
 
-## Design Decisions
+## 設計方針
 
 | 決定 | 選択 |
 | --- | --- |
@@ -51,7 +51,7 @@
 | Renovate 対応 | `mise.toml` 単一 SoT のため追加設定なし（既存ルールで mise 管理対象） |
 | ドキュメント / cspell 辞書 | 関連語の言及があれば実装時に grep で精査して更新 |
 
-## Architecture
+## 構成
 
 ```text
 .
@@ -99,34 +99,34 @@ steps:
 
 ## 実装手順
 
-### Step 1: `mise.toml` に Python 追加
+### 手順 1: `mise.toml` に Python 追加
 
 - `mise.toml` の `[tools]` に `python = "3.13.0"` を追記
 - ローカルで `mise install` → `mise current python` が `3.13.0` を返すことを確認
-- Commit: `🔧 mise.toml に Python を集約`
+- コミット: `🔧 mise.toml に Python を集約`
 
-### Step 2: `.python-version` / `.terraform-version` 削除
+### 手順 2: `.python-version` / `.terraform-version` 削除
 
 - 両ファイルを `git rm`
 - `mise current` が `python 3.13.0` / `terraform 1.14.8` を返すことを確認
 - `python --version` / `terraform version` がそれぞれ正しい version を返すことを確認
-- Commit: `🗑️ .python-version / .terraform-version を削除（mise.toml に集約）`
+- コミット: `🗑️ .python-version / .terraform-version を削除（mise.toml に集約）`
 
-### Step 3: GitHub Actions terraform.yml を mise 化
+### 手順 3: GitHub Actions terraform.yml を mise 化
 
 - `env.TF_VERSION` を削除
 - `Get current Terraform version` step を削除（`AWS_ACCOUNT_ID` export を別 step に分離 or 不要確認）
 - `Setup Terraform`（`hashicorp/setup-terraform`）を削除
 - `Checkout` の直後に `jdx/mise-action@<commit-sha>` を追加（`cache: true`）
-- Commit: `👷 terraform workflow を mise-action 経由に移行`
+- コミット: `👷 terraform workflow を mise-action 経由に移行`
 
-### Step 4: ドキュメント / 辞書整合
+### 手順 4: ドキュメント / 辞書整合
 
 - `rg -w '\.python-version|\.terraform-version'` で残参照を確認、ドキュメントの言及を更新
 - `.cspell/project-words.txt` に不要語があれば削除
-- Commit: `📝 .python-version / .terraform-version 削除に伴うドキュメント更新`
+- コミット: `📝 .python-version / .terraform-version 削除に伴うドキュメント更新`
 
-### Step 5: PR
+### 手順 5: PR
 
 - title: `🔧 tool version を mise.toml に集約（.python-version / .terraform-version 削除）`
 - base: `main`, branch: `feature/ref-version-files`
@@ -167,7 +167,7 @@ DRY_RUN=true bash scripts/installers/anyenv.sh
 | `infra/terraform/**/versions.tf` の `required_version` 制約と乖離 | provider / terraform エラー | Non-Goal だが Step 3 検証で plan が pass することを確認 |
 | `AWS_ACCOUNT_ID` export 行が他 step で必要だった場合の喪失 | apply / plan が `AWS_ACCOUNT_ID` 未定義で失敗 | Step 3 で grep で全参照を確認、必要なら別 step に分離 |
 
-## Critical Files
+## 主要ファイル
 
 - `mise.toml`（変更）
 - `.python-version`（削除）

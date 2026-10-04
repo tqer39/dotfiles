@@ -1,9 +1,10 @@
 # AGENTS.md
 
-[🇺🇸 English](../AGENTS.md)
+[生成されたルールの入口](../AGENTS.md)
 
 Codex と Claude Code に共通するリポジトリのガイダンスです。
-`CLAUDE.md` はこの英語版 `AGENTS.md` への symlink です。
+この文書が共通ガイダンスの正本です。ルートの `AGENTS.md` は RuleSync が生成する参照用の入口です。
+`CLAUDE.md` はルートの `AGENTS.md` への symlink です。
 **「実装の委譲（Claude Code 専用）」を除くすべての節を、両方のツールに適用します。**
 
 ## リポジトリの目的
@@ -23,7 +24,7 @@ mise run lint
 ./scripts/dotfiles.sh uninstall
 ./scripts/dotfiles.sh doctor
 
-# Independent concurrent work (creates a new branch and worktree)
+# 独立した並行作業（新しいブランチと worktree を作成）
 mise run wt-new <name>
 mise run wt-list
 
@@ -41,7 +42,7 @@ mise run tf -chdir=prod/bootstrap apply
 
 ## コーディングガイドライン
 
-- Shell: `#!/usr/bin/env bash` with `set -euo pipefail`
+- シェル: `#!/usr/bin/env bash` と `set -euo pipefail` を使用
 - 変数/関数名: snake_case
 - 算術演算: `count=$((count + 1))` (`((count++))` ではない)
 
@@ -63,7 +64,7 @@ mise run tf -chdir=prod/bootstrap apply
 - 定型作業には適用可能な既存スキルを使います。失敗が繰り返されたら、原因に応じて
   回帰テスト・スクリプト・適用範囲を絞った短い指示に反映します。
 
-依頼テンプレートと手戻りの記録方法は、[Codex の運用ガイド](codex.ja.md#日常の運用)を参照してください。
+依頼テンプレートと手戻りの記録方法は、[Codex の運用ガイド](codex.md#日常の運用)を参照してください。
 
 ## 完了条件と検証（両ツール共通）
 
@@ -168,6 +169,6 @@ herdr wait agent-status <pane_id> --status idle --timeout 600000
 
 ## ドキュメント
 
-- [docs/local-dev.ja.md](local-dev.ja.md) - 開発環境セットアップ
-- [docs/architecture.ja.md](architecture.ja.md) - アーキテクチャ詳細
-- [docs/codex.ja.md](codex.ja.md) - Codex の設定・運用・依頼テンプレート
+- [docs/local-dev.md](local-dev.md) - 開発環境セットアップ
+- [docs/architecture.md](architecture.md) - アーキテクチャ詳細
+- [docs/codex.md](codex.md) - Codex の設定・運用・依頼テンプレート

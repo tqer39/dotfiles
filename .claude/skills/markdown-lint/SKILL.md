@@ -3,9 +3,12 @@ name: markdown-lint
 description: Markdown ファイル編集後のリント実行。Markdown を作成・編集したら必ず実行。
 ---
 
-# Markdown Lint
+# Markdown の検証
 
 Markdown ファイルを作成・編集した後に lint を実行するスキル。
+
+このリポジトリでは、編集前に `docs/rules/documentation.md` の言語・命名規約を読みます。
+規約がない別のリポジトリでは、そのリポジトリとユーザーの指示に従います。
 
 ## 重要
 

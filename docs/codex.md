@@ -1,163 +1,158 @@
-# Codex quality setup
+# Codex の品質優先セットアップ
 
-[🇯🇵 日本語版](codex.ja.md)
+## 管理するファイル
 
-## Managed files
+dotfiles のインストーラーは macOS・Linux・Windows で次のファイルをリンクします。
 
-The dotfiles installer links these files on macOS, Linux, and Windows:
+- `src/.codex/AGENTS.md`: 日本語での応答、実装、検証、最終レビューに関する共通指示
+- `src/.codex/quality.config.toml`: GPT-6 Astra、通常時と Plan モードの推論強度
+  `max`、ライブ検索の設定
 
-- `src/.codex/AGENTS.md`: guidance for Japanese responses, implementation,
-  verification, and review.
-- `src/.codex/quality.config.toml`: GPT-6 Astra with Max reasoning for normal
-  and Plan mode, plus live web search.
+既存のインストール手順で `./scripts/dotfiles.sh install` を実行します。
+リンク先にある既存ファイルは `~/.dotfiles_backup/` に退避されます。
+認証情報、MCP 設定、プロジェクトの信頼設定、基本設定の `~/.codex/config.toml` は
+端末ごとに管理します。
 
-Run `./scripts/dotfiles.sh install` using the existing installation workflow.
-Existing destination files are backed up under `~/.dotfiles_backup/`.
-Authentication, MCP settings, project trust, and the base `~/.codex/config.toml`
-remain machine-local.
+## 使い方
 
-## Usage
-
-This profile was checked with Codex CLI 0.153.4. It requires access to
-`gpt-6-astra` with `max` reasoning.
+Codex CLI 0.153.4 で検証したプロファイルです。
+`gpt-6-astra` と推論強度 `max` を利用できるアカウントが必要です。
 
 ```bash
 codex --profile quality
-codex exec --profile quality "Review the current changes"
+codex exec --profile quality "現在の変更をレビューしてください"
 ```
 
-For the same defaults without a CLI profile, merge the four values into
-`~/.codex/config.toml`.
-Copy them from `quality.config.toml`, before any TOML table.
-Preserve the other settings. The desktop app and IDE extension share the base
-configuration; check the model picker when starting a new conversation.
-Project settings and explicit CLI options can override these defaults.
+プロファイルを指定せずに同じ設定を使う場合は、`quality.config.toml` の先頭にある
+4 項目を `~/.codex/config.toml` に統合します。
+TOML のテーブルより前に記載し、ほかの設定は保持してください。
+デスクトップアプリと IDE 拡張も基本設定を共有します。新しい会話でモデルの選択を確認してください。
+プロジェクト設定や CLI の明示指定は、これらの既定値より優先されます。
 
-Max prioritizes reasoning depth and can increase latency and usage. Ultra is
-available separately for work that benefits from parallel subagents; select it
-explicitly when needed. Neither setting guarantees better results on every task.
-Context limits and compaction thresholds use the model defaults.
+Max は推論の深さを優先するため、応答時間や利用量の増加に注意してください。
+並列のサブエージェントを活用できる作業では、必要に応じて Ultra を明示的に選択します。
+どちらも、すべての課題で品質の向上を保証する設定ではありません。
+コンテキスト上限と圧縮のしきい値はモデルの既定値を使用します。
 
-## Verification
+## 動作確認
 
 ```bash
 codex --strict-config doctor --summary
 ```
 
-Start `codex --profile quality` and use `/status` to inspect the runtime settings.
-Check the reported model, config loading, authentication, and connectivity.
-Inspect MCP warnings for missing executables. Disable obsolete servers in the
-machine-local config or repair their installation before enabling them again.
-Use a representative task and its tests to assess output quality.
+`codex --profile quality` で起動し、`/status` で実行時の設定を確認します。
+表示されたモデル、設定の読み込み、認証、接続の結果を確認します。
+MCP の警告が出たら、実行ファイルの有無を確認してください。
+古いサーバーは端末の設定で無効化するか、インストールを修復してから有効にします。
+出力の品質は、代表的な作業とそのテストで評価してください。
 
-## Daily workflow
+## 日常の運用
 
-Start with the existing GPT-6 Astra / `max` setup. Improve instructions,
-completion criteria, and verification first.
-Assess model or reasoning changes after collecting the results below.
+既存の GPT-6 Astra / `max` 設定を出発点にします。
+まず指示・完了条件・検証を整え、モデルや推論強度の変更は、以下の記録を見て判断します。
 
-### Instruction scope
+### 指示の適用範囲
 
-Keep personal Codex preferences in `src/.codex/AGENTS.md`, installed as
-`~/.codex/AGENTS.md`. Keep repository rules in [AGENTS.md](../AGENTS.md), which
-`CLAUDE.md` also references through a symlink. Common workflow and verification
-rules apply to both Codex and Claude Code. The delegation section applies only
-to Claude Code; Codex implements assigned work directly.
+個人共通の Codex 指示は、`~/.codex/AGENTS.md` にインストールされる
+`src/.codex/AGENTS.md` で管理します。
+リポジトリのルールは [AGENTS.md](../AGENTS.md) に置き、
+`CLAUDE.md` も symlink で同じファイルを参照します。
+共通の作業手順と検証ルールは Codex・Claude Code の両方に適用します。
+委譲の節は Claude Code 専用で、Codex は割り当てられた実装を直接行います。
 
-Codex reads global guidance before repository guidance.
-More specific project instructions can override earlier guidance. If unexpected rules apply, check for
-`AGENTS.override.md` at the global and project levels. Start a new Codex session
-after updating instruction files to confirm the loaded guidance.
-See [the official instruction discovery rules](https://learn.chatgpt.com/docs/agent-configuration/agents-md).
+Codex は個人共通の指示に続いてリポジトリの指示を読み込み、より具体的な
+プロジェクトの指示が、それ以前の指示に優先することがあります。
+想定外のルールが適用されたら、個人共通・プロジェクトの各階層にある
+`AGENTS.override.md` も確認します。
+指示ファイルを更新した後は、新しい Codex セッションで読み込まれた指示を確認してください。
+詳しくは[公式の指示ファイル仕様](https://learn.chatgpt.com/docs/agent-configuration/agents-md)を参照してください。
 
-### Request template
+### 依頼テンプレート
 
-Copy this template for daily requests. Include expected inputs and outputs or a
-concrete example when behavior matters. For large changes with unclear specifications, use Plan mode.
-Agree on the behavior and checks before implementation. Once the plan is agreed, proceed through verification.
+日常の依頼では、次のテンプレートをコピーして使います。
+動作に関する変更では、期待する入出力や具体例も添えてください。
+仕様が曖昧な大きな変更では、Plan モードで期待する動作と検証方法を合わせてから実装します。
+計画に合意した後は、検証まで進めます。
 
 ```text
-Goal: What should improve?
-Target: Relevant files, features, or errors
-Constraints: Behavior to preserve and boundaries of the change
-Done when: Expected behavior and required checks
+目的：何を改善したいか
+対象：関連するファイル・機能・エラー
+制約：維持したい挙動や変更範囲
+完了条件：期待する動作と必要な検証
 
-Carry the work through implementation, necessary tests, verification, and diff review.
-Clarify unknowns that affect the specification.
-Finish by reporting changes, verification results, and anything left unverified.
+実装、必要なテスト、検証、差分レビューまで進めてください。
+仕様を左右する不明点は確認してください。
+最後に変更点、検証結果、未確認事項を報告してください。
 ```
 
-For example, define an installer idempotency task with a test home containing an existing file.
-After two installations, the destination remains the same symlink.
-The backup preserves the original file. The second run creates no extra backup.
-These are observable completion criteria.
+たとえば、インストーラーの冪等性を扱う作業では、次のように完了条件を具体化できます。
+「既存ファイルのある検証用ホームで2回インストールしても、リンク先は同じまま、
+元ファイルはバックアップに保持され、2回目には余分なバックアップを作らない」。
+このように、実際に観測できる動作を指定します。
 
-### Completion checks
+### 完了時の確認
 
-Completion requires `mise run lint`, checks suited to the change, and a final diff review. A bug fix also needs confirmation that
-the original reproduction no longer fails. Add regression coverage when the
-behavior change warrants it. Documentation changes need checks of links,
-documented commands, and English/Japanese consistency.
+このリポジトリでは、`mise run lint`、変更内容に合う検証、最終差分レビューを完了条件に含めます。
+不具合修正では、元の再現条件で問題が解消したことも確認します。
+意味のある動作変更には回帰テストを追加します。
+ドキュメントの変更では、リンク・記載したコマンド・日本語の正本との整合を確認します。
 
-Check the final lint summary and the files actually scanned. The shared
-[verification rules](../AGENTS.md#completion-and-verification-both-tools) explain
-the targeted cspell check that avoids a misleading zero-file success.
-The final report should name the commands or checks run, their results, and any
-unverified items with reasons. Review the final diff after automatic lint fixes.
+lint の最後の結果と、実際に検査されたファイルを確認します。
+cspell の0ファイル検査による誤判定を避ける方法は、
+[共通の検証ルール](AGENTS.md#完了条件と検証両ツール共通)を参照してください。
+最終報告には、実行したコマンドや確認、結果、未確認事項とその理由を記載します。
+lint が自動修正した場合は、その後の最終差分をレビューします。
 
-### Independent work
+### 独立した作業
 
-Keep separate objectives in separate threads. For concurrent editing, create a
-worktree from the repository root:
+別目的の変更は別スレッドに分けます。同時に編集するときは、
+リポジトリのルートで worktree を作成します。
 
 ```bash
 mise run wt-new codex-workflow
 mise run wt-list
 ```
 
-The recipe creates a new branch and directory under `../dotfiles-worktrees/`
-named `codex-workflow-<yymmdd>-<random>`. Start the corresponding thread in the
-printed worktree directory. Decide which files each task owns before editing,
-and coordinate any overlap when integrating changes.
+このレシピは `codex-workflow-<yymmdd>-<random>` という名前のブランチと、
+`../dotfiles-worktrees/` 配下のディレクトリを作成します。
+表示された worktree のディレクトリで、その作業のスレッドを開始します。
+編集前にファイルの担当範囲を決め、変更を統合する際にも重複を調整します。
 
-### Reusable improvements
+### 繰り返す作業の改善
 
-Use existing skills for routine work, such as `markdown-lint` for Markdown and
-`sync-install-docs` after installer changes. When the same failure recurs, record its cause.
-Use the smallest useful prevention. Add a regression test for a behavioral bug, or a script for a repeatable check.
-Use a short scoped instruction for a recurring decision. Update relevant English and Japanese guidance together.
+Markdown には `markdown-lint`、インストーラーの変更後には `sync-install-docs` など、
+定型作業に合う既存スキルを使います。
+同じ失敗が繰り返されたら、原因を記録し、必要な範囲で再発を防ぎます。
+動作の不具合には回帰テスト、定型的な確認にはスクリプト、繰り返す判断には
+適用範囲を絞った短い指示を使います。関連する正本と生成元の参照も一緒に更新します。
 
-### Assess the results
+### 効果の確認
 
-For the next three to five tasks, copy this record into each task's final report
-or work log. Keep actual observations; use "unrecorded" when data is missing.
+次の3〜5件について、下の記録欄を各作業の最終報告や作業ログにコピーして使います。
+実際に観測した内容を記録し、データがない項目は「未記録」とします。
 
 ```text
-Task / date:
-Additional correction rounds:
-Missed verification items:
-Follow-up exchanges until completion:
-Verification results / unverified items:
-Recurring cause / preventive change:
+作業名・日付：
+追加修正の回数：
+検証漏れの件数：
+完了までの追加のやり取り：
+検証結果・未確認事項：
+繰り返した原因・再発防止策：
 ```
 
-Count additional correction rounds after the first completion report for the
-original scope. Exclude new feature requests.
-Verification omissions are required checks found missing after that report.
-Count each user follow-up and agent response as one exchange.
-Exclude the initial request, tool calls, and progress updates.
-If later corrections occur, update the same task record.
+追加修正は、最初の完了報告後に元の依頼範囲で必要になった修正の回数を数えます。
+新しい機能の依頼は含めません。検証漏れは、その報告後に判明した必須の検証の欠落を数えます。
+やり取りは、ユーザーの追加発言とエージェントの応答を1往復とし、最初の依頼・
+ツール呼び出し・進捗報告は除きます。後から修正が必要になったら、同じ作業の記録を更新します。
 
-Compare tasks of similar scope with recent recorded work. If there is no earlier
-record, use the first few tasks as a baseline.
-Success means fewer correction rounds, verification omissions, and exchanges.
-The behavior and verification criteria must still be met.
-Decide whether to adjust the model or reasoning level after reviewing these observations.
-The workflow's effect has not yet been measured.
+最近の記録から、規模や内容が近い作業と比較します。
+以前の記録がなければ、最初の数件を比較の基準にします。
+期待する動作と検証条件を満たしたうえで、追加修正・検証漏れ・やり取りが減ることを成功基準にします。
+モデルや推論強度を調整するかは、この記録を確認してから判断します。運用の効果はまだ未測定です。
 
-## Official references
+## 公式資料
 
-- [Instruction scope and discovery](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
-- [Models and reasoning effort](https://learn.chatgpt.com/docs/models)
-- [Configuration profiles](https://learn.chatgpt.com/docs/config-file/config-advanced#profiles)
-- [Practical setup and verification](https://learn.chatgpt.com/guides/best-practices)
+- [指示の適用範囲と読み込み](https://learn.chatgpt.com/docs/agent-configuration/agents-md)
+- [モデルと推論強度](https://learn.chatgpt.com/docs/models)
+- [設定プロファイル](https://learn.chatgpt.com/docs/config-file/config-advanced#profiles)
+- [セットアップと検証の指針](https://learn.chatgpt.com/guides/best-practices)

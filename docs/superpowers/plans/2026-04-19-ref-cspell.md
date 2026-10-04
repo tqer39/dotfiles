@@ -1,18 +1,18 @@
-# ref-cspell Implementation Plan
+# ref-cspell 実装計画
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **エージェント向け:** 必須のサブスキルとして `superpowers:subagent-driven-development`（推奨）または `superpowers:executing-plans` を使い、タスク単位でこの計画を実施します。進捗はチェックボックス（`- [ ]`）で管理します。
 
-**Goal:** `cspell.json` の `words[]` を `.cspell/project-words.txt` に切り出し、未使用語をクリーンアップする。
+**目的:** `cspell.json` の `words[]` を `.cspell/project-words.txt` に切り出し、未使用語をクリーンアップする。
 
-**Architecture:** `dictionaryDefinitions` で外部辞書を参照する構成に変更する。辞書を一時退避した状態で `cspell --unique --words-only` を実行して必要語を抽出する。三方向 diff で未使用語を特定してユーザー承認後に削除する。
+**構成:** `dictionaryDefinitions` で外部辞書を参照する構成に変更する。辞書を一時退避した状態で `cspell --unique --words-only` を実行して必要語を抽出する。三方向 diff で未使用語を特定してユーザー承認後に削除する。
 
-**Tech Stack:** `cspell` v10 (streetsidesoftware/cspell-cli via prek) / `jq` / `comm` / `sort` / `ripgrep`
+**使用技術:** `cspell` v10 (streetsidesoftware/cspell-cli via prek) / `jq` / `comm` / `sort` / `ripgrep`
 
-**Spec:** `docs/superpowers/specs/2026-04-19-ref-cspell-design.md`
+**仕様:** `docs/superpowers/specs/2026-04-19-ref-cspell-design.md`
 
 ---
 
-## File Structure
+## ファイル構成
 
 | File | 役割 | Action |
 | --- | --- | --- |
@@ -22,11 +22,11 @@
 
 ---
 
-## Task 1: 辞書ファイルの切り出し
+## タスク 1: 辞書ファイルの切り出し
 
-**Files:**
+**対象ファイル:**
 
-- Create: `.cspell/project-words.txt`
+- 作成: `.cspell/project-words.txt`
 
 - [ ] **Step 1: `.cspell/` ディレクトリを作成**
 
@@ -51,11 +51,11 @@ jq '.words | length' cspell.json
 
 ---
 
-## Task 2: `cspell.json` の構造変更
+## タスク 2: `cspell.json` の構造変更
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `cspell.json`
+- 変更: `cspell.json`
 
 - [ ] **Step 1: `cspell.json` を書き換え**
 
@@ -93,9 +93,9 @@ jq . cspell.json > /dev/null && echo OK
 
 ---
 
-## Task 3: 現行同等 pass の確認 (gate)
+## タスク 3: 現行同等 pass の確認 (gate)
 
-**Files:** 確認のみ、変更なし。
+**対象ファイル:** 確認のみ、変更なし。
 
 - [ ] **Step 1: cspell を直接実行**
 
@@ -117,9 +117,9 @@ just lint-hook cspell
 
 ---
 
-## Task 4: 切り出しの commit
+## タスク 4: 切り出しの commit
 
-**Files:** git 操作のみ。
+**対象ファイル:** git 操作のみ。
 
 - [ ] **Step 1: 変更内容を確認**
 
@@ -140,9 +140,9 @@ git commit -m "🔧 cspell 辞書を .cspell/project-words.txt に外出し"
 
 ---
 
-## Task 5: 未使用語検出ワークフロー
+## タスク 5: 未使用語検出ワークフロー
 
-**Files:** 一時ファイルのみ、リポジトリに commit しない。
+**対象ファイル:** 一時ファイルのみ、リポジトリに commit しない。
 
 - [ ] **Step 1: ベースライン (現行辞書) を保存**
 
@@ -201,9 +201,9 @@ cat /tmp/cspell-unused-with-count.txt
 
 ---
 
-## Task 6: 削除候補のユーザー承認
+## タスク 6: 削除候補のユーザー承認
 
-**Files:** レビューのみ、変更なし。
+**対象ファイル:** レビューのみ、変更なし。
 
 - [ ] **Step 1: 削除候補一覧をユーザーに提示**
 
@@ -224,11 +224,11 @@ wc -l /tmp/cspell-remove.txt
 
 ---
 
-## Task 7: 辞書クリーンアップ
+## タスク 7: 辞書クリーンアップ
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `.cspell/project-words.txt`
+- 変更: `.cspell/project-words.txt`
 
 - [ ] **Step 1: 削除対象を除外した辞書を生成**
 
@@ -252,9 +252,9 @@ wc -l .cspell/project-words.txt
 
 ---
 
-## Task 8: クリーンアップ後の回帰確認
+## タスク 8: クリーンアップ後の回帰確認
 
-**Files:** 確認のみ。
+**対象ファイル:** 確認のみ。
 
 - [ ] **Step 1: cspell 単体で 0 issues 確認**
 
@@ -284,9 +284,9 @@ just lint
 
 ---
 
-## Task 9: クリーンアップの commit
+## タスク 9: クリーンアップの commit
 
-**Files:** git 操作のみ。
+**対象ファイル:** git 操作のみ。
 
 - [ ] **Step 1: 変更内容を確認**
 
@@ -304,9 +304,9 @@ git commit -m "🧹 未使用の cspell 辞書エントリを削除"
 
 ---
 
-## Task 10: PR 作成
+## タスク 10: PR 作成
 
-**Files:** git 操作のみ。
+**対象ファイル:** git 操作のみ。
 
 - [ ] **Step 1: branch を push**
 

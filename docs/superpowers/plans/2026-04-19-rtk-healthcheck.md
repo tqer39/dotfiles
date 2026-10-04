@@ -1,41 +1,41 @@
-# RTK Healthcheck Implementation Plan
+# RTK ヘルスチェック 実装計画
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **エージェント向け:** 必須のサブスキルとして `superpowers:subagent-driven-development`（推奨）または `superpowers:executing-plans` を使い、タスク単位でこの計画を実施します。進捗はチェックボックス（`- [ ]`）で管理します。
 
-**Goal:** RTK (Rust Token Killer) が dotfiles 環境で正常動作しているかを 1 セッションで把握する。
+**目的:** RTK (Rust Token Killer) が dotfiles 環境で正常動作しているかを 1 セッションで把握する。
 
-**Architecture:** 3 段階の独立チェック（C: バイナリ → A: hook 設定 → B: 効果測定）を Bash で順次実行し、各項目を ✅/⚠️/❌ で報告。最後に総合判定を出す。スクリプト化はしない一回性タスク。
+**構成:** 3 段階の独立チェック（C: バイナリ → A: hook 設定 → B: 効果測定）を Bash で順次実行し、各項目を ✅/⚠️/❌ で報告。最後に総合判定を出す。スクリプト化はしない一回性タスク。
 
-**Tech Stack:** bash, jq (settings.json パース), readlink, brew, rtk
+**使用技術:** bash, jq (settings.json パース), readlink, brew, rtk
 
 ---
 
-## File Structure
+## ファイル構成
 
 このプランは検証のみで成果物（ファイル変更）を生まない。最後に検証結果を 1 つだけドキュメント化する。
 
-- Create: `docs/superpowers/reports/2026-04-19-rtk-healthcheck-result.md` — 実行結果サマリ
+- 作成: `docs/superpowers/reports/2026-04-19-rtk-healthcheck-result.md` — 実行結果サマリ
 
 ---
 
-### Task 1: C. バイナリ検証
+### タスク 1: C. バイナリ検証
 
-**Files:** なし（コマンド実行のみ）
+**対象ファイル:** なし（コマンド実行のみ）
 
 - [ ] **Step 1: バイナリパス確認**
 
-Run: `command -v rtk`
-Expected: `/opt/homebrew/bin/rtk`（macOS Homebrew 環境）
+実行: `command -v rtk`
+期待する結果: `/opt/homebrew/bin/rtk`（macOS Homebrew 環境）
 
 - [ ] **Step 2: バージョン確認**
 
-Run: `rtk --version`
-Expected: `rtk <semver>` 形式の文字列が返る（cost-optimization spec 時点では `0.37.1`）
+実行: `rtk --version`
+期待する結果: `rtk <semver>` 形式の文字列が返る（cost-optimization spec 時点では `0.37.1`）
 
 - [ ] **Step 3: サブコマンド一覧確認**
 
-Run: `rtk --help`
-Expected: ヘルプテキストが返り、`init` サブコマンドが含まれる
+実行: `rtk --help`
+期待する結果: ヘルプテキストが返り、`init` サブコマンドが含まれる
 
 - [ ] **Step 4: 結果を記録**
 
@@ -43,30 +43,30 @@ Expected: ヘルプテキストが返り、`init` サブコマンドが含まれ
 
 ---
 
-### Task 2: A. hook セットアップ検証
+### タスク 2: A. hook セットアップ検証
 
-**Files:** なし（読み取りのみ）
+**対象ファイル:** なし（読み取りのみ）
 
 - [ ] **Step 1: settings.json の symlink 確認**
 
-Run: `readlink ~/.claude/settings.json`
-Expected: dotfiles リポジトリ内のパスを指す（例: `/Users/takeruooyama/.dotfiles/src/.claude/settings.personal.json`）。
+実行: `readlink ~/.claude/settings.json`
+期待する結果: dotfiles リポジトリ内のパスを指す（例: `/Users/takeruooyama/.dotfiles/src/.claude/settings.personal.json`）。
 - 出力なし → symlink ではない（要対処: `./scripts/dotfiles.sh install`）
 - 出力あり → どのプロファイル (personal/work) が active か記録
 
 - [ ] **Step 2: active settings.json に rtk hook が存在するか確認**
 
-Run: `jq '.hooks.PreToolUse' ~/.claude/settings.json`
-Expected: 配列が返り、その中に `rtk` を呼び出すエントリ（`command` フィールドに `rtk` を含む）がある。
+実行: `jq '.hooks.PreToolUse' ~/.claude/settings.json`
+期待する結果: 配列が返り、その中に `rtk` を呼び出すエントリ（`command` フィールドに `rtk` を含む）がある。
 - `null` → hook 未登録（要対処: `rtk init --global` 再実行 + dotfiles 反映）
 - 配列はあるが rtk なし → 同上
 
 - [ ] **Step 3: dotfiles ソース側にも反映されているか確認**
 
 active プロファイルが personal なら:
-Run: `jq '.hooks.PreToolUse' /Users/takeruooyama/.dotfiles/src/.claude/settings.personal.json`
+実行: `jq '.hooks.PreToolUse' /Users/takeruooyama/.dotfiles/src/.claude/settings.personal.json`
 work なら settings.work.json を見る。
-Expected: Step 2 と同等の hook が記録されている（symlink なので本来一致するはずだが、念のため確認）
+期待する結果: Step 2 と同等の hook が記録されている（symlink なので本来一致するはずだが、念のため確認）
 
 - [ ] **Step 4: 結果を記録**
 
@@ -74,17 +74,17 @@ Expected: Step 2 と同等の hook が記録されている（symlink なので�
 
 ---
 
-### Task 3: B. 効果測定（間接証拠）
+### タスク 3: B. 効果測定（間接証拠）
 
-**Files:** なし
+**対象ファイル:** なし
 
 - [ ] **Step 1: RTK のログ出力先を調査**
 
-Run: `rtk --help 2>&1 | grep -iE 'log|debug|cache|verbose'`
-Expected: ログ関連のオプションが見つかる、または何も無い（その場合は次ステップ）
+実行: `rtk --help 2>&1 | grep -iE 'log|debug|cache|verbose'`
+期待する結果: ログ関連のオプションが見つかる、または何も無い（その場合は次ステップ）
 
-Run: `ls -la ~/.cache/rtk/ ~/.local/share/rtk/ ~/Library/Caches/rtk/ 2>/dev/null`
-Expected: 既存ログディレクトリがあれば中身を確認
+実行: `ls -la ~/.cache/rtk/ ~/.local/share/rtk/ ~/Library/Caches/rtk/ 2>/dev/null`
+期待する結果: 既存ログディレクトリがあれば中身を確認
 
 - [ ] **Step 2: 直近セッションの圧縮痕跡を探す**
 
@@ -94,8 +94,8 @@ Expected: 既存ログディレクトリがあれば中身を確認
 
 - [ ] **Step 3: 軽量な再現テストを試行**
 
-Run: `RTK_DEBUG=1 rtk --help 2>&1 | head -20`（環境変数で詳細モードを有効化できるかの試行）
-Expected: 何らかの diagnostic 出力 or 通常出力。情報がなければスキップ。
+実行: `RTK_DEBUG=1 rtk --help 2>&1 | head -20`（環境変数で詳細モードを有効化できるかの試行）
+期待する結果: 何らかの diagnostic 出力 or 通常出力。情報がなければスキップ。
 
 - [ ] **Step 4: 結果を記録**
 
@@ -103,18 +103,18 @@ Expected: 何らかの diagnostic 出力 or 通常出力。情報がなければ
 
 ---
 
-### Task 4: 結果レポート作成と総合判定
+### タスク 4: 結果レポート作成と総合判定
 
-**Files:**
-- Create: `docs/superpowers/reports/2026-04-19-rtk-healthcheck-result.md`
+**対象ファイル:**
+- 作成: `docs/superpowers/reports/2026-04-19-rtk-healthcheck-result.md`
 
 - [ ] **Step 1: ディレクトリ作成（必要なら）**
 
-Run: `mkdir -p docs/superpowers/reports`
+実行: `mkdir -p docs/superpowers/reports`
 
 - [ ] **Step 2: レポート書き出し**
 
-Task 1〜3 の結果を以下のテンプレートに埋めて `2026-04-19-rtk-healthcheck-result.md` に保存:
+タスク 1〜3 の結果を以下のテンプレートに埋めて `2026-04-19-rtk-healthcheck-result.md` に保存:
 
 ```markdown
 # RTK ヘルスチェック実施結果 (2026-04-19)

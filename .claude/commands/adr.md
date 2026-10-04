@@ -1,46 +1,49 @@
 ---
-description: Create an Architecture Decision Record (ADR)
+description: アーキテクチャ決定記録（ADR）を日本語で作成する
 ---
 
-Create an ADR document in `docs/adr/` directory.
+# アーキテクチャ決定記録の作成
 
-## Instructions
+`docs/adr/` に ADR を作成します。
+文書の言語と命名は `docs/rules/documentation.md` に従います。
 
-1. Check existing ADR files in `docs/adr/` to determine the next number (NNNN format, e.g., 0003)
-2. Create a new file: `docs/adr/NNNN-<kebab-case-title>.md`
-3. Follow the format below exactly
+## 手順
 
-## ADR Format
+1. `docs/adr/` の既存ファイルを調べ、次の連番を決めます（例：0003）。
+2. `docs/adr/NNNN-<kebab-case-title>.md` を作成します。
+3. 以下の形式で、背景・選択肢・判断理由を日本語で記載します。
+
+## ADR の形式
 
 ```markdown
-# ADR-NNNN: <Title>
+# ADR-NNNN: <タイトル>
 
 ## ステータス
 
-Accepted
+採用済み
 
 ## コンテキスト
 
-[Describe the background, problem, and requirements]
+[背景、問題、要件を記述]
 
 ### 要件
 
-- [Requirement 1]
-- [Requirement 2]
+- [要件1]
+- [要件2]
 
 ## 検討した選択肢
 
-### 選択肢 1: <Option Name>
+### 選択肢1：<名前>
 
-- [Description]
+- [説明]
 
-### 選択肢 2: <Option Name>
+### 選択肢2：<名前>
 
-- [Description]
+- [説明]
 
 ## 決定
 
-**<Chosen Option>** を採用する。
+**<選択肢>** を採用する。
 
 ## 理由
 
@@ -50,14 +53,14 @@ Accepted
 
 ### 主な決定理由
 
-1. [Reason 1]
-2. [Reason 2]
+1. [理由1]
+2. [理由2]
 
 ## 結果
 
-[Describe the implementation result]
+[実装の結果を記述]
 ```
 
-## Topic
+## 題材
 
 $ARGUMENTS

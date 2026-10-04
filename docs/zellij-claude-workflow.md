@@ -115,7 +115,7 @@ Zellij タブを追加で作る:
 
 例:
 
-- Tab 1 (`main`): Claude Code + shell
+- タブ 1 (`main`): Claude Code とシェル
 - Tab 2 (`test`): `mise run test --watch` 常駐
 - Tab 3 (`git`): `lazygit` 常駐
 

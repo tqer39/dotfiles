@@ -1,6 +1,6 @@
 # Claude Code コスト最適化 設計
 
-## Context
+## 背景
 
 Claude Code の API トークン消費を削減するため、ユーザー設定とツールチェーンを最適化する。
 コミュニティで共有されている最適化設定値（env 変数 3 種、effortLevel）と、コマンド出力を圧縮する
@@ -67,7 +67,7 @@ RTK と env 最適化はユーザーレベルの関心事のため。
 
 ## 検証手順
 
-### Phase 1: 設定ファイル変更後
+### 段階 1: 設定ファイル変更後
 
 ```bash
 # JSON 構文チェック
@@ -82,7 +82,7 @@ just lint
 ./scripts/dotfiles.sh status
 ```
 
-### Phase 2: env 変数反映確認
+### 段階 2: env 変数反映確認
 
 新しい Claude Code セッションを起動し、以下が反映されていることを確認：
 
@@ -90,7 +90,7 @@ just lint
 - Subagent が Sonnet で動作（Opus アイコンが出ない）
 - 自動メモリ保存が走らない
 
-### Phase 3: RTK 動作確認
+### 段階 3: RTK 動作確認
 
 ```bash
 brew install rtk      # まだなら

@@ -456,7 +456,7 @@
             ]
           },
           {
-            "description": "ブラウザ: 元 Caps Lock+J でNaniのクイック翻訳を実行",
+            "description": "OS: 元 Caps Lock+J でNaniのクイック翻訳を実行",
             "enabled": true,
             "manipulators": [
               {
@@ -471,7 +471,7 @@
                 "to": [
                   {
                     "key_code": "j",
-                    "modifiers": ["left_control", "left_option"]
+                    "modifiers": ["left_control"]
                   }
                 ],
                 "conditions": [
@@ -479,14 +479,39 @@
                     "type": "variable_if",
                     "name": "original_control_pressed",
                     "value": true
-                  },
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "ターミナル: 元 Caps Lock+J でNaniのクイック翻訳を実行",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "mandatory": ["control"],
+                    "optional": []
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "j",
+                    "modifiers": ["left_control"]
+                  }
+                ],
+                "conditions": [
                   {
                     "type": "frontmost_application_if",
                     "bundle_identifiers": [
-                      "^com\\.google\\.Chrome$",
-                      "^com\\.brave\\.Browser$",
-                      "^com\\.apple\\.Safari$",
-                      "^org\\.mozilla\\.firefox$"
+                      "^com\\.apple\\.Terminal$",
+                      "^com\\.mitchellh\\.ghostty$",
+                      "^com\\.cmuxterm\\.app$",
+                      "^com\\.googlecode\\.iterm2?$",
+                      "^co\\.zeit\\.hyper$"
                     ]
                   }
                 ]
@@ -550,39 +575,6 @@
             ]
           },
           {
-            "description": "ChatGPT Codex: 元 Caps Lock+J でNaniのクイック翻訳を実行",
-            "enabled": true,
-            "manipulators": [
-              {
-                "type": "basic",
-                "from": {
-                  "key_code": "j",
-                  "modifiers": {
-                    "mandatory": ["command"],
-                    "optional": []
-                  }
-                },
-                "to": [
-                  {
-                    "key_code": "j",
-                    "modifiers": ["left_control", "left_option"]
-                  }
-                ],
-                "conditions": [
-                  {
-                    "type": "variable_if",
-                    "name": "original_control_pressed",
-                    "value": true
-                  },
-                  {
-                    "type": "frontmost_application_if",
-                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
-                  }
-                ]
-              }
-            ]
-          },
-          {
             "description": "OS: Control を Command として使う（設定済みターミナルアプリを除く）",
             "enabled": true,
             "manipulators": [
@@ -593,12 +585,19 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "to": [
-                  { "key_code": "left_command" },
                   {
                     "set_variable": {
                       "name": "original_control_pressed",
-                      "value": true,
-                      "key_up_value": false
+                      "value": true
+                    }
+                  },
+                  { "key_code": "left_command" }
+                ],
+                "to_after_key_up": [
+                  {
+                    "set_variable": {
+                      "name": "original_control_pressed",
+                      "value": false
                     }
                   }
                 ],
@@ -622,12 +621,19 @@
                   "modifiers": { "optional": ["any"] }
                 },
                 "to": [
-                  { "key_code": "left_command" },
                   {
                     "set_variable": {
                       "name": "original_control_pressed",
-                      "value": true,
-                      "key_up_value": false
+                      "value": true
+                    }
+                  },
+                  { "key_code": "left_command" }
+                ],
+                "to_after_key_up": [
+                  {
+                    "set_variable": {
+                      "name": "original_control_pressed",
+                      "value": false
                     }
                   }
                 ],

@@ -1,18 +1,18 @@
-# ref-version-files Implementation Plan
+# ref-version-files 実装計画
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **エージェント向け:** 必須のサブスキルとして `superpowers:subagent-driven-development`（推奨）または `superpowers:executing-plans` を使い、タスク単位でこの計画を実施します。進捗はチェックボックス（`- [ ]`）で管理します。
 
-**Goal:** `mise.toml` を tool version の SoT に集約する。`.python-version` / `.terraform-version` を削除し、GitHub Actions terraform workflow を `jdx/mise-action` 経由に移行する。
+**目的:** `mise.toml` を tool version の SoT に集約する。`.python-version` / `.terraform-version` を削除し、GitHub Actions terraform workflow を `jdx/mise-action` 経由に移行する。
 
-**Architecture:** ルート `mise.toml` の `[tools]` テーブルに python を追記する。これにより 4 ツール (python / terraform / trivy / biome) の唯一の宣言場所となる。CI も同 SoT を使うよう terraform workflow に `jdx/mise-action@v4.0.1` を追加する。`hashicorp/setup-terraform` および `.terraform-version` を `cat` する step は削除する。dead env の `TF_VERSION` と未参照の `AWS_ACCOUNT_ID` export も同時に撤去する。anyenv 自体の廃止は `ref-anyenv-removal` で別 spec として扱い、本 plan の scope 外とする。
+**構成:** ルート `mise.toml` の `[tools]` テーブルに python を追記する。これにより 4 ツール (python / terraform / trivy / biome) の唯一の宣言場所となる。CI も同 SoT を使うよう terraform workflow に `jdx/mise-action@v4.0.1` を追加する。`hashicorp/setup-terraform` および `.terraform-version` を `cat` する step は削除する。dead env の `TF_VERSION` と未参照の `AWS_ACCOUNT_ID` export も同時に撤去する。anyenv 自体の廃止は `ref-anyenv-removal` で別 spec として扱い、本 plan の scope 外とする。
 
-**Tech Stack:** mise (`mise.toml`) / GitHub Actions (`jdx/mise-action@v4.0.1`) / bash / Terraform 1.14.8 / Python 3.13.0
+**使用技術:** mise (`mise.toml`) / GitHub Actions (`jdx/mise-action@v4.0.1`) / bash / Terraform 1.14.8 / Python 3.13.0
 
-**Spec:** `docs/superpowers/specs/2026-04-19-ref-version-files-design.md`
+**仕様:** `docs/superpowers/specs/2026-04-19-ref-version-files-design.md`
 
 ---
 
-## File Structure
+## ファイル構成
 
 | Path | 操作 | 責務 |
 | --- | --- | --- |
@@ -25,17 +25,17 @@
 
 ---
 
-## Task 1: `mise.toml` に Python を追加
+## タスク 1: `mise.toml` に Python を追加
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `mise.toml`
+- 変更: `mise.toml`
 
 - [ ] **Step 1.1: 現状の `mise.toml` を読む**
 
-Run: `cat mise.toml`
+実行: `cat mise.toml`
 
-Expected:
+期待する結果:
 
 ```toml
 [tools]
@@ -46,7 +46,7 @@ biome = "2.3.11"
 
 - [ ] **Step 1.2: `python = "3.13.0"` を `[tools]` の先頭行に追記**
 
-Edit `mise.toml` so it becomes exactly:
+`mise.toml` を次の内容に変更します:
 
 ```toml
 [tools]
@@ -58,13 +58,13 @@ biome = "2.3.11"
 
 - [ ] **Step 1.3: 検証 — mise install が通る**
 
-Run: `mise install`
+実行: `mise install`
 
-Expected: 全ツール install 済み or 新規 install。エラーなし。
+期待する結果: 全ツール install 済み or 新規 install。エラーなし。
 
-Run: `mise current`
+実行: `mise current`
 
-Expected output (順不同):
+期待する結果 output (順不同):
 
 ```text
 biome     2.3.11
@@ -75,15 +75,15 @@ trivy     0.69.3
 
 - [ ] **Step 1.4: 検証 — python が解決される**
 
-Run: `python --version`
+実行: `python --version`
 
-Expected: `Python 3.13.0`
+期待する結果: `Python 3.13.0`
 
 - [ ] **Step 1.5: lint 回帰確認**
 
-Run: `just lint`
+実行: `just lint`
 
-Expected: 全 hook PASS。`mise.toml` を biome / cspell が触るが既存と同等。
+期待する結果: 全 hook PASS。`mise.toml` を biome / cspell が触るが既存と同等。
 
 - [ ] **Step 1.6: Commit**
 
@@ -97,18 +97,18 @@ mise.toml に追記。次タスクで .python-version を削除する。"
 
 ---
 
-## Task 2: `.python-version` / `.terraform-version` を削除
+## タスク 2: `.python-version` / `.terraform-version` を削除
 
-**Files:**
+**対象ファイル:**
 
-- Delete: `.python-version`
-- Delete: `.terraform-version`
+- 削除: `.python-version`
+- 削除: `.terraform-version`
 
 - [ ] **Step 2.1: 削除前の事前確認 — mise が両方解決できる**
 
-Run: `mise current python terraform`
+実行: `mise current python terraform`
 
-Expected:
+期待する結果:
 
 ```text
 python    3.13.0
@@ -121,22 +121,22 @@ terraform 1.14.8
 git rm .python-version .terraform-version
 ```
 
-Expected: 両 file が staged 削除状態。
+期待する結果: 両 file が staged 削除状態。
 
 - [ ] **Step 2.3: 検証 — mise が引き続き解決する (fallback がないこと)**
 
-Run: `mise current python terraform`
+実行: `mise current python terraform`
 
-Expected:
+期待する結果:
 
 ```text
 python    3.13.0
 terraform 1.14.8
 ```
 
-Run: `python --version && terraform version | head -1`
+実行: `python --version && terraform version | head -1`
 
-Expected:
+期待する結果:
 
 ```text
 Python 3.13.0
@@ -145,15 +145,15 @@ Terraform v1.14.8
 
 - [ ] **Step 2.4: anyenv.sh が skip する確認 (dry-run)**
 
-Run: `DRY_RUN=true bash scripts/installers/anyenv.sh 2>&1 | grep -A1 -i 'python'`
+実行: `DRY_RUN=true bash scripts/installers/anyenv.sh 2>&1 | grep -A1 -i 'python'`
 
-Expected: `Installing pyenv...` までは出る。`.python-version` 不在のため `pyenv install` の log は出ない。`if [[ -f "$python_version_file" ]]` で skip される。
+期待する結果: `Installing pyenv...` までは出る。`.python-version` 不在のため `pyenv install` の log は出ない。`if [[ -f "$python_version_file" ]]` で skip される。
 
 - [ ] **Step 2.5: lint 回帰確認**
 
-Run: `just lint`
+実行: `just lint`
 
-Expected: 全 hook PASS。
+期待する結果: 全 hook PASS。
 
 - [ ] **Step 2.6: Commit**
 
@@ -168,11 +168,11 @@ ref-anyenv-removal で別途対応）。"
 
 ---
 
-## Task 3: GitHub Actions terraform workflow を mise 化
+## タスク 3: GitHub Actions terraform workflow を mise 化
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `.github/workflows/terraform.yml:22-61`
+- 変更: `.github/workflows/terraform.yml:22-61`
 
 このタスクで 3 箇所を変更する。
 
@@ -182,15 +182,15 @@ ref-anyenv-removal で別途対応）。"
 
 - [ ] **Step 3.1: dead code の最終確認**
 
-Run: `rg -n 'TF_VERSION|AWS_ACCOUNT_ID' .github`
+実行: `rg -n 'TF_VERSION|AWS_ACCOUNT_ID' .github`
 
-Expected: `terraform.yml:24` の `TF_VERSION:` 定義と `terraform.yml:55` の `echo "AWS_ACCOUNT_ID=..."` のみ。他に **参照なし**。
+期待する結果: `terraform.yml:24` の `TF_VERSION:` 定義と `terraform.yml:55` の `echo "AWS_ACCOUNT_ID=..."` のみ。他に **参照なし**。
 
 両方とも環境変数を定義 / 出力するだけです。後続 step がどこも `${{ env.TF_VERSION }}` / `${{ env.AWS_ACCOUNT_ID }}` を読まないことを目視確認します。
 
 - [ ] **Step 3.2: `env.TF_VERSION` を削除**
 
-Edit `.github/workflows/terraform.yml`. 22-25 行目を:
+`.github/workflows/terraform.yml` を編集します。22-25 行目を:
 
 ```yaml
 env:
@@ -246,7 +246,7 @@ env:
 
 - [ ] **Step 3.6: 変更後の workflow 全体を確認**
 
-Run: `cat .github/workflows/terraform.yml`
+実行: `cat .github/workflows/terraform.yml`
 
 期待される steps の並びは以下の通り。
 
@@ -277,9 +277,9 @@ env:
 
 - [ ] **Step 3.7: ローカル lint で workflow YAML の syntax 確認**
 
-Run: `just lint`
+実行: `just lint`
 
-Expected: 全 hook PASS。prettier が YAML を formatting check し、PASS することを確認する。
+期待する結果: 全 hook PASS。prettier が YAML を formatting check し、PASS することを確認する。
 
 - [ ] **Step 3.8: Commit**
 
@@ -296,16 +296,16 @@ git commit -m "👷 terraform workflow を mise-action 経由に移行
 
 ---
 
-## Task 4: ドキュメント / 辞書整合
+## タスク 4: ドキュメント / 辞書整合
 
-**Files:**
+**対象ファイル:**
 
-- Modify (条件付き): `docs/**/*.md`
-- Modify (条件付き): `.cspell/project-words.txt`
+- 変更 (条件付き): `docs/**/*.md`
+- 変更 (条件付き): `.cspell/project-words.txt`
 
 - [ ] **Step 4.1: ドキュメントの残参照を grep**
 
-Run: `rg -n '\.python-version|\.terraform-version' docs/ README.md AGENTS.md 2>/dev/null`
+実行: `rg -n '\.python-version|\.terraform-version' docs/ README.md AGENTS.md 2>/dev/null`
 
 該当が **0 件** なら Step 4.2 へ skip。該当があれば各ファイルを読んで、内容に応じて以下のいずれかを行う。
 
@@ -315,7 +315,7 @@ Run: `rg -n '\.python-version|\.terraform-version' docs/ README.md AGENTS.md 2>/
 
 - [ ] **Step 4.2: cspell 辞書の不要語確認**
 
-Run: `rg -n '\.python-version|\.terraform-version|tfenv|pyenv' .cspell/project-words.txt 2>/dev/null`
+実行: `rg -n '\.python-version|\.terraform-version|tfenv|pyenv' .cspell/project-words.txt 2>/dev/null`
 
 該当が **0 件** なら Step 4.3 へ skip。該当があり、リポ全体 (`rg -iw '<word>' --hidden`) でも参照されない場合は削除する。
 
@@ -327,9 +327,9 @@ sort -uf .cspell/project-words.txt -o .cspell/project-words.txt
 
 - [ ] **Step 4.3: lint 回帰確認**
 
-Run: `just lint`
+実行: `just lint`
 
-Expected: 全 hook PASS。
+期待する結果: 全 hook PASS。
 
 - [ ] **Step 4.4: Commit (変更があった場合のみ)**
 
@@ -342,13 +342,13 @@ git commit -m "📝 .python-version / .terraform-version 削除に伴うドキ�
 
 ---
 
-## Task 5: PR 作成
+## タスク 5: PR 作成
 
 - [ ] **Step 5.1: ブランチを push**
 
-Run: `git push -u origin feature/ref-version-files`
+実行: `git push -u origin feature/ref-version-files`
 
-Expected: push 成功。
+期待する結果: push 成功。
 
 - [ ] **Step 5.2: PR を作成**
 
@@ -388,7 +388,7 @@ PR ページで GitHub Actions terraform workflow が green になることを�
 
 ---
 
-## Verification Checklist (全 Task 完了後)
+## 検証項目 (全 Task 完了後)
 
 - [ ] `mise current` が python 3.13.0 / terraform 1.14.8 / trivy 0.69.3 / biome 2.3.11 をすべて返す
 - [ ] リポジトリに `.python-version` / `.terraform-version` が存在しない (`ls .python-version .terraform-version 2>&1` で No such file)

@@ -1,8 +1,6 @@
-# Architecture
+# アーキテクチャ
 
-[🇯🇵 日本語版](./architecture.ja.md)
-
-## Installation Flow
+## インストールフロー
 
 ```mermaid
 flowchart TD
@@ -11,69 +9,69 @@ flowchart TD
     subgraph Cloudflare
         B["DNS: install.tqer39.dev"]
         B --> C["Workers"]
-        C -->|"Fetch & Cache (5min)"| D["GitHub Raw"]
+        C -->|"取得 & キャッシュ (5分)"| D["GitHub Raw"]
     end
 
     D --> E
 
-    subgraph Local["Local Execution"]
-        E["install.sh"] --> F["Clone to ~/.dotfiles"]
-        F --> G["Create symlinks"]
-        G --> H["Install packages (--full)"]
+    subgraph Local["ローカル実行"]
+        E["install.sh"] --> F["~/.dotfiles にクローン"]
+        F --> G["symlink 作成"]
+        G --> H["パッケージインストール (--full)"]
     end
 ```
 
-## Entry Points
+## エントリーポイント
 
-- `install.sh` - Unix (macOS/Linux) entry point, can be piped from curl
-- `install.ps1` - Windows PowerShell entry point
+- `install.sh` - Unix (macOS/Linux) エントリーポイント、curl からパイプ可能
+- `install.ps1` - Windows PowerShell エントリーポイント
 
-## Script Library (`scripts/lib/`)
+## スクリプトライブラリ (`scripts/lib/`)
 
-Shared utilities sourced by all scripts:
+すべてのスクリプトから読み込まれる共通ユーティリティ:
 
-- `log.sh` - Colored logging functions (`log_info`, `log_success`, `log_error`, etc.)
-- `utils.sh` - OS detection (`detect_os` returns `macos`/`ubuntu`/`mint`/`linux`/`windows`), path expansion, command checking
-- `symlink.sh` - Idempotent symlink creation with backup support
+- `log.sh` - カラー付きログ関数 (`log_info`, `log_success`, `log_error` など)
+- `utils.sh` - OS 検出 (`detect_os` は `macos`/`ubuntu`/`mint`/`linux`/`windows` を返す)、パス展開、コマンドチェック
+- `symlink.sh` - バックアップ機能付き冪等シンボリックリンク作成
 
-## Configuration
+## 設定
 
-- `config/platform-files.conf` - Defines SOURCE:DESTINATION:PLATFORMS mappings
-  - Format: `.zshrc:~/.zshrc:macos,linux`
-  - Platforms: `all` / `macos` / `linux` / `ubuntu` / `mint` / `windows`
-  - `mint` matches `linux` and `ubuntu` platform filters (Ubuntu-based)
-- `config/packages/Brewfile` - Homebrew packages
-- `config/packages/apt-packages.txt` - APT packages for Ubuntu
+- `config/platform-files.conf` - SOURCE:DESTINATION:PLATFORMS マッピングを定義
+  - フォーマット: `.zshrc:~/.zshrc:macos,linux`
+  - プラットフォーム: `all` / `macos` / `linux` / `ubuntu` / `mint` / `windows`
+  - `mint` は `linux` と `ubuntu` のプラットフォームフィルターにもマッチ（Ubuntu ベース）
+- `config/packages/Brewfile` - Homebrew パッケージ
+- `config/packages/apt-packages.txt` - Ubuntu 用 APT パッケージ
 
-## Installers (`scripts/installers/`)
+## インストーラー (`scripts/installers/`)
 
-Modular installers called during `--full` installation:
+`--full` インストール時に呼び出されるモジュラーインストーラー:
 
-- `homebrew.sh` - Homebrew and Brewfile packages
-- `apt.sh` - APT packages (Ubuntu/Mint, with flatpak fallback for snap-dependent apps on Mint)
-- `anyenv.sh` - Language runtime manager
-- `vscode.sh` - VS Code extensions from `src/.vscode/extensions.json`
+- `homebrew.sh` - Homebrew と Brewfile パッケージ
+- `apt.sh` - APT パッケージと GUI アプリ (Ubuntu/Mint、Ghostty は snap がなければ .deb、Spotify は flatpak にフォールバック)
+- `anyenv.sh` - 言語ランタイムマネージャー
+- `vscode.sh` - `src/.vscode/extensions.json` の VS Code 拡張機能
 
-## Infrastructure
+## インフラストラクチャ
 
-### Domain & DNS
+### ドメイン & DNS
 
-- **Domain**: `tqer39.dev` (registered via Google Cloud Platform)
+- **ドメイン**: `tqer39.dev` (Google Cloud Platform で登録)
 - **DNS/CDN**: Cloudflare
-  - Zone management for `tqer39.dev`
-  - Workers for `install.tqer39.dev` redirect
+  - `tqer39.dev` のゾーン管理
+  - `install.tqer39.dev` リダイレクト用 Workers
 
 ### CI/CD
 
-- **GitHub Actions** with AWS IAM OIDC (no API keys stored)
-- **State Backend**: AWS S3
+- **GitHub Actions** + AWS IAM OIDC (API キー不要)
+- **状態の保存先**: AWS S3
 
 ### Terraform (`infra/terraform/`)
 
-- `modules/` - Reusable modules
-  - `cloudflare/` - CloudFlare DNS configuration
-  - `workers/` - CloudFlare Workers deployment
-  - `deploy-role/` - IAM Role for GitHub Actions OIDC
-- `envs/prod/` - Production environment
-  - `bootstrap/` - IAM Role (must be run locally first)
-  - `dns/` - CloudFlare DNS records and Workers
+- `modules/` - 再利用可能なモジュール
+  - `cloudflare/` - CloudFlare DNS 設定
+  - `workers/` - CloudFlare Workers デプロイ
+  - `deploy-role/` - GitHub Actions OIDC 用 IAM Role
+- `envs/prod/` - 本番環境
+  - `bootstrap/` - IAM Role (最初にローカル実行必須)
+  - `dns/` - CloudFlare DNS レコードと Workers

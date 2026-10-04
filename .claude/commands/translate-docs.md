@@ -1,64 +1,21 @@
 ---
-description: Translate documentation between English and Japanese with cross-links
+description: ドキュメントを日本語の正本へ統合する
 ---
 
-Translate documentation files and add cross-links between English and Japanese versions.
+# ドキュメントの日本語化
 
-## Rules
+対象の Markdown を日本語に統一します。
+編集前に `docs/rules/documentation.md` の規約を読んでください。
 
-1. **README.md** (root): English only, Japanese version at `docs/README.ja.md`
-2. **AGENTS.md** (root): English only, Japanese version at `docs/AGENTS.ja.md`
-3. **docs/*.md**: English, Japanese version at `docs/*.ja.md`
-4. **docs/*.ja.md**: Japanese, English version at `docs/*.md` (without `.ja`)
+## 手順
 
-## Cross-link Format
+1. 対象と既存の翻訳を読み、内容の差や更新漏れを確認します。
+2. 必要な情報を日本語で統合し、言語サフィックスのない `.md` に保存します。
+3. 英日別ファイルと相互リンクは作成しません。コマンド、パス、固有名は保持します。
+4. ファイル移動に伴うリンク、アンカー、スキル内の参照を更新します。
+5. RuleSync の参照を変更した場合は `mise run rules-generate` を実行します。
+6. `mise run lint` を実行し、参照先も検証して結果を報告します。
 
-Add at the top of each file (after title):
-
-**English version:**
-
-```markdown
-[🇯🇵 日本語版](./filename.ja.md)
-```
-
-**Japanese version:**
-
-```markdown
-[🇺🇸 English](./filename.md)
-```
-
-**For README.md:**
-
-```markdown
-[🇯🇵 日本語版](docs/README.ja.md)
-```
-
-**For docs/README.ja.md:**
-
-```markdown
-[🇺🇸 English](../README.md)
-```
-
-**For AGENTS.md:**
-
-```markdown
-[🇯🇵 日本語版](docs/AGENTS.ja.md)
-```
-
-**For docs/AGENTS.ja.md:**
-
-```markdown
-[🇺🇸 English](../AGENTS.md)
-```
-
-## Instructions
-
-1. Read the source file
-2. Translate the content (keep code blocks, commands, and file paths as-is)
-3. Add cross-link to both source and target files
-4. Write the translated file
-5. Run `pre-commit run --all-files` to verify
-
-## Target
+## 対象
 
 $ARGUMENTS

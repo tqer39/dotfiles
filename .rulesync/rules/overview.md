@@ -1,3 +1,9 @@
+---
+root: true
+targets: ["codexcli"]
+description: "dotfiles の作業規約とキー入力ルールの参照先"
+---
+
 # dotfiles の作業ルール
 
 このファイルは RuleSync の生成物です。参照先の正本を読み、指示として適用してください。
