@@ -456,6 +456,44 @@
             ]
           },
           {
+            "description": "ブラウザ: 元 Caps Lock+J でNaniのクイック翻訳を実行",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "mandatory": ["command"],
+                    "optional": []
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "j",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$",
+                      "^org\\.mozilla\\.firefox$"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "ChatGPT Codex: 元 Caps Lock+Tab でブラウザタブを移動",
             "enabled": true,
             "manipulators": [
@@ -469,6 +507,67 @@
                   }
                 },
                 "to": [{ "key_code": "tab", "modifiers": ["control"] }],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "ChatGPT Codex: 元 Caps Lock+Shift+J でターミナルを開く",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "mandatory": ["command", "shift"],
+                    "optional": []
+                  }
+                },
+                "to": [{ "key_code": "j", "modifiers": ["left_command"] }],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "ChatGPT Codex: 元 Caps Lock+J でNaniのクイック翻訳を実行",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "j",
+                  "modifiers": {
+                    "mandatory": ["command"],
+                    "optional": []
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "j",
+                    "modifiers": ["left_control", "left_option"]
+                  }
+                ],
                 "conditions": [
                   {
                     "type": "variable_if",
