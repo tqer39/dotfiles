@@ -17,8 +17,9 @@ def profile():
     return next(item for item in json.loads(CONFIG.read_text())["profiles"] if item.get("selected"))
 
 
-def transform(key, modifiers, app):
+def transform(key, modifiers, app, variables=None):
     """Evaluate the first matching basic key rule used by this configuration."""
+    variables = {} if variables is None else variables
     groups = {
         "control": {"left_control", "right_control"},
         "command": {"left_command", "right_command"},
@@ -33,8 +34,12 @@ def transform(key, modifiers, app):
                 continue
             valid = True
             for condition in item.get("conditions", []):
-                matches = any(re.search(pattern, app) for pattern in condition["bundle_identifiers"])
-                if matches != (condition["type"] == "frontmost_application_if"):
+                if condition["type"] == "variable_if":
+                    matches = variables.get(condition["name"], False) == condition["value"]
+                else:
+                    matches = any(re.search(pattern, app) for pattern in condition["bundle_identifiers"])
+                    matches = matches == (condition["type"] == "frontmost_application_if")
+                if not matches:
                     valid = False
             if not valid:
                 continue
@@ -48,15 +53,22 @@ def transform(key, modifiers, app):
             allowed = set().union(*(groups.get(modifier, {modifier}) for modifier in optional))
             if "any" not in optional and remaining - allowed:
                 continue
-            output = item["to"][0]
+            for output in item["to"]:
+                variable = output.get("set_variable")
+                if variable:
+                    variables[variable["name"]] = variable["value"]
+            output = next((output for output in item["to"] if "key_code" in output), None)
+            if output is None:
+                continue
             return output["key_code"], remaining | set(output.get("modifiers", []))
     return key, modifiers
 
 
 def chord(modifier, key, app, extra=frozenset()):
     """Modifier key-down is handled before the following key event."""
-    mapped, _ = transform(modifier, set(), app)
-    return transform(key, {mapped, *extra}, app)
+    variables = {}
+    mapped, _ = transform(modifier, set(), app, variables)
+    return transform(key, {mapped, *extra}, app, variables)
 
 
 class ModifierRoleTest(unittest.TestCase):
@@ -69,8 +81,41 @@ class ModifierRoleTest(unittest.TestCase):
                 with self.subTest(app=app, control=control):
                     self.assertEqual(transform(control, set(), app), ("left_command", set()))
                     self.assertEqual(chord(control, "w", app), ("w", {"left_command"}))
+
+    def test_codex_control_tab_moves_browser_tabs(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "tab", "com.openai.codex"),
+                                 ("tab", {"control"}))
+                self.assertEqual(chord(control, "tab", "com.openai.codex", {"left_shift"}),
+                                 ("tab", {"control", "left_shift"}))
+
+    def test_control_tab_moves_browser_and_vscode_tabs(self):
+        for app in (
+            "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
+            "org.mozilla.firefox", "com.microsoft.VSCode", "com.microsoft.VSCodeInsiders",
+            "com.vscodium",
+        ):
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    self.assertEqual(chord(control, "tab", app), ("tab", {"control"}))
                     self.assertEqual(chord(control, "tab", app, {"left_shift"}),
-                                     ("tab", {"left_command", "left_shift"}))
+                                     ("tab", {"control", "left_shift"}))
+
+    def test_control_tab_keeps_command_in_other_apps(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "tab", "com.apple.TextEdit", {"left_shift"}),
+                                 ("tab", {"left_command", "left_shift"}))
+
+    def test_physical_command_tab_keeps_native_application_switcher(self):
+        for app in (
+            "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
+            "org.mozilla.firefox", "com.microsoft.VSCode", "com.openai.codex",
+        ):
+            with self.subTest(app=app):
+                self.assertEqual(transform("tab", {"left_command"}, app),
+                                 ("tab", {"left_command"}))
 
     def test_control_stays_native_in_terminals(self):
         for app in TERMINALS:

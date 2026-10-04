@@ -421,6 +421,69 @@
             ]
           },
           {
+            "description": "ブラウザ / VS Code: 元 Caps Lock+Tab でタブを移動",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["command"],
+                    "optional": ["shift"]
+                  }
+                },
+                "to": [{ "key_code": "tab", "modifiers": ["control"] }],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": [
+                      "^com\\.google\\.Chrome$",
+                      "^com\\.brave\\.Browser$",
+                      "^com\\.apple\\.Safari$",
+                      "^org\\.mozilla\\.firefox$",
+                      "^com\\.microsoft\\.VSCode(Insiders)?$",
+                      "^com\\.vscodium$"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "description": "ChatGPT Codex: 元 Caps Lock+Tab でブラウザタブを移動",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["command"],
+                    "optional": ["shift"]
+                  }
+                },
+                "to": [{ "key_code": "tab", "modifiers": ["control"] }],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "OS: Control を Command として使う（設定済みターミナルアプリを除く）",
             "enabled": true,
             "manipulators": [
@@ -430,7 +493,16 @@
                   "key_code": "left_control",
                   "modifiers": { "optional": ["any"] }
                 },
-                "to": [{ "key_code": "left_command" }],
+                "to": [
+                  { "key_code": "left_command" },
+                  {
+                    "set_variable": {
+                      "name": "original_control_pressed",
+                      "value": true,
+                      "key_up_value": false
+                    }
+                  }
+                ],
                 "conditions": [
                   {
                     "type": "frontmost_application_unless",
@@ -450,7 +522,16 @@
                   "key_code": "right_control",
                   "modifiers": { "optional": ["any"] }
                 },
-                "to": [{ "key_code": "left_command" }],
+                "to": [
+                  { "key_code": "left_command" },
+                  {
+                    "set_variable": {
+                      "name": "original_control_pressed",
+                      "value": true,
+                      "key_up_value": false
+                    }
+                  }
+                ],
                 "conditions": [
                   {
                     "type": "frontmost_application_unless",
