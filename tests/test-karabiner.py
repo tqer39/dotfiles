@@ -11,6 +11,9 @@ TERMINALS = (
     "com.apple.Terminal", "com.mitchellh.ghostty", "com.cmuxterm.app",
     "com.googlecode.iterm2", "co.zeit.hyper",
 )
+BROWSERS = (
+    "com.google.Chrome", "com.brave.Browser", "com.apple.Safari", "org.mozilla.firefox",
+)
 
 
 def profile():
@@ -117,6 +120,50 @@ def chord(modifier, key, app, extra=frozenset()):
 
 
 class ModifierRoleTest(unittest.TestCase):
+    def test_option_arrows_navigate_browser_history(self):
+        for app in BROWSERS:
+            for option in ("left_option", "right_option"):
+                for key, output in (("left_arrow", "open_bracket"),
+                                    ("right_arrow", "close_bracket")):
+                    with self.subTest(app=app, option=option, key=key):
+                        self.assertEqual(chord(option, key, app),
+                                         (output, {"left_command"}))
+
+    def test_option_arrows_remain_native_outside_browsers(self):
+        for app in ("com.apple.TextEdit", "com.apple.finder",
+                    "com.microsoft.VSCode", "com.example.Browser", *TERMINALS):
+            for option in ("left_option", "right_option"):
+                for key in ("left_arrow", "right_arrow"):
+                    with self.subTest(app=app, option=option, key=key):
+                        self.assertEqual(chord(option, key, app), (key, {option}))
+
+    def test_browser_history_does_not_capture_other_arrow_shortcuts(self):
+        for app in (*BROWSERS, "com.openai.codex"):
+            for key in ("left_arrow", "right_arrow"):
+                for option in ("left_option", "right_option"):
+                    for extra in ("left_shift", "left_command", "left_control", "fn"):
+                        with self.subTest(app=app, key=key, option=option, extra=extra):
+                            modifiers = {option, extra}
+                            self.assertEqual(transform(key, modifiers, app), (key, modifiers))
+                for modifiers in (set(), {"left_command"}, {"right_command"}):
+                    with self.subTest(app=app, key=key, modifiers=modifiers):
+                        self.assertEqual(transform(key, modifiers, app), (key, modifiers))
+
+    def test_codex_option_arrows_use_command_arrows(self):
+        for option in ("left_option", "right_option"):
+            for key in ("left_arrow", "right_arrow"):
+                with self.subTest(option=option, key=key):
+                    self.assertEqual(chord(option, key, "com.openai.codex"),
+                                     (key, {"left_command"}))
+
+    def test_codex_control_text_shortcuts_remain_command(self):
+        for control in ("left_control", "right_control"):
+            for key in ("left_arrow", "right_arrow", "a", "c", "v"):
+                for extra in (set(), {"left_shift"}):
+                    with self.subTest(control=control, key=key, extra=extra):
+                        self.assertEqual(chord(control, key, "com.openai.codex", extra),
+                                         (key, {"left_command", *extra}))
+
     def test_output_model_detects_early_key_and_variable_release(self):
         variable = {"set_variable": {
             "name": "original_control_pressed", "value": True, "key_up_value": False,

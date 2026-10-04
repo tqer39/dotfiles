@@ -421,6 +421,43 @@
             ]
           },
           {
+            "description": "Codex: Option+左右矢印でブラウザの履歴を移動",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "left_arrow",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [
+                  { "key_code": "left_arrow", "modifiers": ["left_command"] }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "right_arrow",
+                  "modifiers": { "mandatory": ["option"] }
+                },
+                "to": [
+                  { "key_code": "right_arrow", "modifiers": ["left_command"] }
+                ],
+                "conditions": [
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "ブラウザ / VS Code: 元 Caps Lock+Tab でタブを移動",
             "enabled": true,
             "manipulators": [
@@ -2517,7 +2554,7 @@
             ]
           },
           {
-            "description": "Google Chrome / Brave / Safari: 前のページに戻る(opt+←)",
+            "description": "Google Chrome / Brave / Safari / Firefox: 前のページに戻る(opt+←)",
             "manipulators": [
               {
                 "conditions": [
@@ -2526,7 +2563,8 @@
                     "bundle_identifiers": [
                       "^com\\.google\\.Chrome$",
                       "^com\\.brave\\.Browser$",
-                      "^com\\.apple\\.Safari$"
+                      "^com\\.apple\\.Safari$",
+                      "^org\\.mozilla\\.firefox$"
                     ]
                   }
                 ],
@@ -2547,7 +2585,7 @@
             ]
           },
           {
-            "description": "Google Chrome / Brave / Safari: 次のページに進む(opt+→)",
+            "description": "Google Chrome / Brave / Safari / Firefox: 次のページに進む(opt+→)",
             "manipulators": [
               {
                 "conditions": [
@@ -2556,7 +2594,8 @@
                     "bundle_identifiers": [
                       "^com\\.google\\.Chrome$",
                       "^com\\.brave\\.Browser$",
-                      "^com\\.apple\\.Safari$"
+                      "^com\\.apple\\.Safari$",
+                      "^org\\.mozilla\\.firefox$"
                     ]
                   }
                 ],

@@ -41,16 +41,20 @@ description = "Install Git hooks"
 run = "lefthook install"
 
 [tasks.lint]
-description = "Run all linters and keyboard shortcut tests"
-run = "lefthook run pre-commit --all-files && python3 tests/test-karabiner.py"
+description = "Run all linters, keyboard shortcut tests, and RuleSync checks"
+run = "lefthook run pre-commit --all-files && python3 tests/test-karabiner.py && mise run rules-check"
 
 [tasks.lint-clean]
 description = "Clean lefthook cache"
 run = "rm -rf .lefthook"
 
 [tasks.rules-generate]
-description = "Generate repository rule references from RuleSync"
+description = "Generate repository rule references and shared skills from RuleSync"
 run = "rulesync generate --config rulesync.jsonc"
+
+[tasks.rules-check]
+description = "Check RuleSync outputs without modifying files"
+run = "rulesync generate --config rulesync.jsonc --check"
 
 [tasks.status]
 description = "Show mise tool status"
