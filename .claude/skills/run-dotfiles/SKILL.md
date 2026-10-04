@@ -15,12 +15,12 @@ symlink を張るインストーラ。**素で実行すると開発機の dotfil
 
 パスはすべてリポジトリルートからの相対。
 
-## Prerequisites
+## 前提条件
 
 macOS では追加インストール不要（bash / git / find のみ使用）。
 lint を回す場合のみ `mise` と `pnpm install` が必要。
 
-## Run (agent path)
+## 実行（エージェント向け）
 
 ```bash
 .claude/skills/run-dotfiles/driver.sh smoke
@@ -82,7 +82,7 @@ DOTFILES_MODE=work .claude/skills/run-dotfiles/driver.sh install
 | `DOTFILES_MODE` | `personal`（既定）/ `work` |
 | `LOG_LEVEL` | `DEBUG` で詳細ログ |
 
-## Run (human path)
+## 実行（ユーザー向け）
 
 実機に本当に入れる場合のみ:
 
@@ -94,7 +94,7 @@ DOTFILES_MODE=work .claude/skills/run-dotfiles/driver.sh install
 `~/.dotfiles_backup/` に退避した上で symlink に置き換える。検証目的なら
 上の driver で足りる。
 
-## Test
+## テスト
 
 このリポジトリにユニットテストは無い。実質のテストは `smoke` / `matrix` と lint:
 
@@ -106,7 +106,7 @@ shellcheck .claude/skills/run-dotfiles/driver.sh
 CI（`.github/workflows/test-install.yml`）は runner の実 HOME に対して
 `bash install.sh --minimal --ci` を流している。ローカルで同じことをしてはいけない。
 
-## Gotchas
+## 注意点
 
 実際に踏んだもののみ記載。
 
@@ -169,7 +169,7 @@ CI（`.github/workflows/test-install.yml`）は runner の実 HOME に対して
 | `just lint` が `pnpm-lock.yaml` を整形して staged 化 | #487 |
 | `--work` が personal パッケージを除外できていない | #488 |
 
-## Troubleshooting
+## トラブルシューティング
 
 | 症状 | 原因 / 対処 |
 | --- | --- |

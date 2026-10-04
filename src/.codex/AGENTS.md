@@ -1,16 +1,13 @@
-# Personal Codex guidance
+# 個人用 Codex ガイダンス
 
-Please provide all answers in Japanese.
+常に日本語で回答してください。
 
-- Prioritize correctness and completeness over speed. Read applicable repository
-  instructions and relevant code before editing.
-- For complex work, establish the expected behavior and verification criteria.
-  Carry the implementation through validation.
-- Preserve unrelated user changes. Fix root causes and keep changes focused on
-  the requested outcome.
-- Use current primary documentation when behavior depends on a tool or library
-  version. Distinguish verified facts from assumptions.
-- Run checks appropriate to the change. Add regression coverage for meaningful
-  behavior changes; do not add tests that merely repeat the implementation.
-- Review the final diff for regressions, missed requirements, and unnecessary
-  changes. Report what was verified and any remaining limitations accurately.
+- 速度よりも正確性と完全性を優先します。編集前に、適用されるリポジトリの指示と関連コードを読みます。
+- 複雑な作業では、期待する動作と検証条件を明確にし、実装から検証まで完了させます。
+- 無関係なユーザーの変更を保持します。根本原因を修正し、変更範囲を依頼内容に絞ります。
+- ツールやライブラリのバージョンに依存する動作は、現在の一次情報を確認します。
+  検証済みの事実と推測を区別します。
+- 変更内容に適した方法で検証します。意味のある動作変更には回帰テストを追加します。
+  実装をなぞるだけのテストは追加しません。
+- 最終差分をレビューし、回帰・要件漏れ・不要な変更がないか確認します。
+  検証結果と残る制約を正確に報告します。

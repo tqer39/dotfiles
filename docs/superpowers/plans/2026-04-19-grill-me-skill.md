@@ -1,42 +1,42 @@
-# grill-me skill 導入 Implementation Plan
+# grill-me skill 導入 実装計画
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **エージェント向け:** 必須のサブスキルとして `superpowers:subagent-driven-development`（推奨）または `superpowers:executing-plans` を使い、タスク単位でこの計画を実施します。進捗はチェックボックス（`- [ ]`）で管理します。
 
-**Goal:** mattpocock/skills の `grill-me` skill を `tqer39/claude-code-marketplace` に新規 plugin として登録する。
+**目的:** mattpocock/skills の `grill-me` skill を `tqer39/claude-code-marketplace` に新規 plugin として登録する。
 さらに `tqer39/.dotfiles` の `installed_plugins.personal.json` で再現性を確保する。
 
-**Architecture:** 既存の「1 plugin = 1 skill」構成 (security, agent-config 等) に揃える。
+**構成:** 既存の「1 plugin = 1 skill」構成 (security, agent-config 等) に揃える。
 2 リポジトリにまたがるため、marketplace PR → merge → dotfiles PR の 2 段階で進める。
 MIT License の帰属要件は LICENSE ファイル同梱 + SKILL.md 末尾コメントで二重に満たす。
 
-**Tech Stack:** Markdown。JSON。bash。GitHub CLI (`gh`)。pre-commit hooks (markdownlint-cli2 / textlint / cspell)。
+**使用技術:** Markdown。JSON。bash。GitHub CLI (`gh`)。pre-commit hooks (markdownlint-cli2 / textlint / cspell)。
 
-**Spec:** [docs/superpowers/specs/2026-04-19-grill-me-skill-design.md](../specs/2026-04-19-grill-me-skill-design.md)
-
----
-
-## File Structure
-
-### Phase A: Marketplace (`/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/`)
-
-- Create: `plugins/grill-me/.claude-plugin/plugin.json` — plugin メタデータ
-- Create: `plugins/grill-me/skills/grill-me/SKILL.md` — skill 定義 (upstream 逐語)
-- Create: `plugins/grill-me/LICENSE` — MIT License 全文 (帰属要件)
-- Modify: `.claude-plugin/marketplace.json` — `plugins` 配列末尾にエントリ追加
-- Modify: `README.md` — install コマンド例 + plugin 一覧に grill-me を追加
-- Modify: `docs/README.ja.md` — 日本語版に同様の追加
-
-### Phase B: Dotfiles (本 worktree: `/Users/takeruooyama/.dotfiles/.claude/worktrees/transient-bubbling-octopus/`)
-
-- Modify: `src/.claude/plugins/installed_plugins.personal.json` — grill-me@tqer39-plugins エントリ追加
+**仕様:** [docs/superpowers/specs/2026-04-19-grill-me-skill-design.md](../specs/2026-04-19-grill-me-skill-design.md)
 
 ---
 
-## Phase A: Marketplace 変更
+## ファイル構成
 
-### Task A1: Marketplace worktree 準備 & ブランチ作成
+### 段階 A: Marketplace (`/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/`)
 
-**Files:**
+- 作成: `plugins/grill-me/.claude-plugin/plugin.json` — plugin メタデータ
+- 作成: `plugins/grill-me/skills/grill-me/SKILL.md` — skill 定義 (upstream 逐語)
+- 作成: `plugins/grill-me/LICENSE` — MIT License 全文 (帰属要件)
+- 変更: `.claude-plugin/marketplace.json` — `plugins` 配列末尾にエントリ追加
+- 変更: `README.md` — install コマンド例 + plugin 一覧に grill-me を追加
+- 変更: `docs/README.ja.md` — 日本語版に同様の追加
+
+### 段階 B: Dotfiles (本 worktree: `/Users/takeruooyama/.dotfiles/.claude/worktrees/transient-bubbling-octopus/`)
+
+- 変更: `src/.claude/plugins/installed_plugins.personal.json` — grill-me@tqer39-plugins エントリ追加
+
+---
+
+## 段階 A: Marketplace 変更
+
+### タスク A1: Marketplace worktree 準備 & ブランチ作成
+
+**対象ファイル:**
 
 - None (ブランチ作成のみ)
 
@@ -48,7 +48,7 @@ git status
 git log -1 --oneline
 ```
 
-Expected: `On branch main`, `Your branch is up to date with 'origin/main'`。`.claude/` が untracked として残っているが本タスクでは触らない。
+期待する結果: `On branch main`, `Your branch is up to date with 'origin/main'`。`.claude/` が untracked として残っているが本タスクでは触らない。
 
 - [ ] **Step 2: 新ブランチ作成**
 
@@ -56,15 +56,15 @@ Expected: `On branch main`, `Your branch is up to date with 'origin/main'`。`.c
 git switch -c feat/add-grill-me-plugin
 ```
 
-Expected: `Switched to a new branch 'feat/add-grill-me-plugin'`
+期待する結果: `Switched to a new branch 'feat/add-grill-me-plugin'`
 
 ---
 
-### Task A2: plugin.json を作成
+### タスク A2: plugin.json を作成
 
-**Files:**
+**対象ファイル:**
 
-- Create: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/.claude-plugin/plugin.json`
+- 作成: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/.claude-plugin/plugin.json`
 
 - [ ] **Step 1: ディレクトリ作成**
 
@@ -92,15 +92,15 @@ cd /Users/takeruooyama/workspace/tqer39/claude-code-marketplace
 python3 -c "import json; json.load(open('plugins/grill-me/.claude-plugin/plugin.json'))"
 ```
 
-Expected: エラーなし (stdout/stderr 両方空)
+期待する結果: エラーなし (stdout/stderr 両方空)
 
 ---
 
-### Task A3: SKILL.md を作成
+### タスク A3: SKILL.md を作成
 
-**Files:**
+**対象ファイル:**
 
-- Create: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/skills/grill-me/SKILL.md`
+- 作成: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/skills/grill-me/SKILL.md`
 
 - [ ] **Step 1: SKILL.md を書き込む**
 
@@ -128,15 +128,15 @@ gh api repos/mattpocock/skills/contents/grill-me/SKILL.md --jq '.content' | base
 diff /tmp/upstream-grill-me.md /Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/skills/grill-me/SKILL.md
 ```
 
-Expected: 末尾の `<!-- Source: ... -->` コメント行のみが差分として表示される (local に 1 行追加、それ以外は一致)。
+期待する結果: 末尾の `<!-- Source: ... -->` コメント行のみが差分として表示される (local に 1 行追加、それ以外は一致)。
 
 ---
 
-### Task A4: LICENSE を作成
+### タスク A4: LICENSE を作成
 
-**Files:**
+**対象ファイル:**
 
-- Create: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/LICENSE`
+- 作成: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/LICENSE`
 
 - [ ] **Step 1: upstream LICENSE をダウンロードして配置**
 
@@ -150,7 +150,7 @@ gh api repos/mattpocock/skills/contents/LICENSE --jq '.content' | base64 -d > /U
 head -3 /Users/takeruooyama/workspace/tqer39/claude-code-marketplace/plugins/grill-me/LICENSE
 ```
 
-Expected:
+期待する結果:
 
 ```text
 MIT License
@@ -160,11 +160,11 @@ Copyright (c) 2026 Matt Pocock
 
 ---
 
-### Task A5: marketplace.json を更新
+### タスク A5: marketplace.json を更新
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/.claude-plugin/marketplace.json`
+- 変更: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/.claude-plugin/marketplace.json`
 
 - [ ] **Step 1: 既存の最後のエントリ (skill-matcher) の直後に grill-me を追加**
 
@@ -206,15 +206,15 @@ cd /Users/takeruooyama/workspace/tqer39/claude-code-marketplace
 python3 -c "import json; d=json.load(open('.claude-plugin/marketplace.json')); assert any(p['name']=='grill-me' for p in d['plugins']), 'grill-me not found'; print('ok')"
 ```
 
-Expected: `ok`
+期待する結果: `ok`
 
 ---
 
-### Task A6: README.md (英語) を更新
+### タスク A6: README.md (英語) を更新
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/README.md`
+- 変更: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/README.md`
 
 - [ ] **Step 1: 冒頭インストール例 (L20 付近) に grill-me 行を追加**
 
@@ -258,11 +258,11 @@ Upstream: [mattpocock/skills](https://github.com/mattpocock/skills) (MIT License
 
 ---
 
-### Task A7: docs/README.ja.md (日本語) を更新
+### タスク A7: docs/README.ja.md (日本語) を更新
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/docs/README.ja.md`
+- 変更: `/Users/takeruooyama/workspace/tqer39/claude-code-marketplace/docs/README.ja.md`
 
 - [ ] **Step 1: 冒頭インストール例に grill-me 行を追加**
 
@@ -306,9 +306,9 @@ Upstream: [mattpocock/skills](https://github.com/mattpocock/skills) (MIT License
 
 ---
 
-### Task A8: lint & validate
+### タスク A8: lint & validate
 
-**Files:**
+**対象ファイル:**
 
 - None (検証のみ)
 
@@ -320,7 +320,7 @@ git add plugins/grill-me .claude-plugin/marketplace.json README.md docs/README.j
 pre-commit run --files plugins/grill-me/.claude-plugin/plugin.json plugins/grill-me/skills/grill-me/SKILL.md plugins/grill-me/LICENSE .claude-plugin/marketplace.json README.md docs/README.ja.md
 ```
 
-Expected: すべて `Passed` または `Skipped`。Failed があれば該当メッセージに従って修正し、再実行。
+期待する結果: すべて `Passed` または `Skipped`。Failed があれば該当メッセージに従って修正し、再実行。
 
 - [ ] **Step 2: just lint があれば実行**
 
@@ -329,13 +329,13 @@ cd /Users/takeruooyama/workspace/tqer39/claude-code-marketplace
 just lint 2>&1 | tail -30 || echo "just lint not available, skipping"
 ```
 
-Expected: 成功 or skip。
+期待する結果: 成功 or skip。
 
 ---
 
-### Task A9: commit & push & PR 作成
+### タスク A9: commit & push & PR 作成
 
-**Files:**
+**対象ファイル:**
 
 - None (git 操作のみ)
 
@@ -355,7 +355,7 @@ EOF
 )"
 ```
 
-Expected: pre-commit が再度走り、成功してコミット作成。
+期待する結果: pre-commit が再度走り、成功してコミット作成。
 
 - [ ] **Step 2: push**
 
@@ -363,7 +363,7 @@ Expected: pre-commit が再度走り、成功してコミット作成。
 git push -u origin feat/add-grill-me-plugin
 ```
 
-Expected: `Branch 'feat/add-grill-me-plugin' set up to track 'origin/feat/add-grill-me-plugin'`
+期待する結果: `Branch 'feat/add-grill-me-plugin' set up to track 'origin/feat/add-grill-me-plugin'`
 
 - [ ] **Step 3: PR 作成**
 
@@ -388,13 +388,13 @@ EOF
 )"
 ```
 
-Expected: PR URL が返る。
+期待する結果: PR URL が返る。
 
 ---
 
-### Task A10: PR マージ
+### タスク A10: PR マージ
 
-**Files:**
+**対象ファイル:**
 
 - None (GitHub 操作のみ)
 
@@ -404,7 +404,7 @@ Expected: PR URL が返る。
 gh pr view --repo tqer39/claude-code-marketplace feat/add-grill-me-plugin --json statusCheckRollup,mergeable
 ```
 
-Expected: `statusCheckRollup` がすべて `SUCCESS` (CI がない場合は空配列でも可)、`mergeable: "MERGEABLE"`。
+期待する結果: `statusCheckRollup` がすべて `SUCCESS` (CI がない場合は空配列でも可)、`mergeable: "MERGEABLE"`。
 
 - [ ] **Step 2: PR をマージ**
 
@@ -412,7 +412,7 @@ Expected: `statusCheckRollup` がすべて `SUCCESS` (CI がない場合は空�
 gh pr merge --repo tqer39/claude-code-marketplace feat/add-grill-me-plugin --squash --delete-branch
 ```
 
-Expected: `Merged pull request ...` のメッセージ。
+期待する結果: `Merged pull request ...` のメッセージ。
 
 - [ ] **Step 3: ローカルを main に戻して pull**
 
@@ -422,17 +422,17 @@ git switch main
 git pull --ff-only
 ```
 
-Expected: merge commit が取り込まれる。
+期待する結果: merge commit が取り込まれる。
 
 ---
 
-## Phase B: Dotfiles 変更
+## 段階 B: Dotfiles 変更
 
-### Task B1: installed_plugins.personal.json を更新
+### タスク B1: installed_plugins.personal.json を更新
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `src/.claude/plugins/installed_plugins.personal.json` (本 worktree 内)
+- 変更: `src/.claude/plugins/installed_plugins.personal.json` (本 worktree 内)
 
 - [ ] **Step 1: ファイル末尾の最後のエントリ (discord@claude-plugins-official) の後に grill-me@tqer39-plugins を追加**
 
@@ -482,13 +482,13 @@ cd /Users/takeruooyama/.dotfiles/.claude/worktrees/transient-bubbling-octopus
 python3 -c "import json; d=json.load(open('src/.claude/plugins/installed_plugins.personal.json')); assert 'grill-me@tqer39-plugins' in d['plugins'], 'missing'; print('ok')"
 ```
 
-Expected: `ok`
+期待する結果: `ok`
 
 ---
 
-### Task B2: dotfiles commit & PR
+### タスク B2: dotfiles のコミットと PR
 
-**Files:**
+**対象ファイル:**
 
 - None (git 操作のみ)
 
@@ -507,7 +507,7 @@ EOF
 )"
 ```
 
-Expected: pre-commit 成功、commit 作成。
+期待する結果: pre-commit 成功、commit 作成。
 
 - [ ] **Step 2: push**
 
@@ -515,7 +515,7 @@ Expected: pre-commit 成功、commit 作成。
 git push -u origin "$(git branch --show-current)"
 ```
 
-Expected: push 成功。
+期待する結果: push 成功。
 
 - [ ] **Step 3: PR 作成**
 
@@ -538,13 +538,13 @@ EOF
 )"
 ```
 
-Expected: PR URL が返る。
+期待する結果: PR URL が返る。
 
 ---
 
-### Task B3: 動作確認
+### タスク B3: 動作確認
 
-**Files:**
+**対象ファイル:**
 
 - None (手動検証)
 
@@ -556,22 +556,22 @@ Expected: PR URL が返る。
 claude plugin install grill-me@tqer39-plugins
 ```
 
-Expected: インストール成功メッセージ。
+期待する結果: インストール成功メッセージ。
 
 - [ ] **Step 2: skill 発火確認**
 
 任意の Claude Code セッションで「計画を grill me してほしい」等と発話し、grill-me skill が起動することを目視確認。
 
-Expected: Socratic 型の質問が 1 問ずつ返ってくる。
+期待する結果: Socratic 型の質問が 1 問ずつ返ってくる。
 
 ---
 
-## Self-Review Checklist
+## 自己レビューの確認項目
 
 実装開始前に実行者が確認:
 
-- [ ] Spec (docs/superpowers/specs/2026-04-19-grill-me-skill-design.md) のすべての変更項目が Phase A/B のタスクでカバーされている
+- [ ] 仕様 (docs/superpowers/specs/2026-04-19-grill-me-skill-design.md) のすべての変更項目が Phase A/B のタスクでカバーされている
 - [ ] プレースホルダ (TBD, TODO 等) が本プランに存在しない
-- [ ] Phase A の各タスクが marketplace リポジトリ、Phase B が dotfiles リポジトリで完結している
+- [ ] 段階 A の各タスクが marketplace リポジトリ、Phase B が dotfiles リポジトリで完結している
 - [ ] JSON ファイル編集 (plugin.json, marketplace.json, installed_plugins.personal.json) の各タスクに構文検証ステップがある
 - [ ] MIT License の帰属表示 (LICENSE ファイル + SKILL.md 末尾コメント) の両方が含まれる

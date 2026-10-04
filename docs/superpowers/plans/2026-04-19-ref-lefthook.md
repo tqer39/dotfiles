@@ -1,22 +1,22 @@
-# ref-lefthook Implementation Plan
+# ref-lefthook 実装計画
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **エージェント向け:** 必須のサブスキルとして `superpowers:subagent-driven-development`（推奨）または `superpowers:executing-plans` を使い、タスク単位でこの計画を実施します。進捗はチェックボックス（`- [ ]`）で管理します。
 
-**Goal:** lint 基盤を `prek` + `.pre-commit-config.yaml` から `lefthook` + `lefthook.yml` に置換し、Node 依存を `pnpm` で pin する。
+**目的:** lint 基盤を `prek` + `.pre-commit-config.yaml` から `lefthook` + `lefthook.yml` に置換し、Node 依存を `pnpm` で pin する。
 
-**Architecture:** `terraform-github` リポと同じ構成を採用する。`parallel: true` と `{staged_files}` で commit を高速化する。`lefthook` / `pnpm` は `mise` で版固定する。CI は `prek.yml` を `lint.yml` に置換する。
+**構成:** `terraform-github` リポと同じ構成を採用する。`parallel: true` と `{staged_files}` で commit を高速化する。`lefthook` / `pnpm` は `mise` で版固定する。CI は `prek.yml` を `lint.yml` に置換する。
 
-**Tech Stack:**
+**使用技術:**
 
 - lefthook 1.8.4 / pnpm 10.33.0
 - cspell 10 / markdownlint-cli2 0.22 / prettier 3.1 / textlint 15.5 / biome 1.9
 - shellcheck (system) / GitHub Actions (mise-action)
 
-**Spec:** `docs/superpowers/specs/2026-04-19-ref-lefthook-design.md`
+**仕様:** `docs/superpowers/specs/2026-04-19-ref-lefthook-design.md`
 
 ---
 
-## File Structure
+## ファイル構成
 
 新規 (10 ファイル):
 
@@ -50,9 +50,9 @@
 
 ---
 
-## Task 1: ブランチ作成
+## タスク 1: ブランチ作成
 
-**Files:** N/A (git のみ)
+**対象ファイル:** N/A (git のみ)
 
 - [ ] **Step 1: 現在のブランチを確認**
 
@@ -61,7 +61,7 @@ git status
 git branch --show-current
 ```
 
-Expected: clean, ブランチ名は worktree 名。
+期待する結果: clean, ブランチ名は worktree 名。
 
 - [ ] **Step 2: feature ブランチを切る (worktree 内のため必要なら名前変更だけ)**
 
@@ -71,20 +71,20 @@ git branch -m feature/ref-lefthook
 git branch --show-current
 ```
 
-Expected: `feature/ref-lefthook`
+期待する結果: `feature/ref-lefthook`
 
 ---
 
-## Task 2: scripts/lint/*.sh を作成 (セーフティ系 hook 6 本)
+## タスク 2: scripts/lint/*.sh を作成 (セーフティ系 hook 6 本)
 
-**Files:**
+**対象ファイル:**
 
-- Create: `scripts/lint/check-added-large-files.sh`
-- Create: `scripts/lint/detect-aws-credentials.sh`
-- Create: `scripts/lint/detect-private-key.sh`
-- Create: `scripts/lint/end-of-file-fixer.sh`
-- Create: `scripts/lint/mixed-line-ending.sh`
-- Create: `scripts/lint/trailing-whitespace.sh`
+- 作成: `scripts/lint/check-added-large-files.sh`
+- 作成: `scripts/lint/detect-aws-credentials.sh`
+- 作成: `scripts/lint/detect-private-key.sh`
+- 作成: `scripts/lint/end-of-file-fixer.sh`
+- 作成: `scripts/lint/mixed-line-ending.sh`
+- 作成: `scripts/lint/trailing-whitespace.sh`
 
 - [ ] **Step 1: `scripts/lint/` ディレクトリ作成**
 
@@ -253,7 +253,7 @@ chmod +x scripts/lint/*.sh
 ls -l scripts/lint/
 ```
 
-Expected: 6 ファイル全てが `-rwxr-xr-x`。
+期待する結果: 6 ファイル全てが `-rwxr-xr-x`。
 
 - [ ] **Step 9: shellcheck で検証**
 
@@ -261,7 +261,7 @@ Expected: 6 ファイル全てが `-rwxr-xr-x`。
 shellcheck scripts/lint/*.sh
 ```
 
-Expected: exit 0、警告なし。
+期待する結果: exit 0、警告なし。
 
 - [ ] **Step 10: 動作テスト (大ファイル検出)**
 
@@ -273,7 +273,7 @@ echo "exit=$?"
 rm -f /tmp/big.bin
 ```
 
-Expected: `/tmp/big.bin: 600 KB (exceeds 512 KB)` と `exit=1`。
+期待する結果: `/tmp/big.bin: 600 KB (exceeds 512 KB)` と `exit=1`。
 
 - [ ] **Step 11: Commit**
 
@@ -292,12 +292,12 @@ MSG
 
 ---
 
-## Task 3: package.json と pnpm-lock.yaml を作成
+## タスク 3: package.json と pnpm-lock.yaml を作成
 
-**Files:**
+**対象ファイル:**
 
-- Create: `package.json`
-- Create: `pnpm-lock.yaml`
+- 作成: `package.json`
+- 作成: `pnpm-lock.yaml`
 
 - [ ] **Step 1: `pnpm` が利用可能か確認**
 
@@ -306,7 +306,7 @@ which pnpm || corepack enable pnpm
 pnpm --version
 ```
 
-Expected: 10.x が表示。なければ `mise install pnpm@10.33.0` か `npm i -g pnpm`。
+期待する結果: 10.x が表示。なければ `mise install pnpm@10.33.0` か `npm i -g pnpm`。
 
 - [ ] **Step 2: `package.json` を作成**
 
@@ -338,7 +338,7 @@ pnpm install
 ls pnpm-lock.yaml node_modules/.pnpm > /dev/null && echo OK
 ```
 
-Expected: `pnpm-lock.yaml` 生成、`node_modules/` に依存解決済み。
+期待する結果: `pnpm-lock.yaml` 生成、`node_modules/` に依存解決済み。
 
 - [ ] **Step 4: 各ツールが起動できることを確認**
 
@@ -350,7 +350,7 @@ pnpm exec textlint --version
 pnpm exec biome --version
 ```
 
-Expected: それぞれバージョン表示 / OK。
+期待する結果: それぞれバージョン表示 / OK。
 
 - [ ] **Step 5: `.gitignore` に `node_modules/` と `.lefthook/` を追記**
 
@@ -385,11 +385,11 @@ MSG
 
 ---
 
-## Task 4: mise.toml に lefthook と pnpm を追加
+## タスク 4: mise.toml に lefthook と pnpm を追加
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `mise.toml`
+- 変更: `mise.toml`
 
 - [ ] **Step 1: `mise.toml` を更新**
 
@@ -411,7 +411,7 @@ mise install
 mise list | grep -E 'lefthook|pnpm'
 ```
 
-Expected: `lefthook 1.8.4` と `pnpm 10.33.0` が installed。
+期待する結果: `lefthook 1.8.4` と `pnpm 10.33.0` が installed。
 
 - [ ] **Step 3: コマンドが解決できることを確認**
 
@@ -420,7 +420,7 @@ which lefthook && lefthook version
 which pnpm && pnpm --version
 ```
 
-Expected: `mise/installs/...` 配下のパス、それぞれバージョン表示。
+期待する結果: `mise/installs/...` 配下のパス、それぞれバージョン表示。
 
 - [ ] **Step 4: Commit**
 
@@ -439,11 +439,11 @@ MSG
 
 ---
 
-## Task 5: lefthook.yml を作成
+## タスク 5: lefthook.yml を作成
 
-**Files:**
+**対象ファイル:**
 
-- Create: `lefthook.yml`
+- 作成: `lefthook.yml`
 
 - [ ] **Step 1: `lefthook.yml` を作成**
 
@@ -510,7 +510,7 @@ EOF
 lefthook validate
 ```
 
-Expected: `Lefthook validation result: ✔ valid`。
+期待する結果: `Lefthook validation result: ✔ valid`。
 
 - [ ] **Step 3: lefthook install で git hook を書き換え**
 
@@ -519,7 +519,7 @@ lefthook install
 cat .git/hooks/pre-commit | head -3
 ```
 
-Expected: lefthook 由来のスクリプト (`# LEFTHOOK ...`) が出力される。
+期待する結果: lefthook 由来のスクリプト (`# LEFTHOOK ...`) が出力される。
 
 - [ ] **Step 4: 全 file lint で動作確認 (gate)**
 
@@ -527,7 +527,7 @@ Expected: lefthook 由来のスクリプト (`# LEFTHOOK ...`) が出力され�
 lefthook run pre-commit --all-files
 ```
 
-Expected: 全 hook PASS、exit 0。失敗があれば glob/script を調整。
+期待する結果: 全 hook PASS、exit 0。失敗があれば glob/script を調整。
 
 - [ ] **Step 5: 単独 hook で動作確認**
 
@@ -537,7 +537,7 @@ lefthook run pre-commit --commands shellcheck --all-files
 lefthook run pre-commit --commands markdownlint --all-files
 ```
 
-Expected: それぞれ exit 0。
+期待する結果: それぞれ exit 0。
 
 - [ ] **Step 6: Commit**
 
@@ -557,11 +557,11 @@ MSG
 
 ---
 
-## Task 6: justfile を lefthook ベースに書き換え
+## タスク 6: justfile を lefthook ベースに書き換え
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `justfile`
+- 変更: `justfile`
 
 - [ ] **Step 1: 現行 justfile の関連部分を確認**
 
@@ -569,7 +569,7 @@ MSG
 sed -n '1,40p' justfile
 ```
 
-Expected: setup 系および lint 系の各レシピが表示される。
+期待する結果: setup 系および lint 系の各レシピが表示される。
 
 - [ ] **Step 2: `setup` セクションを更新**
 
@@ -619,7 +619,7 @@ just lint
 just lint-hook cspell
 ```
 
-Expected: ヘルプ表示が出る。`just lint` / `just lint-hook cspell` がそれぞれ exit 0。
+期待する結果: ヘルプ表示が出る。`just lint` / `just lint-hook cspell` がそれぞれ exit 0。
 
 - [ ] **Step 5: Commit**
 
@@ -638,12 +638,12 @@ MSG
 
 ---
 
-## Task 7: CI ワークフローを置換
+## タスク 7: CI ワークフローを置換
 
-**Files:**
+**対象ファイル:**
 
-- Create: `.github/workflows/lint.yml`
-- Delete: `.github/workflows/prek.yml`
+- 作成: `.github/workflows/lint.yml`
+- 削除: `.github/workflows/prek.yml`
 
 - [ ] **Step 1: `lint.yml` を作成**
 
@@ -696,7 +696,7 @@ git add .github/workflows/lint.yml
 lefthook run pre-commit --commands prettier-yaml --all-files
 ```
 
-Expected: prettier が yaml をフォーマット (差分なし or 自動修正後 stage)。
+期待する結果: prettier が yaml をフォーマット (差分なし or 自動修正後 stage)。
 
 - [ ] **Step 4: Commit**
 
@@ -715,14 +715,14 @@ MSG
 
 ---
 
-## Task 8: README / docs バッジ URL とインストール手順を更新
+## タスク 8: README / docs バッジ URL とインストール手順を更新
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `README.md` (バッジ)
-- Modify: `docs/README.ja.md` (バッジ)
-- Modify: `docs/local-dev.md` (`prek` → `lefthook`)
-- Modify: `docs/local-dev.ja.md` (`prek` → `lefthook`)
+- 変更: `README.md` (バッジ)
+- 変更: `docs/README.ja.md` (バッジ)
+- 変更: `docs/local-dev.md` (`prek` → `lefthook`)
+- 変更: `docs/local-dev.ja.md` (`prek` → `lefthook`)
 
 - [ ] **Step 1: `README.md` のバッジを差し替え**
 
@@ -778,7 +778,7 @@ MSG
 grep -rn '\bprek\b' README.md docs/ 2>/dev/null || echo "no prek references"
 ```
 
-Expected: 1 件も出ないこと。残っていれば追加で修正する。
+期待する結果: 1 件も出ないこと。残っていれば追加で修正する。
 
 - [ ] **Step 6: Commit**
 
@@ -797,13 +797,13 @@ MSG
 
 ---
 
-## Task 9: Brewfile / install.ps1 から prek を削除
+## タスク 9: Brewfile / install.ps1 から prek を削除
 
-**Files:**
+**対象ファイル:**
 
-- Modify: `Brewfile` (root)
-- Modify: `config/packages/Brewfile`
-- Modify: `install.ps1`
+- 変更: `Brewfile` (root)
+- 変更: `config/packages/Brewfile`
+- 変更: `install.ps1`
 
 - [ ] **Step 1: root `Brewfile` から `prek` を削除**
 
@@ -813,7 +813,7 @@ diff Brewfile Brewfile.bak || true
 rm Brewfile.bak
 ```
 
-Expected: `brew "prek"` の 1 行が消えていること。
+期待する結果: `brew "prek"` の 1 行が消えていること。
 
 - [ ] **Step 2: `config/packages/Brewfile` から `prek` を削除 (`pre-commit` は据え置き)**
 
@@ -824,7 +824,7 @@ rm config/packages/Brewfile.bak
 grep -n 'prek\|pre-commit' config/packages/Brewfile
 ```
 
-Expected: `brew "pre-commit"` の行のみ残り、`brew "prek"` は消える。
+期待する結果: `brew "pre-commit"` の行のみ残り、`brew "prek"` は消える。
 
 - [ ] **Step 3: `install.ps1` の scoop 配列から `"prek",` を削除**
 
@@ -843,7 +843,7 @@ rm install.ps1.bak
 grep -n '"prek"' install.ps1 || echo "no prek references"
 ```
 
-Expected: `"prek",` が消え、grep で出力なし。
+期待する結果: `"prek",` が消え、grep で出力なし。
 
 - [ ] **Step 4: 各ファイルの整合性確認**
 
@@ -856,7 +856,7 @@ brew bundle list --file=config/packages/Brewfile >/dev/null && echo "packages/Br
 which pwsh && pwsh -NoProfile -Command "Get-Content install.ps1 | Out-Null" || echo "skip pwsh check"
 ```
 
-Expected: それぞれ OK。pwsh が無ければスキップ可。
+期待する結果: それぞれ OK。pwsh が無ければスキップ可。
 
 - [ ] **Step 5: Commit**
 
@@ -875,12 +875,12 @@ MSG
 
 ---
 
-## Task 10: .pre-commit-config.yaml を削除し最終回帰
+## タスク 10: .pre-commit-config.yaml を削除し最終回帰
 
-**Files:**
+**対象ファイル:**
 
-- Delete: `.pre-commit-config.yaml`
-- Modify: `.cspell/project-words.txt` (必要時)
+- 削除: `.pre-commit-config.yaml`
+- 変更: `.cspell/project-words.txt` (必要時)
 
 - [ ] **Step 1: `.pre-commit-config.yaml` を削除**
 
@@ -894,7 +894,7 @@ git rm .pre-commit-config.yaml
 just lint
 ```
 
-Expected: 全 hook PASS、exit 0。`cspell` で `lefthook` / `prettier` / `pnpm` 等が unknown word として fail した場合、`.cspell/project-words.txt` に追記する。
+期待する結果: 全 hook PASS、exit 0。`cspell` で `lefthook` / `prettier` / `pnpm` 等が unknown word として fail した場合、`.cspell/project-words.txt` に追記する。
 
 - [ ] **Step 3: cspell 辞書追記 (Step 2 で fail した語のみ)**
 
@@ -907,7 +907,7 @@ sort -uf .cspell/project-words.txt -o .cspell/project-words.txt
 just lint-hook cspell
 ```
 
-Expected: cspell hook が 0 issues。
+期待する結果: cspell hook が 0 issues。
 
 - [ ] **Step 4: staged-files モードでの動作確認 (commit シミュレーション)**
 
@@ -921,7 +921,7 @@ git restore --staged test.md
 rm test.md
 ```
 
-Expected: stage 済み変更に末尾改行追加が反映されている。
+期待する結果: stage 済み変更に末尾改行追加が反映されている。
 
 - [ ] **Step 5: 最終 lint**
 
@@ -929,7 +929,7 @@ Expected: stage 済み変更に末尾改行追加が反映されている。
 just lint
 ```
 
-Expected: 全 hook PASS、exit 0。
+期待する結果: 全 hook PASS、exit 0。
 
 - [ ] **Step 6: Commit**
 
@@ -947,9 +947,9 @@ MSG
 
 ---
 
-## Task 11: PR を作成
+## タスク 11: PR を作成
 
-**Files:** N/A
+**対象ファイル:** N/A
 
 - [ ] **Step 1: 残作業がないことを確認**
 
@@ -958,7 +958,7 @@ git status
 grep -rn '\bprek\b' . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.lefthook --exclude=pnpm-lock.yaml --exclude=docs/superpowers/specs/2026-04-19-ref-cspell-design.md --exclude=docs/superpowers/specs/2026-04-19-ref-lefthook-design.md --exclude=docs/superpowers/plans/2026-04-19-ref-lefthook.md --exclude=docs/superpowers/plans/2026-04-19-ref-cspell.md --exclude=.cspell/project-words.txt 2>/dev/null || echo "no remaining prek references"
 ```
 
-Expected: clean working tree。`prek` の残存は spec / plan の歴史記述と辞書のみ。
+期待する結果: clean working tree。`prek` の残存は spec / plan の歴史記述と辞書のみ。
 
 - [ ] **Step 2: ブランチを push**
 
@@ -1007,7 +1007,7 @@ EOF
 )"
 ````
 
-Expected: PR URL が表示される。
+期待する結果: PR URL が表示される。
 
 - [ ] **Step 4: PR の CI 結果を確認**
 
@@ -1015,7 +1015,7 @@ Expected: PR URL が表示される。
 gh pr checks
 ```
 
-Expected: `lint` workflow が success。
+期待する結果: `lint` workflow が success。
 
 ---
 
