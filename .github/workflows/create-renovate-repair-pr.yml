@@ -1,0 +1,208 @@
+# cspell:ignore mktemp
+name: Create Renovate Repair PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Renovate PR number to create a repair PR for. If omitted, workflow_run context is used.'
+        required: false
+        type: string
+      dry_run:
+        description: 'Do not push a branch or create a PR.'
+        required: true
+        default: true
+        type: boolean
+  workflow_run:
+    workflows:
+      - Labeler
+      - lint
+      - Test Install Scripts
+    types:
+      - completed
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch || inputs.pr_number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  create-repair-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'failure'
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    steps:
+      - name: GitHub App トークンの生成
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        with:
+          app-id: ${{ secrets.GHA_APP_ID }}
+          private-key: ${{ secrets.GHA_APP_PRIVATE_KEY }}
+
+      - name: 対象 Renovate PR の特定
+        id: target
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
+          WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          WORKFLOW_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          WORKFLOW_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          set -euo pipefail
+
+          PR_NUMBER="${INPUT_PR_NUMBER}"
+          if [ -z "$PR_NUMBER" ]; then
+            if [ -z "$WORKFLOW_HEAD_SHA" ]; then
+              echo "workflow_run head SHA is empty and pr_number was not provided"
+              exit 0
+            fi
+            PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${WORKFLOW_HEAD_SHA}/pulls" \
+              --jq '[.[] | select(.state == "open")][0].number // empty')
+          fi
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No open PR found for this event."
+            exit 0
+          fi
+
+          PR_JSON=$(gh pr view "$PR_NUMBER" \
+            --repo "${{ github.repository }}" \
+            --json number,title,url,author,headRefName,headRefOid,baseRefName,state,isDraft)
+
+          AUTHOR=$(jq -r '.author.login' <<<"$PR_JSON")
+          HEAD_BRANCH=$(jq -r '.headRefName' <<<"$PR_JSON")
+          HEAD_SHA=$(jq -r '.headRefOid' <<<"$PR_JSON")
+          TITLE=$(jq -r '.title' <<<"$PR_JSON")
+          URL=$(jq -r '.url' <<<"$PR_JSON")
+          STATE=$(jq -r '.state' <<<"$PR_JSON")
+
+          if [ "$STATE" != "OPEN" ]; then
+            echo "PR #${PR_NUMBER} is not open: ${STATE}"
+            exit 0
+          fi
+
+          if [ "$AUTHOR" != "app/renovate" ] && [ "$AUTHOR" != "renovate[bot]" ]; then
+            echo "PR #${PR_NUMBER} is not a Renovate PR: author=${AUTHOR}"
+            exit 0
+          fi
+
+          if [[ "$HEAD_BRANCH" == renovate-repair/* ]]; then
+            echo "Skip repair branch: ${HEAD_BRANCH}"
+            exit 0
+          fi
+
+          if [[ "$HEAD_BRANCH" != renovate/* ]]; then
+            echo "PR #${PR_NUMBER} head branch is not renovate/*: ${HEAD_BRANCH}"
+            exit 0
+          fi
+
+          SAFE_BRANCH=$(printf '%s' "$HEAD_BRANCH" | sed -E 's|^renovate/||; s|[^A-Za-z0-9._-]+|-|g' | cut -c1-80)
+          REPAIR_BRANCH="renovate-repair/pr-${PR_NUMBER}-${SAFE_BRANCH}"
+          EXISTING_PR=$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --state open \
+            --head "$REPAIR_BRANCH" \
+            --json number,url \
+            --jq '.[0].url // empty')
+
+          {
+            echo "pr_number=${PR_NUMBER}"
+            echo "pr_title=${TITLE}"
+            echo "pr_url=${URL}"
+            echo "head_branch=${HEAD_BRANCH}"
+            echo "head_sha=${HEAD_SHA}"
+            echo "repair_branch=${REPAIR_BRANCH}"
+            echo "existing_pr=${EXISTING_PR}"
+            echo "workflow_name=${WORKFLOW_NAME:-manual}"
+            echo "workflow_url=${WORKFLOW_URL:-}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: repair PR 作成
+        if: steps.target.outputs.pr_number != '' && steps.target.outputs.existing_pr == ''
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          DRY_RUN: ${{ inputs.dry_run || false }}
+          PR_NUMBER: ${{ steps.target.outputs.pr_number }}
+          PR_TITLE: ${{ steps.target.outputs.pr_title }}
+          PR_URL: ${{ steps.target.outputs.pr_url }}
+          HEAD_BRANCH: ${{ steps.target.outputs.head_branch }}
+          HEAD_SHA: ${{ steps.target.outputs.head_sha }}
+          REPAIR_BRANCH: ${{ steps.target.outputs.repair_branch }}
+          WORKFLOW_NAME: ${{ steps.target.outputs.workflow_name }}
+          WORKFLOW_URL: ${{ steps.target.outputs.workflow_url }}
+        run: |
+          set -euo pipefail
+
+          BODY_FILE=$(mktemp)
+          cat > "$BODY_FILE" <<EOF
+          ## 概要
+
+          Renovate PR #${PR_NUMBER} の CI failure を受けて自動生成された repair PR です。
+
+          元 PR:
+          - ${PR_URL}
+
+          この PR の base は \`${HEAD_BRANCH}\` です。\`main\` ではありません。
+
+          ## 検知した failure
+
+          - Workflow: ${WORKFLOW_NAME}
+          - Run: ${WORKFLOW_URL:-N/A}
+          - Renovate branch: \`${HEAD_BRANCH}\`
+          - Renovate head SHA: \`${HEAD_SHA}\`
+          - Repair branch: \`${REPAIR_BRANCH}\`
+
+          ## 初期版の挙動
+
+          現時点では安全のため、ファイルは変更せず empty commit のみで CI を再実行します。
+          修復差分が必要な場合は、この repair PR branch に追加 commit を積んでください。
+
+          ## レビュー観点
+
+          - この PR は元 Renovate PR に直接 push しないためのレビュー用 PR です。
+          - merge すると元 Renovate branch に repair commit が入り、元 PR の CI が再実行されます。
+          EOF
+
+          echo "Target PR: #${PR_NUMBER} ${PR_TITLE}"
+          echo "Repair branch: ${REPAIR_BRANCH}"
+          echo "Dry run: ${DRY_RUN}"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            echo "dry_run=true のため branch push / PR 作成は行いません。"
+            cat "$BODY_FILE"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git init repair-worktree
+          cd repair-worktree
+          git remote add origin "https://github.com/${{ github.repository }}.git"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: bearer ${GH_TOKEN}" \
+            fetch --depth=1 origin "${HEAD_BRANCH}"
+          git checkout -b "${REPAIR_BRANCH}" FETCH_HEAD
+          git commit --allow-empty -m "chore: retrigger CI for Renovate PR #${PR_NUMBER}"
+          git -c http.https://github.com/.extraheader="AUTHORIZATION: bearer ${GH_TOKEN}" \
+            push origin "${REPAIR_BRANCH}"
+
+          gh pr create \
+            --repo "${{ github.repository }}" \
+            --base "${HEAD_BRANCH}" \
+            --head "${REPAIR_BRANCH}" \
+            --draft \
+            --title "chore: retrigger CI for Renovate PR #${PR_NUMBER}" \
+            --body-file "$BODY_FILE"
+
+      - name: 既存 repair PR の表示
+        if: steps.target.outputs.existing_pr != ''
+        run: |
+          echo "既存の repair PR があるため新規作成しません。"
+          echo "${{ steps.target.outputs.existing_pr }}"
