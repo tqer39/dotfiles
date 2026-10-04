@@ -1,21 +1,18 @@
-name: Auto Merge
+name: Enable Auto-merge
 
 on:
-  workflow_run:
-    workflows: [CI]
-    types: [completed]
+  pull_request:
+    types: [opened, reopened, ready_for_review, synchronize]
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.workflow_run.id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
-  auto-merge:
+  enable-auto-merge:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    if: >-
-      github.event.workflow_run.event == 'pull_request' &&
-      github.event.workflow_run.conclusion == 'success'
+    if: github.event.pull_request.draft == false
     permissions:
       contents: read
       pull-requests: read
@@ -27,31 +24,11 @@ jobs:
           app-id: ${{ secrets.GHA_APP_ID }}
           private-key: ${{ secrets.GHA_APP_PRIVATE_KEY }}
 
-      - name: PR 番号の取得
-        id: pr
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          PR_NUMBER=$(gh api "repos/${{ github.repository }}/commits/${{ github.event.workflow_run.head_sha }}/pulls" \
-            --jq '.[0].number // empty')
-          echo "number=${PR_NUMBER}" >> "$GITHUB_OUTPUT"
-
-      - name: PR の approve
-        if: steps.pr.outputs.number != ''
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
-          gh pr review "${{ steps.pr.outputs.number }}" \
-            --repo "${{ github.repository }}" \
-            --approve \
-            --body "GitHub App による自動承認（CI の workflow-result 成功）"
-
       - name: auto-merge の有効化（squash）
-        if: steps.pr.outputs.number != ''
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          gh pr merge "${{ steps.pr.outputs.number }}" \
+          gh pr merge "${{ github.event.pull_request.number }}" \
             --repo "${{ github.repository }}" \
             --squash \
             --auto
