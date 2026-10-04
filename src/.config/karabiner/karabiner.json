@@ -436,6 +436,11 @@
                 "to": [{ "key_code": "tab", "modifiers": ["control"] }],
                 "conditions": [
                   {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
                     "type": "frontmost_application_if",
                     "bundle_identifiers": [
                       "^com\\.google\\.Chrome$",
@@ -466,6 +471,11 @@
                 "to": [{ "key_code": "tab", "modifiers": ["control"] }],
                 "conditions": [
                   {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
                     "type": "frontmost_application_if",
                     "bundle_identifiers": ["^com\\.openai\\.codex$"]
                   }
@@ -483,7 +493,16 @@
                   "key_code": "left_control",
                   "modifiers": { "optional": ["any"] }
                 },
-                "to": [{ "key_code": "left_command" }],
+                "to": [
+                  { "key_code": "left_command" },
+                  {
+                    "set_variable": {
+                      "name": "original_control_pressed",
+                      "value": true,
+                      "key_up_value": false
+                    }
+                  }
+                ],
                 "conditions": [
                   {
                     "type": "frontmost_application_unless",
@@ -503,7 +522,16 @@
                   "key_code": "right_control",
                   "modifiers": { "optional": ["any"] }
                 },
-                "to": [{ "key_code": "left_command" }],
+                "to": [
+                  { "key_code": "left_command" },
+                  {
+                    "set_variable": {
+                      "name": "original_control_pressed",
+                      "value": true,
+                      "key_up_value": false
+                    }
+                  }
+                ],
                 "conditions": [
                   {
                     "type": "frontmost_application_unless",
