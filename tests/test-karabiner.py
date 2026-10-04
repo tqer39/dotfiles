@@ -90,6 +90,34 @@ class ModifierRoleTest(unittest.TestCase):
                 self.assertEqual(chord(control, "tab", "com.openai.codex", {"left_shift"}),
                                  ("tab", {"control", "left_shift"}))
 
+    def test_codex_control_j_runs_nani_quick_translate(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "j", "com.openai.codex"),
+                                 ("j", {"left_control", "left_option"}))
+
+    def test_codex_control_shift_j_opens_terminal(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "j", "com.openai.codex", {"left_shift"}),
+                                 ("j", {"left_command"}))
+
+    def test_control_j_keeps_command_in_other_apps(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "j", "com.apple.TextEdit"),
+                                 ("j", {"left_command"}))
+
+    def test_control_j_runs_nani_quick_translate_in_browsers(self):
+        for app in (
+            "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
+            "org.mozilla.firefox",
+        ):
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    self.assertEqual(chord(control, "j", app),
+                                     ("j", {"left_control", "left_option"}))
+
     def test_control_tab_moves_browser_and_vscode_tabs(self):
         for app in (
             "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
@@ -116,6 +144,17 @@ class ModifierRoleTest(unittest.TestCase):
             with self.subTest(app=app):
                 self.assertEqual(transform("tab", {"left_command"}, app),
                                  ("tab", {"left_command"}))
+
+    def test_physical_command_j_keeps_native_shortcuts(self):
+        for app in (
+            "com.openai.codex", "com.google.Chrome", "com.brave.Browser",
+            "com.apple.Safari", "org.mozilla.firefox",
+        ):
+            with self.subTest(app=app):
+                self.assertEqual(transform("j", {"left_command"}, app),
+                                 ("j", {"left_command"}))
+                self.assertEqual(transform("j", {"left_command", "left_shift"}, app),
+                                 ("j", {"left_command", "left_shift"}))
 
     def test_control_stays_native_in_terminals(self):
         for app in TERMINALS:
