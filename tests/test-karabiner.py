@@ -69,8 +69,32 @@ class ModifierRoleTest(unittest.TestCase):
                 with self.subTest(app=app, control=control):
                     self.assertEqual(transform(control, set(), app), ("left_command", set()))
                     self.assertEqual(chord(control, "w", app), ("w", {"left_command"}))
+
+    def test_codex_control_tab_moves_browser_tabs(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "tab", "com.openai.codex"),
+                                 ("tab", {"control"}))
+                self.assertEqual(chord(control, "tab", "com.openai.codex", {"left_shift"}),
+                                 ("tab", {"control", "left_shift"}))
+
+    def test_control_tab_moves_browser_and_vscode_tabs(self):
+        for app in (
+            "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
+            "org.mozilla.firefox", "com.microsoft.VSCode", "com.microsoft.VSCodeInsiders",
+            "com.vscodium",
+        ):
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    self.assertEqual(chord(control, "tab", app), ("tab", {"control"}))
                     self.assertEqual(chord(control, "tab", app, {"left_shift"}),
-                                     ("tab", {"left_command", "left_shift"}))
+                                     ("tab", {"control", "left_shift"}))
+
+    def test_control_tab_keeps_command_in_other_apps(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "tab", "com.apple.TextEdit", {"left_shift"}),
+                                 ("tab", {"left_command", "left_shift"}))
 
     def test_control_stays_native_in_terminals(self):
         for app in TERMINALS:
