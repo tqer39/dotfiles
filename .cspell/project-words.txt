@@ -185,6 +185,7 @@ tflint
 tfsl
 timemachine
 titlebar
+todesktop
 tokyonight
 toplevel
 tqer
