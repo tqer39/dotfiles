@@ -322,5 +322,61 @@ class ModifierRoleTest(unittest.TestCase):
             self.assertFalse(rules[description].get("enabled", True), description)
 
 
+class EditorTerminalKeybindingTest(unittest.TestCase):
+    def resolve_binding(self, key, modifiers, is_mac, terminal_focus=False, full=False):
+        aliases = {"left_command": "cmd", "left_control": "ctrl", "left_shift": "shift"}
+        pressed = {key, *(aliases.get(modifier, modifier) for modifier in modifiers)}
+        bindings = json.loads((ROOT / "config/editor-keybindings.json").read_text())
+        for binding in reversed(bindings):
+            context = {"isMac": is_mac, "!isMac": not is_mac,
+                       "terminalFocus": terminal_focus}
+            if not all(context[term.strip()] for term in binding["when"].split("&&")):
+                continue
+            if set(binding["key"].split("+")) == pressed:
+                return binding if full else binding["command"]
+        return None
+
+    def test_mac_editors_focus_terminal_after_existing_control_conversion(self):
+        for app in ("com.microsoft.VSCode", "com.microsoft.VSCodeInsiders",
+                    "com.todesktop.230313mzl4w4u92", "com.vscodium"):
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    key, modifiers = chord(control, "j", app, {"left_shift"})
+                    self.assertEqual(self.resolve_binding(key, modifiers, True),
+                                     "workbench.action.terminal.focus")
+                    key, modifiers = chord(control, "j", app)
+                    self.assertIsNone(self.resolve_binding(key, modifiers, True))
+
+    def test_windows_and_linux_control_shift_j_focuses_terminal(self):
+        self.assertEqual(self.resolve_binding("j", {"left_control", "left_shift"}, False),
+                         "workbench.action.terminal.focus")
+        self.assertIsNone(self.resolve_binding("j", {"left_control"}, False))
+
+    def test_platform_binding_does_not_leak(self):
+        self.assertIsNone(self.resolve_binding("j", {"left_control", "left_shift"}, True))
+        self.assertIsNone(self.resolve_binding("j", {"left_command", "left_shift"}, False))
+
+    def test_editor_history_search_sends_control_r_without_enter(self):
+        for app in ("com.microsoft.VSCode", "com.microsoft.VSCodeInsiders",
+                    "com.todesktop.230313mzl4w4u92", "com.vscodium"):
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    key, modifiers = chord(control, "r", app)
+                    binding = self.resolve_binding(key, modifiers, True, True, full=True)
+                    self.assertEqual(binding["command"], "workbench.action.terminal.sendSequence")
+                    self.assertEqual(binding["args"]["text"].encode(), bytes([18]))
+                    self.assertIsNone(self.resolve_binding(key, modifiers, True))
+
+    def test_history_search_context_and_platform_isolation(self):
+        for is_mac, modifier in ((True, "left_command"), (False, "left_control")):
+            binding = self.resolve_binding("r", {modifier}, is_mac, True, full=True)
+            self.assertEqual(binding["command"], "workbench.action.terminal.sendSequence")
+            self.assertEqual(binding["args"]["text"].encode(), bytes([18]))
+            self.assertIsNone(self.resolve_binding("r", {modifier}, is_mac))
+            self.assertIsNone(self.resolve_binding("r", {modifier}, not is_mac, True))
+            for extra in ("left_shift", "left_option"):
+                self.assertIsNone(self.resolve_binding("r", {modifier, extra}, is_mac, True))
+
+
 if __name__ == "__main__":
     unittest.main()

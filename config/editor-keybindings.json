@@ -1,0 +1,28 @@
+[
+  {
+    "key": "cmd+shift+j",
+    "command": "workbench.action.terminal.focus",
+    "when": "isMac"
+  },
+  {
+    "key": "ctrl+shift+j",
+    "command": "workbench.action.terminal.focus",
+    "when": "!isMac"
+  },
+  {
+    "key": "cmd+r",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+      "text": "\u0012"
+    },
+    "when": "isMac && terminalFocus"
+  },
+  {
+    "key": "ctrl+r",
+    "command": "workbench.action.terminal.sendSequence",
+    "args": {
+      "text": "\u0012"
+    },
+    "when": "!isMac && terminalFocus"
+  }
+]
