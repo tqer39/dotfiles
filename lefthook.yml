@@ -35,7 +35,8 @@ pre-commit:
       run: pnpm exec cspell lint --no-must-find-files --no-progress --gitignore --files {staged_files}
     renovate-config-validator:
       glob: 'renovate.json5'
-      run: npx --yes --package=renovate -- renovate-config-validator {staged_files}
+      # Node の互換性変更は別途対応し、現在の検証バージョンを維持する。
+      run: npx --yes --prefer-offline --package=renovate@37.440.7 -- renovate-config-validator {staged_files}
 
     # ── フォーマッタ系 ──
     biome-check:
