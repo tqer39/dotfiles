@@ -215,6 +215,25 @@ class ModifierRoleTest(unittest.TestCase):
                 self.assertEqual(chord(control, "tab", "com.openai.codex", {"left_shift"}),
                                  ("tab", {"control", "left_shift"}))
 
+    def test_codex_control_r_reloads_browser_with_command_r(self):
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "r", "com.openai.codex"),
+                                 ("r", {"left_command"}))
+
+    def test_codex_physical_command_r_remains_native(self):
+        for command in ("left_command", "right_command"):
+            for extra in (set(), {"left_shift"}, {"left_option"}):
+                with self.subTest(command=command, extra=extra):
+                    self.assertEqual(chord(command, "r", "com.openai.codex", extra),
+                                     ("r", {command} | extra))
+
+    def test_terminal_control_r_remains_history_search(self):
+        for app in TERMINALS:
+            for control in ("left_control", "right_control"):
+                with self.subTest(app=app, control=control):
+                    self.assertEqual(chord(control, "r", app), ("r", {control}))
+
     def test_codex_control_j_runs_nani_quick_translate(self):
         for control in ("left_control", "right_control"):
             with self.subTest(control=control):
