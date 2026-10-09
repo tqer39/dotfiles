@@ -7,7 +7,7 @@
 
 [tools]
 node = "lts"
-"npm:@openai/codex" = "0.155.1"
+"npm:@openai/codex" = "0.157.0"
 
 # Official macOS binaries; keep the version and publisher checksums together.
 [tools."github:jacobbednarz/cf-vault"]
