@@ -134,6 +134,29 @@
 - リポジトリの設定とホームの Karabiner 設定が別ファイルの場合、自動では反映されません。
   適用時は既存設定の差分を確認し、他のキー設定を上書きしないでください。
 
+## Slack の行末までの選択
+
+- Slack のテキスト編集中に `A左キー+Shift+End` で現在行の末尾まで選択します。
+  macOS では `Command+Shift+→` に変換し、文章全体の末尾までの選択と区別します。
+- `original_control_pressed` で A左キー由来の Command を識別し、
+  物理 Command の操作、他アプリ、追加の Option を伴う操作は変更しません。
+- `tests/test-karabiner.py` で左右の Control・Shift と対象外操作を検証します。
+  Slack の実際の編集欄と各端末の物理キーによる操作は未確認です。
+
+## Finder のファイル操作
+
+- Finder でファイルを選択した状態の `F2` は、名前の編集を開始します。
+  macOS の Karabiner では `return_or_enter` に変換します。
+- Finder の単独 `Delete` は、選択したファイルをゴミ箱へ移動します。
+  `delete_or_backspace` と `delete_forward` を `Command+Delete` に変換します。
+- HHKB で観測した `fn` 付きの `F2` も対象とし、Fn を取り除いて Return を送ります。
+  2026-10-15 に EventViewer で `f2` と `flags fn` を確認しました。
+- どちらも Finder だけに適用し、Fn+F2 を除く追加の修飾キー付き操作は変換しません。
+  名前編集中や検索欄でもアプリ条件は成立するため、Delete は同じ変換になります。
+- `tests/test-karabiner.py` で変換・対象外アプリ・追加修飾キーを検証します。
+  Mac Studio・MacBook Pro の物理キーによる操作は未確認です。
+  Windows・Ubuntu のファイルマネージャーへの追加設定は行っていません。
+
 ## macOS の物理キーと変換後のキーを区別する
 
 - 「元 Caps Lock」は物理的な Caps Lock キーを指します。

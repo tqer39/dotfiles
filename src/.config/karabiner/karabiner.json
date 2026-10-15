@@ -1212,6 +1212,37 @@
             ]
           },
           {
+            "description": "Slack: A左キー+Shift+End で行末まで選択",
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "end",
+                  "modifiers": {
+                    "mandatory": ["command", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "right_arrow",
+                    "modifiers": ["left_command", "left_shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.tinyspeck\\.slackmacgap$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "Slack: Control+左クリックを Command+左クリックに変換（別ウィンドウで開く）",
             "enabled": false,
             "manipulators": [
@@ -2690,17 +2721,37 @@
           },
           {
             "description": "Finder: 名前の編集開始と終了(F2)",
-            "enabled": false,
+            "enabled": true,
             "manipulators": [
               {
                 "conditions": [
                   {
-                    "bundle_identifiers": ["^com.apple.finder"],
+                    "bundle_identifiers": ["^com\\.apple\\.finder$"],
                     "type": "frontmost_application_if"
                   }
                 ],
                 "from": { "key_code": "f2" },
                 "to": [{ "key_code": "return_or_enter" }],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["^com\\.apple\\.finder$"],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": {
+                  "key_code": "f2",
+                  "modifiers": {
+                    "mandatory": ["fn"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "return_or_enter"
+                  }
+                ],
                 "type": "basic"
               }
             ]
