@@ -120,6 +120,51 @@ def chord(modifier, key, app, extra=frozenset()):
 
 
 class ModifierRoleTest(unittest.TestCase):
+    def test_slack_control_shift_end_selects_to_line_end(self):
+        for control in ("left_control", "right_control"):
+            for shift in ("left_shift", "right_shift"):
+                with self.subTest(control=control, shift=shift):
+                    self.assertEqual(chord(control, "end", "com.tinyspeck.slackmacgap", {shift}),
+                                     ("right_arrow", {"left_command", "left_shift"}))
+
+    def test_slack_line_selection_preserves_other_shortcuts(self):
+        app = "com.tinyspeck.slackmacgap"
+        self.assertEqual(chord("left_command", "end", app, {"left_shift"}),
+                         ("end", {"left_command", "left_shift"}))
+        self.assertEqual(chord("left_control", "end", "com.apple.TextEdit", {"left_shift"}),
+                         ("end", {"left_command", "left_shift"}))
+        self.assertEqual(chord("left_control", "end", app), ("end", {"left_command"}))
+        self.assertEqual(chord("left_control", "end", app, {"left_shift", "left_option"}),
+                         ("end", {"left_command", "left_shift", "left_option"}))
+
+    def test_finder_hhkb_fn_f2_renames_without_forwarding_fn(self):
+        self.assertEqual(transform("f2", {"fn"}, "com.apple.finder"),
+                         ("return_or_enter", set()))
+        self.assertEqual(transform("f2", {"fn"}, "com.apple.TextEdit"),
+                         ("f2", {"fn"}))
+        for extra in ("left_shift", "left_command", "left_control", "left_option"):
+            with self.subTest(extra=extra):
+                self.assertEqual(transform("f2", {"fn", extra}, "com.apple.finder"),
+                                 ("f2", {"fn", extra}))
+
+    def test_finder_f2_renames_and_delete_moves_to_trash(self):
+        self.assertEqual(transform("f2", set(), "com.apple.finder"),
+                         ("return_or_enter", set()))
+        for key in ("delete_or_backspace", "delete_forward"):
+            with self.subTest(key=key):
+                self.assertEqual(transform(key, set(), "com.apple.finder"),
+                                 ("delete_or_backspace", {"left_command"}))
+
+    def test_finder_shortcuts_do_not_capture_other_apps_or_modifiers(self):
+        for key in ("f2", "delete_or_backspace", "delete_forward"):
+            for app in ("com.apple.TextEdit", "com.apple.finder.helper"):
+                with self.subTest(key=key, app=app):
+                    self.assertEqual(transform(key, set(), app), (key, set()))
+            for modifier in ("left_shift", "left_command", "left_option", "left_control"):
+                with self.subTest(key=key, modifier=modifier):
+                    self.assertEqual(transform(key, {modifier}, "com.apple.finder"),
+                                     (key, {modifier}))
+
     def test_option_arrows_navigate_browser_history(self):
         for app in BROWSERS:
             for option in ("left_option", "right_option"):
