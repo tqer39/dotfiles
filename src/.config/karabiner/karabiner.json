@@ -556,7 +556,7 @@
             ]
           },
           {
-            "description": "ChatGPT Codex: 元 Caps Lock+Tab でブラウザタブを移動",
+            "description": "ChatGPT Codex: A左キー+Tab / Shift+Tab でブラウザタブを移動",
             "enabled": true,
             "manipulators": [
               {
@@ -564,11 +564,41 @@
                 "from": {
                   "key_code": "tab",
                   "modifiers": {
-                    "mandatory": ["command"],
-                    "optional": ["shift"]
+                    "mandatory": ["command", "shift"]
                   }
                 },
-                "to": [{ "key_code": "tab", "modifiers": ["control"] }],
+                "to": [
+                  {
+                    "key_code": "open_bracket",
+                    "modifiers": ["command", "shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.openai\\.codex$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["command"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "close_bracket",
+                    "modifiers": ["command", "shift"]
+                  }
+                ],
                 "conditions": [
                   {
                     "type": "variable_if",

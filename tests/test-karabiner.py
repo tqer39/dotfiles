@@ -256,9 +256,10 @@ class ModifierRoleTest(unittest.TestCase):
         for control in ("left_control", "right_control"):
             with self.subTest(control=control):
                 self.assertEqual(chord(control, "tab", "com.openai.codex"),
-                                 ("tab", {"control"}))
-                self.assertEqual(chord(control, "tab", "com.openai.codex", {"left_shift"}),
-                                 ("tab", {"control", "left_shift"}))
+                                 ("close_bracket", {"command", "shift"}))
+                for shift in ("left_shift", "right_shift"):
+                    self.assertEqual(chord(control, "tab", "com.openai.codex", {shift}),
+                                     ("open_bracket", {"command", "shift"}))
 
     def test_codex_control_r_reloads_browser_with_command_r(self):
         for control in ("left_control", "right_control"):
