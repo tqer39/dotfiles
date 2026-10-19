@@ -223,8 +223,14 @@ hs.hotkey.bind(mod, "Down", function()
 end)
 
 -- 設定の自動リロード
-hs.loadSpoon("ReloadConfiguration")   -- Spoon をロード
-spoon.ReloadConfiguration:start()     -- 自動監視スタート
-spoon.ReloadConfiguration:bindHotkeys({
-  reload = { {"cmd","ctrl","shift"}, "R" }  -- ⌘⌃⇧R で手動リロード
-})
+-- cspell:ignore pathwatcher configdir
+-- 外部 Spoon がなくても起動・リロードできるよう標準 API を使う。
+hs.hotkey.bind({"cmd", "ctrl", "shift"}, "R", hs.reload)
+hs.configWatcher = hs.pathwatcher.new(hs.configdir, function(paths)
+  for _, path in ipairs(paths) do
+    if path:sub(-4) == ".lua" then
+      hs.reload()
+      return
+    end
+  end
+end):start()
