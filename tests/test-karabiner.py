@@ -119,7 +119,69 @@ def chord(modifier, key, app, extra=frozenset()):
     return transform(key, press.held | set(extra), app, press.variables)
 
 
+def press_modifiers(keys, app):
+    """Follow physical modifier key-down order through the selected rules."""
+    presses, held, variables = [], set(), {}
+    for key in keys:
+        item, _ = matching_rule(key, held, app, variables)
+        press = ModifierPress(item or {"to": [{"key_code": key}]})
+        presses.append(press)
+        held.update(press.held)
+        variables.update(press.variables)
+    return presses, held, variables
+
+
 class ModifierRoleTest(unittest.TestCase):
+    def test_window_movement_preserves_control_command_in_either_press_order(self):
+        for app in ("com.google.Chrome", "com.tinyspeck.slackmacgap", "com.apple.TextEdit", *TERMINALS):
+            for control in ("left_control", "right_control"):
+                for command in ("left_command", "right_command"):
+                    for keys in ((control, command), (command, control)):
+                        for arrow in ("left_arrow", "right_arrow", "up_arrow", "down_arrow"):
+                            with self.subTest(app=app, keys=keys, arrow=arrow):
+                                _, held, variables = press_modifiers(keys, app)
+                                key, modifiers = transform(arrow, held, app, variables)
+                                self.assertEqual(key, arrow)
+                                self.assertTrue(modifiers & {"left_control", "right_control"})
+                                self.assertTrue(modifiers & {"left_command", "right_command"})
+
+    def test_hhkb_fn_arrows_preserve_window_movement(self):
+        for app in ("com.google.Chrome", "com.tinyspeck.slackmacgap", *TERMINALS):
+            for keys in (("left_control", "left_command"), ("left_command", "left_control")):
+                for arrow in ("left_arrow", "right_arrow", "up_arrow", "down_arrow"):
+                    with self.subTest(app=app, keys=keys, arrow=arrow):
+                        _, held, variables = press_modifiers(keys, app)
+                        key, modifiers = transform(arrow, held | {"fn"}, app, variables)
+                        self.assertEqual(key, arrow)
+                        self.assertIn("fn", modifiers)
+                        self.assertTrue(modifiers & {"left_control", "right_control"})
+                        self.assertTrue(modifiers & {"left_command", "right_command"})
+
+    def test_window_movement_does_not_capture_single_modifier_arrows(self):
+        for app in ("com.google.Chrome", "com.tinyspeck.slackmacgap"):
+            for modifier in ("left_command", "right_command", "left_control", "right_control"):
+                for arrow in ("left_arrow", "right_arrow", "up_arrow", "down_arrow"):
+                    with self.subTest(app=app, modifier=modifier, arrow=arrow):
+                        _, held, variables = press_modifiers((modifier,), app)
+                        self.assertEqual(transform(arrow, held, app, variables), (arrow, held))
+
+    def test_releasing_command_restores_single_modifier_arrows(self):
+        app = "com.google.Chrome"
+        for command in ("left_command", "right_command"):
+            presses, _, variables = press_modifiers(("left_control", command), app)
+            presses[1].release()
+            variables.update(presses[1].variables)
+            self.assertEqual(transform("left_arrow", presses[0].held, app, variables),
+                             ("left_arrow", {"left_command"}))
+
+    def test_window_movement_does_not_capture_selection_or_history(self):
+        app = "com.tinyspeck.slackmacgap"
+        _, held, variables = press_modifiers(("left_control", "left_command"), app)
+        self.assertEqual(transform("left_arrow", held | {"left_shift"}, app, variables),
+                         ("left_arrow", {"left_command", "left_shift"}))
+        self.assertEqual(transform("right_arrow", held | {"left_option"}, app, variables),
+                         ("right_arrow", {"left_command", "left_option"}))
+
     def test_slack_control_shift_end_selects_to_line_end(self):
         for control in ("left_control", "right_control"):
             for shift in ("left_shift", "right_shift"):
