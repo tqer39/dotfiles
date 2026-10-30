@@ -34,6 +34,9 @@ curl -fsSL https://install.tqer39.dev | bash -s -- --full --ci
 curl -fsSL https://install.tqer39.dev | bash -s -- --dry-run
 ```
 
+MacBook をクラムシェルで使う場合は、インストール後に
+[自動スリープを防ぐ必須の手動設定](docs/platform-compatibility.md#macbook-のクラムシェル利用手動設定)を行ってください。
+
 ### Windows (PowerShell)
 
 ```powershell
