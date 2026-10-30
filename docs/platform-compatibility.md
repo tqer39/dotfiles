@@ -42,6 +42,18 @@ Unix のリンク対象は [platform-files.conf](../config/platform-files.conf)�
 | Karabiner-Elements | キーボードリマップ | macOS キーボード API 依存 |
 | Hammerspoon | ウィンドウ管理 | macOS Lua スクリプティングブリッジ |
 
+### MacBook のクラムシェル利用（手動設定）
+
+MacBook を電源に接続し、外部ディスプレイを使って本体を閉じる
+クラムシェル運用では、ディスプレイ消灯時の自動スリープを防ぐため、次の設定を必ずオンにしてください。
+
+1. 「システム設定」→「バッテリー」→「オプション」を開きます。
+2. **「電源アダプタ使用時はディスプレイがオフのときに自動でスリープさせない」をオン**にします。
+3. 「完了」をクリックします。
+
+この設定は dotfiles のインストールでは変更されないため、MacBook ごとに手動で設定します。
+設定項目の説明は [Apple のスリープ設定ガイド](https://support.apple.com/ja-jp/guide/mac-help/mchle41a6ccd/mac)を参照してください。
+
 ## プラットフォーム別代替
 
 | 機能 | macOS | Ubuntu/Mint | Windows |
