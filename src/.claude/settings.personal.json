@@ -20,7 +20,10 @@
       "Read(//Users/*/.aws/config)",
       "Read(//Users/*/.ssh/id_*)",
       "Read(//Users/*/.ssh/*.pem)",
-      "Read(//Users/*/.netrc)"
+      "Read(//Users/*/.netrc)",
+      "Bash(op read*)",
+      "Bash(security find-generic-password*)",
+      "Bash(*agent-harness clear-stop*)"
     ],
     "defaultMode": "auto"
   },
