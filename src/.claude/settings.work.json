@@ -36,6 +36,16 @@
             "command": "rtk hook claude"
           }
         ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 ~/.config/ai-robot-face/robot_face_guard.py",
+            "timeout": 10
+          }
+        ]
       }
     ],
     "SessionStart": [
