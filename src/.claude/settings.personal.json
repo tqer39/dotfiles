@@ -2,7 +2,8 @@
   "env": {
     "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
-    "ENABLE_TOOL_SEARCH": "true"
+    "ENABLE_TOOL_SEARCH": "true",
+    "OP_BIOMETRIC_UNLOCK_ENABLED": "false"
   },
   "includeCoAuthoredBy": true,
   "permissions": {
