@@ -23,8 +23,7 @@
       "Read(//Users/*/.ssh/*.pem)",
       "Read(//Users/*/.netrc)",
       "Bash(op read*)",
-      "Bash(security find-generic-password*)",
-      "Bash(*agent-harness clear-stop*)"
+      "Bash(security find-generic-password*)"
     ],
     "defaultMode": "auto"
   },
@@ -72,7 +71,8 @@
     "architecture@tqer39-plugins": true,
     "agent-config@tqer39-plugins": true,
     "skill-matcher@tqer39-plugins": true,
-    "discord@claude-plugins-official": true
+    "discord@claude-plugins-official": true,
+    "codex@openai-codex": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
@@ -91,6 +91,12 @@
       "source": {
         "source": "github",
         "repo": "tqer39/claude-code-marketplace"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
       }
     }
   },
