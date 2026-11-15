@@ -156,3 +156,32 @@ Markdown には `markdown-lint`、インストーラーの変更後には `sync-
 - [モデルと推論強度](https://learn.chatgpt.com/docs/models)
 - [設定プロファイル](https://learn.chatgpt.com/docs/config-file/config-advanced#profiles)
 - [セットアップと検証の指針](https://learn.chatgpt.com/guides/best-practices)
+
+## Claude とのクロスレビュー
+
+Codex 起点では `claude-review` スキルを使います。
+個人用スキルは `src/.claude/skills/claude-review/` に置き、Unix の既存インストーラーが
+`~/.codex/skills/claude-review` にリンクします。Windows ではこのスキルへのリンクを手動で作成します。
+Python 3 とログイン済み Claude Code が必要です。
+
+Claude 起点では [OpenAI の公式プラグイン](https://github.com/openai/codex-plugin-cc) を使います。
+`settings.personal.json` にマーケットプレイス `openai-codex` と `codex@openai-codex` を定義しています。
+`settings.work.json` には追加していません。
+Unix の `./scripts/dotfiles.sh install` は、personal モードで `~/.claude/settings.json` をこの設定へリンクします。
+既存の通常ファイルがある場合は、差分を確認して今回のキーだけを統合する方法でも反映できます。
+
+```bash
+claude plugin marketplace add openai/codex-plugin-cc
+claude plugin install codex@openai-codex --scope user
+```
+
+新しい Claude Code セッションで `/codex:setup` を実行して認証を確認し、
+`/codex:review`、`/codex:adversarial-review`、`/codex:rescue` を利用します。
+レビューゲートはプラグインの既定どおり無効にします。既に有効なら、そのリポジトリで
+`/codex:setup --disable-review-gate` を実行します。ゲートの設定はリポジトリ別のプラグイン状態に保存され、
+`settings.personal.json` に架空の設定キーは追加しません。
+
+プラグインのインストール記録は端末ごとに生成されます。
+`~/.claude/plugins/installed_plugins.json` が dotfiles へのリンクなら、インストールによる差分を確認し、
+端末固有の絶対パスや時刻をこの移行 PR に含めないでください。設定での有効化だけで
+キャッシュの取得が完了したとは判断せず、新しいセッションでコマンドを確認します。
