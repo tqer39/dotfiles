@@ -143,6 +143,13 @@
 - `tests/test-karabiner.py` で左右の Control・Shift と対象外操作を検証します。
   Slack の実際の編集欄と各端末の物理キーによる操作は未確認です。
 
+## Slack のユーザーグループ表示
+
+- Slack で `A左キー+Shift+E` を押すと、ユーザーグループを表示します。
+  macOS の Karabiner では `Command+Shift+E` を送り、対象は Slack だけです。
+- `tests/test-karabiner.py` で左右の Control・Shift の組み合わせを検証します。
+  Slack の実機動作と各端末の物理キーによる操作は未確認です。
+
 ## Finder のファイル操作
 
 - Finder でファイルを選択した状態の `F2` は、名前の編集を開始します。

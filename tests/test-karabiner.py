@@ -199,6 +199,14 @@ class ModifierRoleTest(unittest.TestCase):
         self.assertEqual(chord("left_control", "end", app, {"left_shift", "left_option"}),
                          ("end", {"left_command", "left_shift", "left_option"}))
 
+    def test_slack_control_shift_e_shows_user_groups(self):
+        for control in ("left_control", "right_control"):
+            for shift in ("left_shift", "right_shift"):
+                with self.subTest(control=control, shift=shift):
+                    key, modifiers = chord(control, "e", "com.tinyspeck.slackmacgap", {shift})
+                    self.assertEqual(key, "e")
+                    self.assertIn(modifiers, ({"left_command", "left_shift"}, {"left_command", shift}))
+
     def test_finder_hhkb_fn_f2_renames_without_forwarding_fn(self):
         self.assertEqual(transform("f2", {"fn"}, "com.apple.finder"),
                          ("return_or_enter", set()))

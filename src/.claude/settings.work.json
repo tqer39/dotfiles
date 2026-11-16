@@ -22,9 +22,9 @@
       "Read(//Users/*/.ssh/*.pem)",
       "Read(//Users/*/.netrc)"
     ],
-    "defaultMode": "plan"
+    "defaultMode": "auto"
   },
-  "model": "claude-fable-5-1[1M]",
+  "model": "fable",
   "disabledMcpjsonServers": ["slack"],
   "hooks": {
     "PreToolUse": [
@@ -86,7 +86,9 @@
     "context7@claude-plugins-official": true,
     "example-skills@anthropic-agent-skills": true,
     "superpowers@claude-plugins-official": true,
-    "claude-code-cost-analysis@kkhs-plugin-marketplace": true
+    "claude-code-cost-analysis@kkhs-plugin-marketplace": true,
+    "skill-creator@claude-plugins-official": true,
+    "postman@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
@@ -104,6 +106,11 @@
   },
   "language": "日本語",
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "high"
+    }
+  },
   "tui": "fullscreen",
   "theme": "dark"
 }

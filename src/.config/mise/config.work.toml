@@ -7,7 +7,10 @@
 
 [tools]
 node = "lts"
-"npm:@openai/codex" = "0.166.0"
+"npm:@openai/codex" = "0.167.1"
+"ubi:DataDog/pup" = "2.4.3"
+python = "3.14.10"
+uv = "0.13.6"
 
 # Official macOS binaries; keep the version and publisher checksums together.
 [tools."github:jacobbednarz/cf-vault"]
