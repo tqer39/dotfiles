@@ -26,3 +26,5 @@
 	gpgsign = false
 [credential "helperselector"]
 	selected = manager
+[includeIf "gitdir:~/workspace/shugyogo_note/"]
+	path = ~/.gitconfig-side
