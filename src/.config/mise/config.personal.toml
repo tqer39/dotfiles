@@ -10,7 +10,6 @@ node = "24"
 
 # AI CLI Tools
 "npm:@google/gemini-cli" = "latest"
-"npm:@openai/codex" = "latest"
 "npm:@github/copilot" = "latest"
 "npm:ctx7" = "latest"
 
