@@ -74,3 +74,6 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
 # pnpm end
+
+# Added by Teamwork Graph CLI installer
+export PATH="$HOME/.local/bin:$PATH"
