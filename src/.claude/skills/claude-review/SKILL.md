@@ -1,6 +1,6 @@
 ---
 name: claude-review
-description: PR 前に現在のブランチと未コミット変更を Claude で敵対的レビューする。設計・前提・境界条件・セキュリティ・テストの欠陥を読み取り専用で確認する。
+description: Codex で作業したとき、PR 前に現在のブランチと未コミット変更を Claude で敵対的レビューする。Claude Code 自身の作業では使わず、/code-review を使う。設計・前提・境界条件・セキュリティ・テストの欠陥を読み取り専用で確認する。
 ---
 
 # Claude の敵対的レビュー

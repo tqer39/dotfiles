@@ -4,7 +4,8 @@
 
 dotfiles のインストーラーは macOS・Linux・Windows で次のファイルをリンクします。
 
-- `src/.codex/AGENTS.md`: 日本語での応答、実装、検証、最終レビューに関する共通指示
+- `src/.claude/CLAUDE.md`: 日本語での応答、実装、検証、最終レビューに関する個人共通の指示。
+  Claude Code の `~/.claude/CLAUDE.md` と同じファイルを `~/.codex/AGENTS.md` にもリンクします
 - `src/.codex/quality.config.toml`: GPT-6 Astra、通常時と Plan モードの推論強度
   `max`、ライブ検索の設定
 
@@ -53,12 +54,12 @@ MCP の警告が出たら、実行ファイルの有無を確認してくださ�
 
 ### 指示の適用範囲
 
-個人共通の Codex 指示は、`~/.codex/AGENTS.md` にインストールされる
-`src/.codex/AGENTS.md` で管理します。
+個人共通の指示は、`~/.claude/CLAUDE.md` と `~/.codex/AGENTS.md` にインストールされる
+`src/.claude/CLAUDE.md` で管理します。
 リポジトリのルールは [AGENTS.md](../AGENTS.md) に置き、
 `CLAUDE.md` も symlink で同じファイルを参照します。
 共通の作業手順と検証ルールは Codex・Claude Code の両方に適用します。
-委譲の節は Claude Code 専用で、Codex は割り当てられた実装を直接行います。
+主担当は Claude Code で、Codex を使う場合も同じ手順に従います。
 
 Codex は個人共通の指示に続いてリポジトリの指示を読み込み、より具体的な
 プロジェクトの指示が、それ以前の指示に優先することがあります。

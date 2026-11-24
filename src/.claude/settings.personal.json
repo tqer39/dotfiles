@@ -81,8 +81,7 @@
     "architecture@tqer39-plugins": true,
     "agent-config@tqer39-plugins": true,
     "skill-matcher@tqer39-plugins": true,
-    "discord@claude-plugins-official": true,
-    "codex@openai-codex": true
+    "discord@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
@@ -101,12 +100,6 @@
       "source": {
         "source": "github",
         "repo": "tqer39/claude-code-marketplace"
-      }
-    },
-    "openai-codex": {
-      "source": {
-        "source": "github",
-        "repo": "openai/codex-plugin-cc"
       }
     }
   },
