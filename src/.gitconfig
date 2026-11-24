@@ -16,8 +16,6 @@
 	pruneTags = true
 [branch]
 	autoSetupMerge = inherit
-[rebase]
-	autoStash = true
 [diff]
 	tool = default-difftool
 [difftool "default-difftool"]

@@ -13,8 +13,6 @@
 	pruneTags = true
 [branch]
 	autoSetupMerge = inherit
-[rebase]
-	autoStash = true
 [commit]
 	gpgsign = false
 [alias]
