@@ -21,6 +21,8 @@ source "${SCRIPT_DIR}/lib/symlink.sh"
 source "${SCRIPT_DIR}/lib/skills.sh"
 # shellcheck source=/dev/null
 source "${SCRIPT_DIR}/lib/doctor.sh"
+# shellcheck source=/dev/null
+source "${SCRIPT_DIR}/lib/macos-shortcuts.sh"
 
 # Install dotfiles by creating symlinks
 install_dotfiles() {
@@ -88,6 +90,10 @@ install_dotfiles() {
 
   # Install Codex skills from Claude Code skills
   install_codex_skills
+
+  if [[ "$current_os" == "macos" ]]; then
+    configure_macos_shortcuts
+  fi
 
   echo ""
   log_success "Dotfiles installation complete!"

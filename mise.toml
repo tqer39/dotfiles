@@ -42,7 +42,7 @@ run = "lefthook install"
 
 [tasks.lint]
 description = "Run all linters, keyboard shortcut tests, and RuleSync checks"
-run = "lefthook run pre-commit --all-files && python3 tests/test-karabiner.py && python3 tests/test-claude-review.py && mise run rules-check"
+run = "lefthook run pre-commit --all-files && python3 tests/test-karabiner.py && python3 tests/test-macos-shortcuts.py && python3 tests/test-claude-review.py && mise run rules-check"
 
 [tasks.lint-clean]
 description = "Clean lefthook cache"
