@@ -133,7 +133,6 @@ oneline
 ooyama
 openclaw
 openpgp
-OPENROUTER
 orbstack
 pathlib
 pcra
