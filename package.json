@@ -4,7 +4,7 @@
   "description": "Development tool dependencies for dotfiles (run via lefthook).",
   "packageManager": "pnpm@12.20.0",
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.6.7",
     "cspell": "10.5.0",
     "markdownlint-cli2": "0.24.1",
     "prettier": "3.10.1",
