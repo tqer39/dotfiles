@@ -13,7 +13,7 @@ dotfiles リポジトリ内で RuleSync を使い、日本語の正本を参照�
 | `AGENTS.md` | RuleSync が生成する参照用の入口 |
 | `CLAUDE.md` | `AGENTS.md` への既存リンク |
 | `.claude/skills/<名前>/SKILL.md` | Claude Code 向けのスキル生成物 |
-| `.codex/skills/<名前>/SKILL.md` | Codex 向けのスキル生成物 |
+| `.agents/skills/<名前>/SKILL.md` | Codex 向けのスキル生成物 |
 
 ルール本文は正本だけを編集します。本文を生成物へ複製しません。
 参照先を追加・変更するときは `.rulesync/rules/overview.md` を編集して再生成します。
@@ -57,7 +57,7 @@ Claude Code 向けの `rules` 生成を有効にせず、既存のリンクを�
 | `translate-docs` | Markdown の日本語化と正本への統合 |
 
 各スキルは `name` と `description` を持つ `SKILL.md` で定義し、対象は依頼文から読み取ります。
-共通の本文から RuleSync が `.claude/skills/` と `.codex/skills/` へ生成します。
+共通の本文から RuleSync が `.claude/skills/` と `.agents/skills/` へ生成します。
 本文の修正は `.rulesync/skills/` だけに反映し、再生成してください。
 生成仕様は [RuleSync の設定](https://rulesync.dyoshikawa.com/guide/configuration) と
 固定バージョンの実装に合わせています。
