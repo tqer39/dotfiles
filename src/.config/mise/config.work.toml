@@ -15,7 +15,7 @@ uv = "0.13.10"
 
 # Official macOS binaries; keep the version and publisher checksums together.
 [tools."github:jacobbednarz/cf-vault"]
-version = "0.0.26"
+version = "0.0.27"
 os = ["macos"]
 
 [tools."github:jacobbednarz/cf-vault".platforms]
