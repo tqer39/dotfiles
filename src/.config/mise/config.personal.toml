@@ -6,7 +6,7 @@
 
 [tools]
 # Language Runtimes
-node = "24"
+node = "26"
 
 # AI CLI Tools
 "npm:@google/gemini-cli" = "latest"
