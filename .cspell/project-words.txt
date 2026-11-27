@@ -169,6 +169,7 @@ softprops
 spacebar
 spctl
 SSIA
+stablyai
 stackdump
 statusline
 steipete

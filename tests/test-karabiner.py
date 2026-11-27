@@ -331,6 +331,17 @@ class ModifierRoleTest(unittest.TestCase):
                     self.assertEqual(chord(control, "tab", "com.openai.codex", {shift}),
                                      ("open_bracket", {"command", "shift"}))
 
+    def test_orca_control_tab_moves_to_next_and_previous_tab(self):
+        # Orca の tab.nextAllTypes / tab.previousAllTypes の既定値は Cmd+Shift+] / [。
+        # Ctrl+Tab は Orca では直前のタブ（MRU）なので使わない。
+        for control in ("left_control", "right_control"):
+            with self.subTest(control=control):
+                self.assertEqual(chord(control, "tab", "com.stablyai.orca"),
+                                 ("close_bracket", {"command", "shift"}))
+                for shift in ("left_shift", "right_shift"):
+                    self.assertEqual(chord(control, "tab", "com.stablyai.orca", {shift}),
+                                     ("open_bracket", {"command", "shift"}))
+
     def test_codex_control_r_reloads_browser_with_command_r(self):
         for control in ("left_control", "right_control"):
             with self.subTest(control=control):
@@ -395,10 +406,13 @@ class ModifierRoleTest(unittest.TestCase):
         for app in (
             "com.google.Chrome", "com.brave.Browser", "com.apple.Safari",
             "org.mozilla.firefox", "com.microsoft.VSCode", "com.openai.codex",
+            "com.stablyai.orca",
         ):
             with self.subTest(app=app):
                 self.assertEqual(transform("tab", {"left_command"}, app),
                                  ("tab", {"left_command"}))
+                self.assertEqual(transform("tab", {"left_command", "left_shift"}, app),
+                                 ("tab", {"left_command", "left_shift"}))
 
     def test_physical_command_j_keeps_native_shortcuts(self):
         for app in (
