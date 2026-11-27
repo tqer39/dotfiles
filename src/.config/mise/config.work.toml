@@ -10,7 +10,7 @@ node = "lts"
 "npm:@openai/codex" = "0.172.0"
 "npm:@github/copilot" = "1.0.111"
 "ubi:DataDog/pup" = "2.7.1"
-python = "3.14.10"
+python = "3.15.2"
 uv = "0.13.10"
 
 # Official macOS binaries; keep the version and publisher checksums together.
