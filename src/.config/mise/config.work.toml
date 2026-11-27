@@ -8,7 +8,7 @@
 [tools]
 node = "lts"
 "npm:@openai/codex" = "0.172.0"
-"npm:@github/copilot" = "1.0.86"
+"npm:@github/copilot" = "1.0.111"
 "ubi:DataDog/pup" = "2.7.1"
 python = "3.14.10"
 uv = "0.13.10"
