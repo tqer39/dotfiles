@@ -168,8 +168,8 @@ Python 3 とログイン済み Claude Code が必要です。
 Claude 起点では [OpenAI の公式プラグイン](https://github.com/openai/codex-plugin-cc) を使います。
 `settings.personal.json` にマーケットプレイス `openai-codex` と `codex@openai-codex` を定義しています。
 `settings.work.json` には追加していません。
-Unix の `./scripts/dotfiles.sh install` は、personal モードで `~/.claude/settings.json` をこの設定へリンクします。
-既存の通常ファイルがある場合は、差分を確認して今回のキーだけを統合する方法でも反映できます。
+Unix の `./scripts/dotfiles.sh install` は、personal モードでこの設定を `~/.claude/settings.json` へコピーします。
+既存のコピーが書き換わっている場合は、バックアップしてからリポジトリの内容で置き換えます。
 
 ```bash
 claude plugin marketplace add openai/codex-plugin-cc

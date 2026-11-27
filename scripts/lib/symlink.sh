@@ -80,6 +80,69 @@ create_symlink() {
   return 0
 }
 
+# Copy a file idempotently instead of linking it.
+# アプリが実行中に書き換える設定ファイル（例: ~/.claude/settings.json）を symlink にすると、
+# 書き換えが dotfiles リポジトリの作業ツリーに入り git pull を止める。実体をコピーして切り離す。
+# - 宛先が同じ内容の通常ファイル: 何もしない（冪等）
+# - 宛先が symlink または内容の異なるファイル: バックアップしてからコピー（リポジトリ側を正とする）
+# - 宛先がない: コピー
+#
+# Usage: copy_file "/path/to/source" "/path/to/destination"
+copy_file() {
+  local src="$1"
+  local dest="$2"
+
+  if [[ ! -f "$src" ]]; then
+    log_error "Source file does not exist: $src"
+    return 1
+  fi
+
+  if [[ -f "$dest" && ! -L "$dest" ]] && cmp -s "$src" "$dest"; then
+    log_debug "Copy already up to date: $dest"
+    return 0
+  fi
+
+  local dest_dir
+  dest_dir=$(dirname "$dest")
+  if [[ ! -d "$dest_dir" ]]; then
+    if [[ "$DRY_RUN" == "true" ]]; then
+      log_info "[DRY-RUN] Would create directory: $dest_dir"
+    else
+      mkdir -p "$dest_dir"
+    fi
+  fi
+
+  if [[ "$DRY_RUN" == "true" ]]; then
+    if [[ -e "$dest" ]] || [[ -L "$dest" ]]; then
+      log_info "[DRY-RUN] Would backup: $dest -> $BACKUP_DIR"
+    fi
+    log_info "[DRY-RUN] Would copy: $src -> $dest"
+    return 0
+  fi
+
+  # 先に同じディレクトリの一時ファイルへコピーし、成功してから退避と置き換えをする。
+  # cp が失敗しても既存の設定が失われず、mv で置き換えるので読み手が書きかけの内容を見ない。
+  local tmp
+  if ! tmp=$(mktemp "${dest}.XXXXXX") || ! cp "$src" "$tmp"; then
+    [[ -n "${tmp:-}" ]] && rm -f "$tmp"
+    log_error "Failed to copy: $src -> $dest"
+    return 1
+  fi
+
+  if [[ -e "$dest" ]] || [[ -L "$dest" ]]; then
+    backup_file "$dest"
+  fi
+
+  if ! mv -f "$tmp" "$dest"; then
+    rm -f "$tmp"
+    log_error "Failed to copy: $src -> $dest"
+    return 1
+  fi
+  log_success "Copied: $src -> $dest"
+
+  return 0
+}
+
 # Create symlinks for a directory recursively
 # Usage: create_symlinks_recursive "/path/to/src/dir" "/path/to/dest/dir"
 create_symlinks_recursive() {

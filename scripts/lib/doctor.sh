@@ -205,6 +205,17 @@ doctor_check_claude_settings() {
 
     if [[ ! -e "$full_src" ]]; then
       doctor_check_fail ".claude/${target_name}" "Source not found: ${source_name}"
+    elif [[ "$target_name" == "settings.json" ]]; then
+      # settings.json は Claude Code が書き換えるため、symlink ではなくコピーで配置する
+      if [[ -L "$full_dest" ]]; then
+        doctor_check_warn ".claude/${target_name}" "Still a symlink; run install to switch to a copy"
+      elif [[ -f "$full_dest" ]] && cmp -s "$full_src" "$full_dest"; then
+        doctor_check_ok ".claude/${target_name}" "Copied, up to date"
+      elif [[ -f "$full_dest" ]]; then
+        doctor_check_warn ".claude/${target_name}" "Differs from ${source_name}; reflect wanted changes in the repo, then run install"
+      else
+        doctor_check_warn ".claude/${target_name}" "Not installed"
+      fi
     elif [[ -L "$full_dest" ]]; then
       local target
       target=$(readlink "$full_dest")

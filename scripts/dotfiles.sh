@@ -116,7 +116,9 @@ install_claude_settings() {
     return 0
   fi
 
-  create_symlink "$settings_src" "${HOME}/.claude/settings.json"
+  # settings.json は Claude Code が /effort や /model で書き換えるため、symlink にせずコピーする。
+  # symlink だと書き換えがリポジトリの未コミット変更になり、git pull（rebase）が止まる。
+  copy_file "$settings_src" "${HOME}/.claude/settings.json"
   create_symlink "$plugins_src" "${HOME}/.claude/plugins/installed_plugins.json"
   create_symlink "$config_src" "${HOME}/.claude/plugins/config.json"
 }
@@ -145,6 +147,29 @@ uninstall_claude_settings() {
   local src_dir="${DOTFILES_DIR}/src/.claude"
 
   log_info "Uninstalling Claude Code settings"
+
+  # コピーで配置した settings.json は、リポジトリのどれかのモードと同じ内容のときだけ消す。
+  # 実行中に書き換わっていれば利用者の変更なので残す。
+  local settings_dest="${HOME}/.claude/settings.json"
+  if [[ -f "$settings_dest" && ! -L "$settings_dest" ]]; then
+    local settings_src matched=false
+    for settings_src in "${src_dir}"/settings.*.json; do
+      if [[ -f "$settings_src" ]] && cmp -s "$settings_src" "$settings_dest"; then
+        matched=true
+        break
+      fi
+    done
+    if [[ "$matched" == "true" ]]; then
+      if [[ "$DRY_RUN" == "true" ]]; then
+        log_info "[DRY-RUN] Would remove: $settings_dest"
+      else
+        rm "$settings_dest"
+        log_success "Removed: $settings_dest"
+      fi
+    else
+      log_warn "Keeping modified copy: $settings_dest"
+    fi
+  fi
 
   local targets=(
     "${HOME}/.claude/settings.json"
@@ -207,6 +232,21 @@ status_claude_settings() {
     if [[ ! -e "$full_src" ]]; then
       status="MISSING"
       details="Source not found"
+    elif [[ "$target_name" == "settings.json" ]]; then
+      # settings.json はコピーで配置する（install_claude_settings を参照）
+      if [[ -L "$full_dest" ]]; then
+        status="LEGACY"
+        details="Symlink; run install to switch to a copy"
+      elif [[ -f "$full_dest" ]] && cmp -s "$full_src" "$full_dest"; then
+        status="OK"
+        details="Copied, up to date (mode: $mode)"
+      elif [[ -f "$full_dest" ]]; then
+        status="DIFFERS"
+        details="Changed since install; diff with $source_name"
+      else
+        status="NONE"
+        details="Not installed"
+      fi
     elif [[ -L "$full_dest" ]]; then
       local target
       target=$(readlink "$full_dest")

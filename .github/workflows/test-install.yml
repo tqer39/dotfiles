@@ -26,6 +26,9 @@ jobs:
       - name: Run update_repository tests
         run: bash tests/test-update-repository.sh
 
+      - name: Run Claude Code settings install tests
+        run: python3 tests/test-claude-settings.py
+
   test-update-repository-windows:
     name: Update path - Windows ${{ matrix.shell }}
     runs-on: windows-latest

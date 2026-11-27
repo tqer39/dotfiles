@@ -88,7 +88,7 @@ graph LR
         E2["~/.claude.json"]
     end
 
-    MODE -- "symlink" --> T1
+    MODE -- "copy" --> T1
     MODE -- "symlink" --> T2
     MODE -- "symlink" --> T3
 
@@ -127,15 +127,30 @@ src/.claude/
     └── config.work.json
 ```
 
-### symlink マッピング
+### 配置マッピング
 
-`DOTFILES_MODE` に応じて以下の symlink を作成:
+`DOTFILES_MODE` に応じて以下を配置する。`settings.json` だけはコピーで配置する（後述の改訂を参照）。
 
-| Source | Target |
-| ------ | ------ |
-| `src/.claude/settings.{mode}.json` | `~/.claude/settings.json` |
-| `src/.claude/plugins/installed_plugins.{mode}.json` | `~/.claude/plugins/installed_plugins.json` |
-| `src/.claude/plugins/config.{mode}.json` | `~/.claude/plugins/config.json` |
+| Source | Target | 方式 |
+| ------ | ------ | ---- |
+| `src/.claude/settings.{mode}.json` | `~/.claude/settings.json` | コピー |
+| `src/.claude/plugins/installed_plugins.{mode}.json` | `~/.claude/plugins/installed_plugins.json` | symlink |
+| `src/.claude/plugins/config.{mode}.json` | `~/.claude/plugins/config.json` | symlink |
+
+### 改訂: settings.json を symlink からコピーへ変更
+
+Claude Code は `/effort` や `/model` などの操作で `~/.claude/settings.json` を書き換える。
+symlink のままだと、書き換えがリポジトリの未コミット変更になる。
+`pull.rebase=true` で autoStash を無効にしているため、その変更が残っていると `git pull` が止まる。
+
+そこで `settings.json` は install 時にコピーで配置し、リポジトリのファイルを正本とする。
+
+- install: 内容が同じなら何もしない。symlink や内容の異なるファイルがあれば `~/.dotfiles_backup/` へ退避してからコピーする
+- status / doctor: 実行中の書き換えでリポジトリと差が出たら `DIFFERS`（doctor は WARN）を表示する。
+  残したい変更はリポジトリへ反映してから install する
+- uninstall: リポジトリのどれかのモードと同じ内容のときだけ削除し、書き換わったコピーは残す
+
+リポジトリ側の変更は、install を再実行するまで `~/.claude/settings.json` に反映されない。
 
 ### セキュリティ方針: deny-first
 
