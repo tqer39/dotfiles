@@ -196,6 +196,13 @@
   `Control+Tab` / `Control+Shift+Tab` は最近のチャット切り替えなので使用しません。
   物理 Command+Tab はアプリ切り替えとして維持します。
   同日にユーザーが変換後のタブ移動の実機動作を確認しました。他の端末・OS は未確認です。
+- Orca（`com.stablyai.orca`）の `A左キー+Tab` は `Command+Shift+]`、`A左キー+Shift+Tab` は
+  `Command+Shift+[` に変換し、右・左のタブへ移動します。
+  2026-11-27 にインストール済みアプリのキーバインド定義で、`tab.nextAllTypes` /
+  `tab.previousAllTypes` の既定値がこの組み合わせであることを確認しました。
+  `Control+Tab` は直前に使ったタブへの切り替え（`tab.previousRecent`）なので使用しません。
+  Codex と同じく `original_control_pressed` を条件とし、物理 Command+Tab はアプリ切り替えとして維持します。
+  Orca の旧プロファイルでは同じキーが同種のタブ移動になる場合があり、実機の動作は未確認です。
 
 ## macOS の Nani の操作を区別する
 

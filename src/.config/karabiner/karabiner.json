@@ -904,6 +904,64 @@
             ]
           },
           {
+            "description": "Orca: A左キー+Tab / Shift+Tab で次・前のタブへ移動",
+            "enabled": true,
+            "manipulators": [
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["command", "shift"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "open_bracket",
+                    "modifiers": ["command", "shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.stablyai\\.orca$"]
+                  }
+                ]
+              },
+              {
+                "type": "basic",
+                "from": {
+                  "key_code": "tab",
+                  "modifiers": {
+                    "mandatory": ["command"]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "close_bracket",
+                    "modifiers": ["command", "shift"]
+                  }
+                ],
+                "conditions": [
+                  {
+                    "type": "variable_if",
+                    "name": "original_control_pressed",
+                    "value": true
+                  },
+                  {
+                    "type": "frontmost_application_if",
+                    "bundle_identifiers": ["^com\\.stablyai\\.orca$"]
+                  }
+                ]
+              }
+            ]
+          },
+          {
             "description": "ChatGPT Codex: 元 Caps Lock+Shift+J でターミナルを開く",
             "enabled": true,
             "manipulators": [
