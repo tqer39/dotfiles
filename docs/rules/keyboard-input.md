@@ -203,6 +203,12 @@
   `Control+Tab` は直前に使ったタブへの切り替え（`tab.previousRecent`）なので使用しません。
   Codex と同じく `original_control_pressed` を条件とし、物理 Command+Tab はアプリ切り替えとして維持します。
   Orca の旧プロファイルでは同じキーが同種のタブ移動になる場合があり、実機の動作は未確認です。
+- macOS の「次のウインドウを操作対象にする」（システムショートカット ID 27）は、
+  日本語環境の既定値が `⌘@`（keycode 33）です。US 配列では `[` の位置にあたります。
+  macOS は Shift 付きを逆方向として取るため、`Command+Shift+[` がアプリに届きません。
+  2026-11-27 に Orca の `A左キー+Shift+Tab` だけが効かない原因として特定しました。
+  `scripts/dotfiles.sh install` は macOS で `scripts/lib/macos-shortcuts.sh` を使い、
+  このショートカットを無効にします。ID 51 など他のショートカットは変更しません。
 
 ## macOS の Nani の操作を区別する
 

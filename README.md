@@ -135,6 +135,8 @@ DRY_RUN=true ./scripts/dotfiles.sh uninstall
 会社モードの Claude Code 設定を扱う場合は、
 `DOTFILES_MODE=work ./scripts/dotfiles.sh install` のように指定します。
 `uninstall` はパッケージやクローン自体を削除しません。
+macOS の `install` は、システムショートカット「次のウインドウを操作対象にする」も無効にします。
+`uninstall` では元に戻らないため、必要ならシステム設定のキーボードショートカットで有効にします。
 
 ### ベースブランチの更新と設定の反映
 

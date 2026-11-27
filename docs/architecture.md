@@ -33,6 +33,7 @@ flowchart TD
 - `log.sh` - カラー付きログ関数 (`log_info`, `log_success`, `log_error` など)
 - `utils.sh` - OS 検出 (`detect_os` は `macos`/`ubuntu`/`mint`/`linux`/`windows` を返す)、パス展開、コマンドチェック
 - `symlink.sh` - バックアップ機能付き冪等シンボリックリンク作成
+- `macos-shortcuts.sh` - macOS の `install` で、`Command+Shift+[` を奪うシステムショートカットを無効化
 
 ## 設定
 
